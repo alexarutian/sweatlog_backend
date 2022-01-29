@@ -1,0 +1,8 @@
+<h2>{{exercise.name}}</h2>
+{% if exercise.description %}
+<p>Description: {{exercise.description}}</p>
+{% elif exercise.exercise_type %}
+<p>Exercise Type: {{exercise.exercise_type.name}}</p>
+{% elif exercise.equipment_type %}
+<p>Equipment Type: {{exercise.equipment_type.name}}</p>
+{% endif %}
