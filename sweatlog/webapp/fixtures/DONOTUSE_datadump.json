@@ -1,0 +1,90 @@
+[
+  { "model": "webapp.exercisetype", "pk": 1, "fields": { "name": "cardio" } },
+  { "model": "webapp.exercisetype", "pk": 2, "fields": { "name": "strength" } },
+  { "model": "webapp.exercisetype", "pk": 3, "fields": { "name": "mobility" } },
+  {
+    "model": "webapp.equipmenttype",
+    "pk": 1,
+    "fields": { "name": "dumbbell" }
+  },
+  { "model": "webapp.equipmenttype", "pk": 2, "fields": { "name": "barbell" } },
+  { "model": "webapp.equipmenttype", "pk": 3, "fields": { "name": "machine" } },
+  { "model": "webapp.equipmenttype", "pk": 4, "fields": { "name": "other" } },
+  {
+    "model": "webapp.exercise",
+    "pk": 1,
+    "fields": {
+      "name": "barbell curl",
+      "description": "",
+      "exercise_type": "strength",
+      "equipment_type": "barbell"
+    }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 2,
+    "fields": {
+      "name": "dumbbell curl",
+      "description": "",
+      "exercise_type": "strength",
+      "equipment_type": "dumbbell"
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 1,
+    "fields": { "name": "my curls block", "date": "2022-02-21T07:12:53.923Z" }
+  },
+  {
+    "model": "webapp.blockcontent",
+    "pk": 1,
+    "fields": {
+      "exercise": 1,
+      "block": 1,
+      "suggested_sets": 3,
+      "suggested_reps": 15,
+      "suggested_weight_lb": 10.0,
+      "suggested_time_in_seconds": null
+    }
+  },
+  {
+    "model": "webapp.blockcontent",
+    "pk": 2,
+    "fields": {
+      "exercise": 2,
+      "block": 1,
+      "suggested_sets": 3,
+      "suggested_reps": 12,
+      "suggested_weight_lb": 45.0,
+      "suggested_time_in_seconds": null
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 1,
+    "fields": {
+      "name": "My curls only workout",
+      "date": "2022-02-21T07:17:48.398Z"
+    }
+  },
+  {
+    "model": "webapp.workoutcontent",
+    "pk": 1,
+    "fields": { "workout": 1, "block": 1, "block_quantity": 1 }
+  },
+  {
+    "model": "webapp.workoutlog",
+    "pk": 1,
+    "fields": {
+      "workout": 1,
+      "block": 1,
+      "exercise": 2,
+      "actual_sets": 2,
+      "actual_reps": 15,
+      "actual_weight_lb": 8.0,
+      "actual_time_in_seconds": null,
+      "notes": "",
+      "date": "2022-02-21T07:21:59.146Z"
+    }
+  }
+]

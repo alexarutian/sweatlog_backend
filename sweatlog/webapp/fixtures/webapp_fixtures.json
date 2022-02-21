@@ -1,0 +1,81 @@
+[
+  {
+    "model": "webapp.exercisetype",
+    "pk": 1,
+    "fields": {
+      "name": "cardio"
+    }
+  },
+  {
+    "model": "webapp.exercisetype",
+    "pk": 2,
+    "fields": {
+      "name": "strength"
+    }
+  },
+  {
+    "model": "webapp.exercisetype",
+    "pk": 3,
+    "fields": {
+      "name": "mobility"
+    }
+  },
+  {
+    "model": "webapp.equipmenttype",
+    "pk": 1,
+    "fields": {
+      "name": "dumbbell"
+    }
+  },
+  {
+    "model": "webapp.equipmenttype",
+    "pk": 2,
+    "fields": {
+      "name": "barbell"
+    }
+  },
+  {
+    "model": "webapp.equipmenttype",
+    "pk": 3,
+    "fields": {
+      "name": "machine"
+    }
+  },
+  {
+    "model": "webapp.equipmenttype",
+    "pk": 4,
+    "fields": {
+      "name": "other"
+    }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 1,
+    "fields": {
+      "name": "barbell curl",
+      "description": "",
+      "exercise_type": ["strength"],
+      "equipment_type": ["barbell"]
+    }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 2,
+    "fields": {
+      "name": "dumbbell curl",
+      "description": "",
+      "exercise_type": ["strength"],
+      "equipment_type": ["dumbbell"]
+    }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 3,
+    "fields": {
+      "name": "dumbbell squat",
+      "description": "",
+      "exercise_type": ["strength"],
+      "equipment_type": ["dumbbell"]
+    }
+  }
+]
