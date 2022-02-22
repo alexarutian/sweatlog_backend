@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block title %}
+    <title>Sweatlog</title>
+    {% endblock %}
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    {% load static %}
+    <script src="https://unpkg.com/vue@3"></script>
+  </head>
+
+  <body>
+    <div id="website-header"></div>
+    {% block content %}{% endblock %}
+    <div id="website-footer"></div>
+  </body>
+</html>

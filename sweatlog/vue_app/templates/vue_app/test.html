@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %} {% block content %} {% load static %}
+<body>
+  <div id="vue-app">
+    <h1>[[ myTitle ]]</h1>
+    <span v-html="mySubtitle"></span>
+  </div>
+</body>
+<script type="module">
+  let { createApp } = Vue; // import multiple things from Vue
+  createApp({
+    delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
+    data() {
+      return {
+        myTitle: "Hello Vue!",
+        mySubtitle: "<h3>Hello again!</h3>",
+      };
+    },
+  }).mount("#vue-app");
+</script>
+{% endblock %}
