@@ -1,0 +1,37 @@
+<body>
+  <h2>{{workout.name}}</h2>
+  {% if workoutblocks %}
+  <p>Workout contents:</p>
+  <div>
+    {% for workoutblock in workoutblocks %}
+    <div id="workout-block">
+      <p>Block: {{workoutblock.block.name}}</p>
+      <p>Block quantity: {{workoutblock.block_quantity}}</p>
+      <p>{{workoutblock.block.blockexercises}}</p>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <p>No workout details available!</p>
+  {% endif %}
+</body>
+<script></script>
+<style>
+  #workout-rectangles {
+    display: flex;
+  }
+
+  #workout-block {
+    width: 200px;
+    background-color: lightgray;
+    color: black;
+    padding: 4px;
+    margin: 5px;
+    text-align: left;
+    border-radius: 4px;
+  }
+
+  #workout-rectangle a {
+    text-decoration: none;
+  }
+</style>

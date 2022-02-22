@@ -17,7 +17,14 @@
     "model": "webapp.exercisetype",
     "pk": 3,
     "fields": {
-      "name": "mobility"
+      "name": "stretching/mobility"
+    }
+  },
+  {
+    "model": "webapp.exercisetype",
+    "pk": 4,
+    "fields": {
+      "name": "other"
     }
   },
   {
@@ -49,6 +56,13 @@
     }
   },
   {
+    "model": "webapp.equipmenttype",
+    "pk": 5,
+    "fields": {
+      "name": "none"
+    }
+  },
+  {
     "model": "webapp.exercise",
     "pk": 1,
     "fields": {
@@ -76,6 +90,135 @@
       "description": "",
       "exercise_type": ["strength"],
       "equipment_type": ["dumbbell"]
+    }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 4,
+    "fields": {
+      "name": "jogging",
+      "description": "",
+      "exercise_type": ["cardio"],
+      "equipment_type": ["none"]
+    }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 5,
+    "fields": {
+      "name": "rest",
+      "description": "",
+      "exercise_type": ["other"],
+      "equipment_type": ["none"]
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 1,
+    "fields": {
+      "name": "curls",
+      "date": "2022-02-21T07:12:53.923Z"
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 2,
+    "fields": {
+      "name": "jogging intervals",
+      "date": "2022-02-21T07:12:53.923Z"
+    }
+  },
+  {
+    "model": "webapp.blockexercise",
+    "pk": 1,
+    "fields": {
+      "exercise": ["jogging"],
+      "block": 2,
+      "suggested_sets": null,
+      "suggested_reps": null,
+      "suggested_weight_lb": null,
+      "suggested_time_in_seconds": 60
+    }
+  },
+  {
+    "model": "webapp.blockexercise",
+    "pk": 2,
+    "fields": {
+      "exercise": ["rest"],
+      "block": 2,
+      "suggested_sets": null,
+      "suggested_reps": null,
+      "suggested_weight_lb": null,
+      "suggested_time_in_seconds": 60
+    }
+  },
+  {
+    "model": "webapp.blockexercise",
+    "pk": 3,
+    "fields": {
+      "exercise": ["barbell curl"],
+      "block": 1,
+      "suggested_sets": 3,
+      "suggested_reps": 15,
+      "suggested_weight_lb": 45.0,
+      "suggested_time_in_seconds": null
+    }
+  },
+  {
+    "model": "webapp.blockexercise",
+    "pk": 4,
+    "fields": {
+      "exercise": ["dumbbell curl"],
+      "block": 1,
+      "suggested_sets": 3,
+      "suggested_reps": 12,
+      "suggested_weight_lb": 10.0,
+      "suggested_time_in_seconds": null
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 1,
+    "fields": {
+      "name": "My curls only workout",
+      "date": "2022-02-21T07:17:48.398Z"
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 2,
+    "fields": {
+      "name": "Tuesday's workout",
+      "date": "2022-02-21T07:17:48.398Z"
+    }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 1,
+    "fields": { "workout": 1, "block": 1, "block_quantity": 3 }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 2,
+    "fields": { "workout": 2, "block": 1, "block_quantity": 2 }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 3,
+    "fields": { "workout": 2, "block": 2, "block_quantity": 10 }
+  },
+  {
+    "model": "webapp.workoutlog",
+    "pk": 1,
+    "fields": {
+      "workout": 1,
+      "blockexercise": 3,
+      "actual_sets": 2,
+      "actual_reps": 15,
+      "actual_weight_lb": 8.0,
+      "actual_time_in_seconds": null,
+      "notes": "",
+      "date": "2022-02-21T07:21:59.146Z"
     }
   }
 ]

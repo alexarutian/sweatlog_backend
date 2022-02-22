@@ -5,9 +5,9 @@ from .models import (
     EquipmentType,
     Exercise,
     Block,
-    BlockContent,
+    BlockExercise,
     Workout,
-    WorkoutContent,
+    WorkoutBlock,
     WorkoutLog,
 )
 
@@ -15,7 +15,7 @@ admin.site.register(ExerciseType)
 admin.site.register(EquipmentType)
 admin.site.register(Exercise)
 admin.site.register(Block)
-admin.site.register(BlockContent)
+admin.site.register(BlockExercise)
 admin.site.register(Workout)
-admin.site.register(WorkoutContent)
+admin.site.register(WorkoutBlock)
 admin.site.register(WorkoutLog)

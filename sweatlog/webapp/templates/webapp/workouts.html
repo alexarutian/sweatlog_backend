@@ -1,0 +1,32 @@
+<body>
+  <div>Workouts:</div>
+  <div id="workout-rectangles">
+    {% if all_workouts %} {% for workout in all_workouts %}
+    <div id="workout-rectangle">
+      <a href="{% url 'webapp:workout_detail' workout.id%}">{{workout.name}}</a>
+    </div>
+    {% endfor %} {% else %}
+    <p>No workouts yet!</p>
+    {% endif %}
+  </div>
+</body>
+<script></script>
+<style>
+  #workout-rectangles {
+    display: flex;
+  }
+
+  #workout-rectangle {
+    width: 100px;
+    background-color: lightgray;
+    color: black;
+    padding: 4px;
+    margin: 5px;
+    text-align: center;
+    border-radius: 4px;
+  }
+
+  #workout-rectangle a {
+    text-decoration: none;
+  }
+</style>
