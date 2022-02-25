@@ -10,12 +10,30 @@
       content="width=device-width, initial-scale=1, maximum-scale=1"
     />
     {% load static %}
-    <script src="https://unpkg.com/vue@3"></script>
+    <link rel="stylesheet" href="{% static 'vue_app/style.css' %}" />
+    <script src="{% static 'vue_app/js/helper.js' %}"></script>
+    <script src="https://unpkg.com/vue@3.1.1/dist/vue.global.prod.js"></script>
   </head>
 
   <body>
-    <div id="website-header"></div>
-    {% block content %}{% endblock %}
-    <div id="website-footer"></div>
+    <div id="website-header">
+      <div id="website-title">SWEATLOG</div>
+    </div>
+    <div id="page-content">
+      <div id="page-block">{% block content %}{% endblock %}</div>
+      <div id="website-footer"></div>
+    </div>
   </body>
+  <style>
+    #website-title {
+      font-family: Arial;
+      font-size: 24pt;
+      font-weight: bold;
+      text-align: center;
+      color: darkgoldenrod;
+      -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: darkgray;
+      margin-top: 10px;
+    }
+  </style>
 </html>
