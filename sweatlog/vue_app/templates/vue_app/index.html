@@ -1,28 +1,98 @@
 {% extends "base_generic.html" %} {% block content %} {% load static %}
 <body>
   <div id="vue-app">
-    <h1>[[ myTitle ]]</h1>
-    <span v-html="mySubtitle"></span>
-    <workouts></workouts>
+    <div id="main-content">
+      <agenda v-if="page == 'agenda'"></agenda>
+      <workouts v-else-if="page == 'workouts'"></workouts>
+      <exercises v-else-if="page == 'exercises'"></exercises>
+      <other v-else-if="page == 'other'"></other>
+    </div>
+    <div id="website-footer">
+      <div id="footer-content">
+        <footertoolbar :menuitems="menuitems"></footertoolbar>
+      </div>
+    </div>
   </div>
 </body>
 <script type="module">
   //   const staticDir = "{% static vue_app %}";
+  import { Agenda } from "{% static 'vue_app/components/agenda.js' %}";
   import { Workouts } from "{% static 'vue_app/components/workouts.js' %}";
+  import { Exercises } from "{% static 'vue_app/components/exercises.js' %}";
+  import { Other } from "{% static 'vue_app/components/other.js' %}";
+  import { FooterToolbar } from "{% static 'vue_app/components/footertoolbar.js' %}";
   let { createApp } = Vue; // import multiple things from Vue
 
-  createApp({
+  const myApp = createApp({
     delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
     components: {
+      agenda: Agenda,
       workouts: Workouts,
+      exercises: Exercises,
+      other: Other,
+      footertoolbar: FooterToolbar,
     },
     data() {
       return {
         myTitle: "Hello Vue!",
         mySubtitle: "<h3>Hello again!</h3>",
+        menuitems: [
+          { id: 1, name: "Agenda", page: "agenda" },
+          { id: 1, name: "Workouts", page: "workouts" },
+          { id: 1, name: "Exercises", page: "exercises" },
+          { id: 1, name: "Other", page: "other" },
+        ],
       };
     },
-  }).mount("#vue-app");
+    methods: {},
+    computed: {
+      page() {
+        return this.$store.state.currentPage;
+      },
+    },
+  });
+
+  let { createStore } = Vuex;
+
+  const store = createStore({
+    state() {
+      return {
+        currentPage: "workouts",
+      };
+    },
+    mutations: {
+      navigate(state, payload) {
+        state.currentPage = payload.page;
+      },
+    },
+  });
+  myApp.use(store);
+  myApp.mount("#vue-app");
 </script>
-<style></style>
+<style>
+  #vue-app {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #main-content {
+    flex-grow: 1;
+    flex-shrink: 0;
+  }
+
+  #website-footer {
+    position: relative;
+    background-color: green;
+    height: 7vh;
+    bottom: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  #footer-content {
+    height: 100%;
+  }
+</style>
 {% endblock %}

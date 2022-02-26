@@ -13,27 +13,82 @@
     <link rel="stylesheet" href="{% static 'vue_app/style.css' %}" />
     <script src="{% static 'vue_app/js/helper.js' %}"></script>
     <script src="https://unpkg.com/vue@3.1.1/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
   </head>
 
   <body>
-    <div id="website-header">
-      <div id="website-title">SWEATLOG</div>
-    </div>
-    <div id="page-content">
-      <div id="page-block">{% block content %}{% endblock %}</div>
-      <div id="website-footer"></div>
+    <div id="page">
+      <div id="website-header">
+        <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
+        <div id="website-title">SWEATLOG</div>
+        <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
+      </div>
+      <div id="page-content">{% block content %}{% endblock %}</div>
     </div>
   </body>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body {
+      height: 100%;
+      width: 100%;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    #page {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #website-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      background-color: green;
+      height: 7vh;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+
+    .dripdrop {
+      height: 3vh;
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
     #website-title {
       font-family: Arial;
       font-size: 24pt;
       font-weight: bold;
       text-align: center;
-      color: darkgoldenrod;
-      -webkit-text-stroke-width: 1px;
-      -webkit-text-stroke-color: darkgray;
-      margin-top: 10px;
+      color: rgb(221, 210, 47);
+      text-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
+      /* -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: darkgray; */
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    #page-content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 0;
     }
   </style>
 </html>

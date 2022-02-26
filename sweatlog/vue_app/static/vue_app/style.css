@@ -204,3 +204,22 @@ table {
   background-color: rgb(194, 218, 194);
   border-radius: 8px;
 }
+
+.footer-toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
+
+.menu-item {
+  padding: 5px;
+  height: 50%;
+  color: white;
+  font-size: 14pt;
+}
+
+.selected-menu-item {
+  color: rgb(221, 210, 47);
+}
