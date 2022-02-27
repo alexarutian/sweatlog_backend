@@ -8,7 +8,7 @@ from .models import (
     BlockExercise,
     Workout,
     WorkoutBlock,
-    WorkoutLog,
+    Session,
 )
 
 admin.site.register(ExerciseType)
@@ -18,4 +18,4 @@ admin.site.register(Block)
 admin.site.register(BlockExercise)
 admin.site.register(Workout)
 admin.site.register(WorkoutBlock)
-admin.site.register(WorkoutLog)
+admin.site.register(Session)

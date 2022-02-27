@@ -113,11 +113,53 @@
     }
   },
   {
+    "model": "webapp.stat",
+    "pk": 1,
+    "fields": {
+      "sets": 3,
+      "reps": 12,
+      "weight_lb": 45,
+      "time_in_seconds": null
+    }
+  },
+  {
+    "model": "webapp.stat",
+    "pk": 2,
+    "fields": {
+      "sets": 3,
+      "reps": 10,
+      "weight_lb": 15,
+      "time_in_seconds": null
+    }
+  },
+  {
+    "model": "webapp.stat",
+    "pk": 3,
+    "fields": {
+      "sets": null,
+      "reps": null,
+      "weight_lb": null,
+      "time_in_seconds": 60
+    }
+  },
+  {
+    "model": "webapp.stat",
+    "pk": 4,
+    "fields": {
+      "sets": null,
+      "reps": null,
+      "weight_lb": null,
+      "time_in_seconds": 30
+    }
+  },
+  {
     "model": "webapp.block",
     "pk": 1,
     "fields": {
       "name": "curls",
-      "date": "2022-02-21T07:12:53.923Z"
+      "date_created": "2022-02-21T07:12:53.923Z",
+      "date_modified": "2022-02-21T07:12:53.923Z",
+      "template": null
     }
   },
   {
@@ -125,7 +167,29 @@
     "pk": 2,
     "fields": {
       "name": "jogging intervals",
-      "date": "2022-02-21T07:12:53.923Z"
+      "date_created": "2022-02-21T07:12:53.923Z",
+      "date_modified": "2022-02-21T07:12:53.923Z",
+      "template": null
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 3,
+    "fields": {
+      "name": "curls",
+      "date_created": "2022-02-21T07:12:53.923Z",
+      "date_modified": "2022-02-21T07:12:53.923Z",
+      "template": 1
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 4,
+    "fields": {
+      "name": "jogging intervals",
+      "date_created": "2022-02-21T07:12:53.923Z",
+      "date_modified": "2022-02-21T07:12:53.923Z",
+      "template": 2
     }
   },
   {
@@ -133,11 +197,9 @@
     "pk": 1,
     "fields": {
       "exercise": ["jogging"],
-      "block": 2,
-      "suggested_sets": null,
-      "suggested_reps": null,
-      "suggested_weight_lb": null,
-      "suggested_time_in_seconds": 60
+      "exercise_order": 1,
+      "block": 4,
+      "stat": 3
     }
   },
   {
@@ -145,11 +207,9 @@
     "pk": 2,
     "fields": {
       "exercise": ["rest"],
-      "block": 2,
-      "suggested_sets": null,
-      "suggested_reps": null,
-      "suggested_weight_lb": null,
-      "suggested_time_in_seconds": 60
+      "exercise_order": 2,
+      "block": 4,
+      "stat": 4
     }
   },
   {
@@ -157,11 +217,9 @@
     "pk": 3,
     "fields": {
       "exercise": ["barbell curl"],
+      "exercise_order": 1,
       "block": 1,
-      "suggested_sets": 3,
-      "suggested_reps": 15,
-      "suggested_weight_lb": 45.0,
-      "suggested_time_in_seconds": null
+      "stat": 1
     }
   },
   {
@@ -169,11 +227,9 @@
     "pk": 4,
     "fields": {
       "exercise": ["dumbbell curl"],
+      "exercise_order": 2,
       "block": 1,
-      "suggested_sets": 3,
-      "suggested_reps": 12,
-      "suggested_weight_lb": 10.0,
-      "suggested_time_in_seconds": null
+      "stat": 2
     }
   },
   {
@@ -181,7 +237,9 @@
     "pk": 1,
     "fields": {
       "name": "My curls only workout",
-      "date": "2022-02-21T07:17:48.398Z"
+      "date_created": "2022-02-21T07:17:48.398Z",
+      "date_modified": "2022-02-21T07:17:48.398Z",
+      "template": null
     }
   },
   {
@@ -189,36 +247,68 @@
     "pk": 2,
     "fields": {
       "name": "Tuesday's workout",
-      "date": "2022-02-21T07:17:48.398Z"
+      "date_created": "2022-02-21T07:17:48.398Z",
+      "date_modified": "2022-02-21T07:17:48.398Z",
+      "template": null
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 3,
+    "fields": {
+      "name": "My curls only workout",
+      "date_created": "2022-02-21T07:17:48.398Z",
+      "date_modified": "2022-02-21T07:17:48.398Z",
+      "template": 1
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 4,
+    "fields": {
+      "name": "Tuesday's workout",
+      "date_created": "2022-02-21T07:17:48.398Z",
+      "date_modified": "2022-02-21T07:17:48.398Z",
+      "template": 2
+    }
+  },
+
+  {
+    "model": "webapp.workoutblock",
+    "pk": 1,
+    "fields": {
+      "workout": 3,
+      "block": 3,
+      "block_quantity": 3,
+      "block_order": 1
     }
   },
   {
     "model": "webapp.workoutblock",
-    "pk": 1,
-    "fields": { "workout": 1, "block": 1, "block_quantity": 3 }
-  },
-  {
-    "model": "webapp.workoutblock",
     "pk": 2,
-    "fields": { "workout": 2, "block": 1, "block_quantity": 2 }
+    "fields": {
+      "workout": 4,
+      "block": 3,
+      "block_quantity": 2,
+      "block_order": 1
+    }
   },
   {
     "model": "webapp.workoutblock",
     "pk": 3,
-    "fields": { "workout": 2, "block": 2, "block_quantity": 10 }
+    "fields": {
+      "workout": 4,
+      "block": 4,
+      "block_quantity": 10,
+      "block_order": 2
+    }
   },
   {
-    "model": "webapp.workoutlog",
+    "model": "webapp.session",
     "pk": 1,
     "fields": {
-      "workout": 1,
-      "blockexercise": 3,
-      "actual_sets": 2,
-      "actual_reps": 15,
-      "actual_weight_lb": 8.0,
-      "actual_time_in_seconds": null,
-      "notes": "",
-      "date": "2022-02-21T07:21:59.146Z"
+      "date": "2022-02-28T21:29:23Z",
+      "workout": 3
     }
   }
 ]

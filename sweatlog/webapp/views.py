@@ -61,7 +61,7 @@ def exercise_detail(request, exercise_id):
 def get_all_workouts_summary(request):
     data = _find_data(request)
     if request.method == "GET":
-        all_workouts = Workout.objects.all().order_by("-date")
+        all_workouts = Workout.objects.all().order_by("-date_modified")
 
         if len(all_workouts) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
@@ -76,7 +76,7 @@ def get_all_workouts_summary(request):
 def get_all_workouts_detail(request):
     data = _find_data(request)
     if request.method == "GET":
-        all_workouts = Workout.objects.all().order_by("-date")
+        all_workouts = Workout.objects.all().order_by("-date_modified")
 
         if len(all_workouts) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
