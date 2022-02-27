@@ -148,18 +148,14 @@ table {
   align-items: center;
 }
 
-.workout-summarized {
-  border: 1px solid lightgray;
-  padding: 5px;
-  width: 90%;
-  margin: 10px;
-}
-
+.workout-summarized,
 .workout-detailed {
   border: 1px solid lightgray;
+  background-color: lightgray;
   padding: 5px;
   width: 90%;
-  margin: 10px;
+  margin: 5px;
+  border-radius: 4px;
 }
 
 .workout-name,
@@ -168,7 +164,7 @@ table {
 }
 
 .workout-detailed-block {
-  background-color: lightgray;
+  background-color: rgb(230, 230, 230);
   margin: 5px;
   padding: 5px;
 }
@@ -176,11 +172,14 @@ table {
 .block-title-info {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .block-rounds {
   font-style: italic;
+  margin-left: 8px;
+  font-size: 80%;
 }
 
 .workout-detailed-exercise {
@@ -192,17 +191,6 @@ table {
 .workout-detailed-exercise > p {
   padding: 5px;
   margin: 3px;
-}
-
-.exercise-sets-reps,
-.exercise-weight {
-  background-color: lightgoldenrodyellow;
-  border-radius: 8px;
-}
-
-.exercise-time {
-  background-color: rgb(194, 218, 194);
-  border-radius: 8px;
 }
 
 .footer-toolbar {
@@ -222,4 +210,39 @@ table {
 
 .selected-menu-item {
   color: rgb(221, 210, 47);
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.exercise-name {
+  width: 40vw;
+}
+
+.exercise-sets-reps,
+.exercise-weight,
+.exercise-time {
+  width: 15vw;
+}
+
+.exercise-sets-reps p,
+.exercise-weight p {
+  text-align: center;
+  padding: 1.5px;
+  border-radius: 8px;
+  background-color: lightgoldenrodyellow;
+}
+
+.exercise-time p {
+  text-align: center;
+  padding: 1.5px;
+  border-radius: 8px;
+  background-color: rgb(192, 236, 192);
+}
+
+.exercise-line td {
+  margin: 1px;
+  padding: 2px;
 }

@@ -1,12 +1,14 @@
 let ExerciseLine = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
-    <div class="exercise-line">
-        <p class="exercise-name">[[exercise.exercise.name]] </p>
-        <p v-if="exercise.suggested_reps" class="exercise-sets-reps">[[exercise.suggested_sets]] x [[exercise.suggested_reps]] </p>
-        <p v-if="exercise.suggested_weight_lb" class="exercise-weight">[[exercise.suggested_weight_lb]] lb</p>
-        <p v-if="exercise.suggested_time_in_seconds" class="exercise-time">[[timeAsString]]</p>
-    </div>    
+    <table class="exercise-line">
+      <tr>  
+        <td  class="exercise-name"><p>[[exercise.exercise.name]] </p></td>
+        <td v-if="exercise.suggested_reps" class="exercise-sets-reps"><p >[[exercise.suggested_sets]] x [[exercise.suggested_reps]] </p></td>
+        <td v-if="exercise.suggested_weight_lb" class="exercise-weight"><p>[[exercise.suggested_weight_lb]] lb</p></td>
+        <td v-if="exercise.suggested_time_in_seconds" class="exercise-time"><p>[[timeAsString]]</p></td>
+      <tr>
+    </table>    
   `,
 
   components: {},
