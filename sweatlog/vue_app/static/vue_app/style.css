@@ -1,0 +1,248 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* END CSS RESET */
+
+#detail-toggle {
+  padding: 5px;
+  margin: 10px;
+  background-color: darkgray;
+  color: white;
+  width: 100px;
+}
+
+#detail-toggle:hover {
+  cursor: pointer;
+}
+
+.workouts-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.workout-summarized,
+.workout-detailed {
+  border: 1px solid lightgray;
+  background-color: lightgray;
+  padding: 5px;
+  width: 90%;
+  margin: 5px;
+  border-radius: 4px;
+}
+
+.workout-name,
+.block-name {
+  font-weight: bold;
+}
+
+.workout-detailed-block {
+  background-color: rgb(230, 230, 230);
+  margin: 5px;
+  padding: 5px;
+}
+
+.block-title-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.block-rounds {
+  font-style: italic;
+  margin-left: 8px;
+  font-size: 80%;
+}
+
+.workout-detailed-exercise {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.workout-detailed-exercise > p {
+  padding: 5px;
+  margin: 3px;
+}
+
+.footer-toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
+
+.menu-item {
+  padding: 5px;
+  height: 50%;
+  color: white;
+  font-size: 14pt;
+}
+
+.selected-menu-item {
+  color: rgb(221, 210, 47);
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.exercise-name {
+  width: 40vw;
+}
+
+.exercise-sets-reps,
+.exercise-weight,
+.exercise-time {
+  width: 15vw;
+}
+
+.exercise-sets-reps p,
+.exercise-weight p {
+  text-align: center;
+  padding: 1.5px;
+  border-radius: 8px;
+  background-color: lightgoldenrodyellow;
+}
+
+.exercise-time p {
+  text-align: center;
+  padding: 1.5px;
+  border-radius: 8px;
+  background-color: rgb(192, 236, 192);
+}
+
+.exercise-line td {
+  margin: 1px;
+  padding: 2px;
+}

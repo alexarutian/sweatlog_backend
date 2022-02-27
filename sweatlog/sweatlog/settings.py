@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "webapp.apps.WebappConfig",  # webapp App connection
+    "vue_app.apps.VueAppConfig",  # vue App connection
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ ROOT_URLCONF = "sweatlog.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],  # says also look for project templates
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
