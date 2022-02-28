@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.utils import timezone
 from django.forms.models import model_to_dict
 
 
-from .models import Detail, Exercise, Workout, WorkoutBlock
+from .models import Detail, Exercise, Workout, Session
 
+from datetime import datetime
 import json
 
 
@@ -58,31 +60,33 @@ def exercise_detail(request, exercise_id):
     return render(request, "webapp/exercisedetail.html", {"exercise": exercise})
 
 
-def get_all_workouts_summary(request):
+def get_all_workout_templates(request):
     data = _find_data(request)
     if request.method == "GET":
-        all_workouts = Workout.objects.all().order_by("-date_modified")
-
-        if len(all_workouts) < 1:
+        all_workout_templates = (
+            Workout.objects.all().filter(template=None).order_by("-date_modified")
+        )
+        if len(all_workout_templates) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
 
-        all_workouts_summary = []
-        for workout in all_workouts:
-            all_workouts_summary.append(workout.serialize())
+        detail = []
+        for workout in all_workout_templates:
+            detail.append(workout.serialize(detail_level=Detail.DETAIL))
 
-        return JsonResponse({"all_workouts_summary": all_workouts_summary}, status=200)
+        return JsonResponse({"all_workout_templates": detail}, status=200)
 
 
-def get_all_workouts_detail(request):
+def get_scheduled_sessions(request):
     data = _find_data(request)
     if request.method == "GET":
-        all_workouts = Workout.objects.all().order_by("-date_modified")
+        today = timezone.now()
+        scheduled_sessions = Session.objects.filter(date__gte=today).order_by("date")
 
-        if len(all_workouts) < 1:
-            return JsonResponse({"message": "no workouts yet!"}, status=404)
+        if len(scheduled_sessions) < 1:
+            return JsonResponse({"message": "no scheduled sessions"}, status=404)
 
-        all_workouts_detail = []
-        for workout in all_workouts:
-            all_workouts_detail.append(workout.serialize(detail_level=Detail.DETAIL))
+        detail = []
+        for session in scheduled_sessions:
+            detail.append(session.serialize(detail_level=Detail.DETAIL))
 
-        return JsonResponse({"all_workouts_detail": all_workouts_detail}, status=200)
+        return JsonResponse({"scheduled_sessions": detail}, status=200)

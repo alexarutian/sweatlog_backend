@@ -223,7 +223,7 @@ class WorkoutBlock(models.Model):
 
 
 class Session(models.Model, NameableMixin):
-    date = models.DateTimeField()
+    date = models.DateField()
     workout = models.ForeignKey(
         Workout, on_delete=models.CASCADE, related_name="sessions"
     )

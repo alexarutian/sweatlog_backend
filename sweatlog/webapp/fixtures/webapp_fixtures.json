@@ -307,7 +307,7 @@
     "model": "webapp.session",
     "pk": 1,
     "fields": {
-      "date": "2022-02-28T21:29:23Z",
+      "date": "2022-02-28",
       "workout": 3
     }
   }

@@ -58,11 +58,39 @@
     state() {
       return {
         currentPage: "workouts",
+        sessions: null,
+        workoutTemplates: null,
       };
     },
     mutations: {
       navigate(state, payload) {
         state.currentPage = payload.page;
+      },
+      updateSessions(state, payload) {
+        state.sessions = payload.data;
+      },
+      updateWorkoutTemplates(state, payload) {
+        state.workoutTemplates = payload.data;
+      },
+    },
+    // actions gets context that includes state and a commit object
+    // could also pass a payload
+    actions: {
+      async fetchSessions(context) {
+        const response = await getJSONFetch(
+          "/webapp/get_scheduled_sessions",
+          {}
+        );
+        let payload = { data: response.scheduled_sessions };
+        context.commit("updateSessions", payload);
+      },
+      async fetchWorkoutTemplates(context) {
+        const response = await getJSONFetch(
+          "/webapp/get_all_workout_templates",
+          {}
+        );
+        let payload = { data: response.all_workout_templates };
+        context.commit("updateWorkoutTemplates", payload);
       },
     },
   });
@@ -78,8 +106,10 @@
   }
 
   #main-content {
+    height: 86vh;
     flex-grow: 1;
     flex-shrink: 0;
+    overflow-y: auto;
   }
 
   #website-footer {
