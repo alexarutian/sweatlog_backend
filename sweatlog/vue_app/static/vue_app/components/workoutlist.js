@@ -30,14 +30,6 @@ let WorkoutList = {
     showDetail: Boolean,
   },
   methods: {
-    async getAllWorkoutTemplates() {
-      const response = await getJSONFetch(
-        "/webapp/get_all_workout_templates",
-        {}
-      );
-      this.workoutTemplates = response.all_workout_templates;
-      console.log(response.all_workout_templates);
-    },
     toggleDetailView() {
       this.detailToggle = !this.detailToggle;
     },

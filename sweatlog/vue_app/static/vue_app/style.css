@@ -289,3 +289,115 @@ table {
 .today-date-header {
   color: red;
 }
+
+#exercise-list {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  overflow: auto;
+}
+
+.exercise-list-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 3px;
+}
+
+#create-exercise-exercise-types,
+#create-exercise-equipment-types {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#create-exercise-exercise-types p,
+#create-exercise-equipment-types p {
+  font-size: 10pt;
+  padding: 3px;
+}
+
+.selected-option {
+  background-color: lightgoldenrodyellow;
+}
+
+.add-exercise-window-button {
+  background-color: gray;
+  padding: 5px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+#exercise-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* for different positioning of the modal overlay
+  position: relative; */
+}
+
+#create-exercise-modal {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 800px;
+  overflow: hidden;
+  padding: 3vw;
+  border: 2px solid lightgray;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 12pt;
+}
+
+#create-exercise-modal input {
+  margin: 3px;
+  padding: 2px;
+  background-color: rgb(224, 224, 224);
+  border-radius: 4px;
+  height: 30px;
+}
+
+#create-exercise-modal-overlay {
+  z-index: 9;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(3px);
+}
+
+#create-exercise-modal.invisible,
+#create-exercise-modal-overlay.invisible {
+  display: none;
+}
+
+.close {
+  margin-left: auto;
+  color: var(--gold-bright);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#add-exercise-button {
+  background-color: yellow;
+  padding: 5px;
+  border-radius: 4px;
+  text-align: center;
+}

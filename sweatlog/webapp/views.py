@@ -1,11 +1,12 @@
 from django.shortcuts import render
+from django.http.response import HttpResponseBadRequest
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils import timezone
 from django.forms.models import model_to_dict
 
 
-from .models import Detail, Exercise, Workout, Session
+from .models import Detail, Exercise, Workout, Session, EquipmentType, ExerciseType
 
 from datetime import datetime
 import json
@@ -58,6 +59,74 @@ def exercise_detail(request, exercise_id):
     except Exercise.DoesNotExist:
         return HttpResponse(status=404)
     return render(request, "webapp/exercisedetail.html", {"exercise": exercise})
+
+
+def get_all_exercise_types(request):
+    data = _find_data(request)
+    if request.method == "GET":
+        all_exercise_types = ExerciseType.objects.all().order_by("id")
+
+        detail = []
+        for exercise_type in all_exercise_types:
+            detail.append(exercise_type.serialize(detail_level=Detail.DETAIL))
+
+        return JsonResponse({"all_exercise_types": detail}, status=200)
+
+
+def get_all_equipment_types(request):
+    data = _find_data(request)
+    if request.method == "GET":
+        all_equipment_types = EquipmentType.objects.all().order_by("id")
+
+        detail = []
+        for equipment_type in all_equipment_types:
+            detail.append(equipment_type.serialize(detail_level=Detail.DETAIL))
+
+        return JsonResponse({"all_equipment_types": detail}, status=200)
+
+
+def get_all_exercises(request):
+    data = _find_data(request)
+    if request.method == "GET":
+        all_exercises = Exercise.objects.all().order_by("name")
+
+        detail = []
+        for exercise in all_exercises:
+            detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+
+        return JsonResponse({"all_exercises": detail}, status=200)
+
+
+def create_exercise(request):
+    data = _find_data(request)
+    if request.method == "POST":
+        print(data)
+        name = data.get("name", "").lower()
+        if not name:
+            return HttpResponseBadRequest("name is required")
+        equipment_type_id = data.get("equipment_type_id", False)
+        exercise_type_id = data.get("exercise_type_id", False)
+        description = data.get("description", False)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        elif equipment_type_id is None:
+            equipment_type = None
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        elif exercise_type_id is None:
+            exercise_type = None
+
+        exercise = Exercise.objects.create(
+            name=name,
+            equipment_type=equipment_type,
+            exercise_type=exercise_type,
+            description=description,
+        )
+        return JsonResponse({"exercise_id": exercise.id}, status=201)
 
 
 def get_all_workout_templates(request):

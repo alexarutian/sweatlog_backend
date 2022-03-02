@@ -47,6 +47,12 @@ class ExerciseType(models.Model, NameableMixin):
     def __str__(self):
         return self.name
 
+    def serialize(self, detail_level=Detail.SUMMARY):
+        d = {}
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+            d = self.search_dict
+        return d
+
 
 class EquipmentTypeManager(models.Manager):
     def get_by_natural_key(self, name):
@@ -61,6 +67,12 @@ class EquipmentType(models.Model, NameableMixin):
 
     def __str__(self):
         return self.name
+
+    def serialize(self, detail_level=Detail.SUMMARY):
+        d = {}
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+            d = self.search_dict
+        return d
 
 
 class ExerciseManager(models.Manager):
@@ -96,8 +108,10 @@ class Exercise(models.Model, NameableMixin):
         elif detail_level == Detail.DETAIL:
             d["name"] = self.name
             d["id"] = self.id
-            d["exercise_type"] = self.exercise_type.name
-            d["equipment_type"] = self.equipment_type.name
+            if self.exercise_type:
+                d["exercise_type"] = self.exercise_type.name
+            if self.equipment_type:
+                d["equipment_type"] = self.equipment_type.name
         return d
 
 

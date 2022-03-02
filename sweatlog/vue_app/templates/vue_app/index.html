@@ -2,6 +2,7 @@
 <body>
   <div id="vue-app">
     <div id="main-content">
+      {% csrf_token %}
       <agenda v-if="page == 'agenda'"></agenda>
       <workouts v-else-if="page == 'workouts'"></workouts>
       <exercises v-else-if="page == 'exercises'"></exercises>
@@ -50,6 +51,9 @@
         return this.$store.state.currentPage;
       },
     },
+    created() {
+      this.$store.commit("updateCsrfToken", { data: getCookie("csrftoken") });
+    },
   });
 
   let { createStore } = Vuex;
@@ -60,17 +64,37 @@
         currentPage: "workouts",
         sessions: null,
         workoutTemplates: null,
+        exercises: null,
+        exerciseTypes: null,
+        equipmentTypes: null,
+        csrfToken: "",
+        addingExerciseWindow: false,
       };
     },
     mutations: {
       navigate(state, payload) {
         state.currentPage = payload.page;
       },
+      toggleAddingExerciseWindow(state) {
+        state.addingExerciseWindow = !state.addingExerciseWindow;
+      },
       updateSessions(state, payload) {
         state.sessions = payload.data;
       },
       updateWorkoutTemplates(state, payload) {
         state.workoutTemplates = payload.data;
+      },
+      updateExercises(state, payload) {
+        state.exercises = payload.data;
+      },
+      updateExerciseTypes(state, payload) {
+        state.exerciseTypes = payload.data;
+      },
+      updateEquipmentTypes(state, payload) {
+        state.equipmentTypes = payload.data;
+      },
+      updateCsrfToken(state, payload) {
+        state.csrfToken = payload.data;
       },
     },
     // actions gets context that includes state and a commit object
@@ -91,6 +115,36 @@
         );
         let payload = { data: response.all_workout_templates };
         context.commit("updateWorkoutTemplates", payload);
+      },
+      async fetchExercises(context) {
+        const response = await getJSONFetch("/webapp/get_all_exercises", {});
+        let payload = { data: response.all_exercises };
+        context.commit("updateExercises", payload);
+      },
+      async fetchExerciseTypes(context) {
+        const response = await getJSONFetch(
+          "/webapp/get_all_exercise_types",
+          {}
+        );
+        let payload = { data: response.all_exercise_types };
+        context.commit("updateExerciseTypes", payload);
+      },
+      async fetchEquipmentTypes(context) {
+        const response = await getJSONFetch(
+          "/webapp/get_all_equipment_types",
+          {}
+        );
+        let payload = { data: response.all_equipment_types };
+        context.commit("updateEquipmentTypes", payload);
+      },
+      async createNewExercise(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/create_exercise/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("toggleAddingExerciseWindow");
+        store.dispatch("fetchExercises");
       },
     },
   });

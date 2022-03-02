@@ -10,4 +10,8 @@ urlpatterns = [
     path("workout/<int:workout_id>/", views.workout_detail, name="workout_detail"),
     path("get_all_workout_templates/", views.get_all_workout_templates),
     path("get_scheduled_sessions/", views.get_scheduled_sessions),
+    path("get_all_exercises/", views.get_all_exercises),
+    path("get_all_exercise_types/", views.get_all_exercise_types),
+    path("get_all_equipment_types/", views.get_all_equipment_types),
+    path("create_exercise/", views.create_exercise),
 ]
