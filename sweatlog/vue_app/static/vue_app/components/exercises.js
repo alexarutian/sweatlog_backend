@@ -1,32 +1,42 @@
 import { CreateExercise } from "./createexercise.js";
+import { ExerciseInfo } from "./exerciseinfo.js";
+import { EditExercise } from "./editexercise.js";
 
 let Exercises = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="exercise-page">
-    <div @click="this.$store.commit('toggleAddingExerciseWindow')" class="add-exercise-window-button">ADD EXERCISE</div>
-    <div id="create-exercise-modal" :class="{'invisible': !this.$store.state.addingExerciseWindow}">
-      <span id="create-exercise-modal-close" class="close"
-            @click="this.$store.commit('toggleAddingExerciseWindow')">&times;</span>  
+    <div @click="this.$store.commit('toggleAddingExerciseWindow')" id="add-exercise-window-button">ADD EXERCISE</div>
+    <div v-if="this.$store.state.addingExerciseWindow" id="create-exercise-modal" class="modal">
+      <span class="close" @click="this.$store.commit('toggleAddingExerciseWindow')">&times;</span>  
       <createexercise v-if="this.$store.state.addingExerciseWindow"></createexercise>
     </div>
-    <div id="create-exercise-modal-overlay" 
-        :class="{'invisible': !this.$store.state.addingExerciseWindow}"
-        @click="this.$store.commit('toggleAddingExerciseWindow')"></div>
+    <div v-if="this.$store.state.addingExerciseWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingExerciseWindow')"></div>
     <div id="exercise-list">
       <div v-for="exercise in exercises" class="exercise-list-line">
-        <p>[[exercise.name]]</p>
+        <p @click="this.$store.commit('selectExercise',{exercise: exercise})" @click="this.$store.commit('toggleExerciseDetailWindow')">[[exercise.name]]</p>
       </div>
     </div>
+    <div v-if="this.$store.state.exerciseDetailWindow" id="exercise-info-modal" class="modal">
+      <span class="close"
+      @click="this.$store.commit('toggleExerciseDetailWindow')" @click="this.$store.commit('turnoffExerciseEditDisplay')">&times;</span>  
+      <exerciseinfo v-if="!this.$store.state.exerciseEditDisplay" :exercise="this.$store.state.selectedExercise"></exerciseinfo>
+      <editexercise v-if="this.$store.state.exerciseEditDisplay" :exercise="this.$store.state.selectedExercise"></editexercise>
+    </div>
+    <div v-if="this.$store.state.exerciseDetailWindow" class="modal-overlay"
+    @click="this.$store.commit('toggleExerciseDetailWindow')" @click="this.$store.commit('turnoffExerciseEditDisplay')"></div>
   </div>
   `,
 
   components: {
     createexercise: CreateExercise,
+    exerciseinfo: ExerciseInfo,
+    editexercise: EditExercise,
   },
   data() {
     return {
       addingExercise: false,
+      selectedExercise: "",
     };
   },
   methods: {},

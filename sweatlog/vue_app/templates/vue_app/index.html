@@ -69,6 +69,10 @@
         equipmentTypes: null,
         csrfToken: "",
         addingExerciseWindow: false,
+        exerciseDetailWindow: false,
+        exerciseInfoDisplay: true,
+        exerciseEditDisplay: false,
+        selectedExercise: "",
       };
     },
     mutations: {
@@ -77,6 +81,18 @@
       },
       toggleAddingExerciseWindow(state) {
         state.addingExerciseWindow = !state.addingExerciseWindow;
+      },
+      toggleExerciseDetailWindow(state) {
+        state.exerciseDetailWindow = !state.exerciseDetailWindow;
+      },
+      toggleExerciseEditDisplay(state) {
+        state.exerciseEditDisplay = !state.exerciseEditDisplay;
+      },
+      turnoffExerciseEditDisplay(state) {
+        state.exerciseEditDisplay = false;
+      },
+      selectExercise(state, payload) {
+        state.selectedExercise = payload.exercise;
       },
       updateSessions(state, payload) {
         state.sessions = payload.data;
@@ -144,6 +160,25 @@
           context.state.csrfToken
         );
         context.commit("toggleAddingExerciseWindow");
+        store.dispatch("fetchExercises");
+      },
+      async deleteExercise(context, payload) {
+        const response = await deleteJSONFetch(
+          "/webapp/delete_exercise/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("toggleExerciseDetailWindow");
+        store.dispatch("fetchExercises");
+      },
+      async editExercise(context, payload) {
+        const response = await putJSONFetch(
+          "/webapp/edit_exercise/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("toggleExerciseDetailWindow");
+        context.commit("toggleExerciseEditDisplay");
         store.dispatch("fetchExercises");
       },
     },

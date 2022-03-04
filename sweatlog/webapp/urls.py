@@ -14,4 +14,6 @@ urlpatterns = [
     path("get_all_exercise_types/", views.get_all_exercise_types),
     path("get_all_equipment_types/", views.get_all_equipment_types),
     path("create_exercise/", views.create_exercise),
+    path("delete_exercise/", views.delete_exercise),
+    path("edit_exercise/", views.edit_exercise),
 ]

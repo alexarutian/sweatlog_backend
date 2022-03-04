@@ -47,6 +47,34 @@ async function getJSONFetch(url, params, csrftoken = null) {
   return final_data;
 }
 
+async function deleteJSONFetch(url, body, csrftoken = null) {
+  let headers = new Headers();
+  headers.append("Content-Type", "application/json");
+  headers.append("Accept", "application/json");
+  if (csrftoken != null) {
+    headers.append("X-CSRFToken", csrftoken);
+  }
+  body = JSON.stringify(body);
+  let response = await fetch(url, { headers, body, method: "DELETE" });
+  let final_data = await response.json();
+  final_data._status = response.status;
+  return final_data;
+}
+
+async function putJSONFetch(url, body, csrftoken = null) {
+  let headers = new Headers();
+  headers.append("Content-Type", "application/json");
+  headers.append("Accept", "application/json");
+  if (csrftoken != null) {
+    headers.append("X-CSRFToken", csrftoken);
+  }
+  body = JSON.stringify(body);
+  let response = await fetch(url, { headers, body, method: "PUT" });
+  let final_data = await response.json();
+  final_data._status = response.status;
+  return final_data;
+}
+
 function formatTime(seconds) {
   if (seconds < 60) {
     return `${seconds}s`;

@@ -14,17 +14,10 @@ let Agenda = {
   data() {
     return {};
   },
-  // render out date list to furthest out session?
   // BUTTONS - GO TO TODAY - GO TO LAST EVENT
   // add button shortcuts for add on each day, then another add at end of list auto-populated with next day out
   // collapsing date ranges if no workouts for more than x days
-  methods: {
-    // action runs this function, then mutation will set value to component
-    async getScheduledSessions() {
-      const response = await getJSONFetch("/webapp/get_scheduled_sessions", {});
-      this.sessions = response.scheduled_sessions;
-    },
-  },
+  methods: {},
   computed: {
     sessions() {
       return this.$store.state.sessions;

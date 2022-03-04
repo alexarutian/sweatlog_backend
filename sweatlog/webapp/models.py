@@ -108,10 +108,12 @@ class Exercise(models.Model, NameableMixin):
         elif detail_level == Detail.DETAIL:
             d["name"] = self.name
             d["id"] = self.id
+            if self.description:
+                d["description"] = self.description
             if self.exercise_type:
-                d["exercise_type"] = self.exercise_type.name
+                d["exercise_type"] = self.exercise_type.serialize()
             if self.equipment_type:
-                d["equipment_type"] = self.equipment_type.name
+                d["equipment_type"] = self.equipment_type.serialize()
         return d
 
 

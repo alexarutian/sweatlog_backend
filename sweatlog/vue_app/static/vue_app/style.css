@@ -321,7 +321,7 @@ table {
   background-color: lightgoldenrodyellow;
 }
 
-.add-exercise-window-button {
+#add-exercise-window-button {
   background-color: gray;
   padding: 5px;
   border-radius: 4px;
@@ -336,7 +336,7 @@ table {
   position: relative; */
 }
 
-#create-exercise-modal {
+.modal {
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -344,10 +344,21 @@ table {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 80vw;
   max-width: 800px;
   overflow: hidden;
   padding: 3vw;
+}
+
+#create-exercise-modal {
+  width: 80vw;
+  border: 2px solid lightgray;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 12pt;
+}
+
+#exercise-info-modal {
+  width: 80vw;
   border: 2px solid lightgray;
   border-radius: 4px;
   background-color: white;
@@ -362,7 +373,7 @@ table {
   height: 30px;
 }
 
-#create-exercise-modal-overlay {
+.modal-overlay {
   z-index: 9;
   position: absolute;
   top: 0;
@@ -372,8 +383,13 @@ table {
   backdrop-filter: blur(3px);
 }
 
+.invisible {
+  display: none;
+}
+
 #create-exercise-modal.invisible,
-#create-exercise-modal-overlay.invisible {
+#exercise-info-modal.invisible,
+.modal-overlay.invisible {
   display: none;
 }
 

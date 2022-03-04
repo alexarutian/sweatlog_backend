@@ -14,7 +14,7 @@ import json
 
 def _find_data(request):
     """return dictionary of get/post data based on request content type"""
-    if request.method == "POST":
+    if request.method in ("POST", "DELETE", "PUT"):
         content_type = request.headers.get("Content-Type", None)
         if content_type == "application/json":
             data = json.loads(request.body)
@@ -100,7 +100,6 @@ def get_all_exercises(request):
 def create_exercise(request):
     data = _find_data(request)
     if request.method == "POST":
-        print(data)
         name = data.get("name", "").lower()
         if not name:
             return HttpResponseBadRequest("name is required")
@@ -127,6 +126,54 @@ def create_exercise(request):
             description=description,
         )
         return JsonResponse({"exercise_id": exercise.id}, status=201)
+
+
+def edit_exercise(request):
+    data = _find_data(request)
+    if request.method == "PUT":
+        id = data.get("id", False)
+        equipment_type_id = data.get("equipment_type_id", False)
+        exercise_type_id = data.get("exercise_type_id", False)
+
+        exercise = Exercise.objects.get(id=id)
+        exercise.name = data.get("name", "").lower()
+        exercise.description = data.get("description", False)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        elif equipment_type_id is None:
+            equipment_type = None
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        elif exercise_type_id is None:
+            exercise_type = None
+
+        exercise.equipment_type = equipment_type
+        exercise.exercise_type = exercise_type
+
+        exercise.save()
+
+        return JsonResponse({"exercise_id": exercise.id}, status=200)
+
+
+def delete_exercise(request):
+    data = _find_data(request)
+    print(data)
+    if request.method == "DELETE":
+        id = int(data.get("id", ""))
+        if not id:
+            return HttpResponseBadRequest("no exercise provided")
+
+        try:
+            exercise = Exercise.objects.get(id=id)
+        except Exercise.DoesNotExist:
+            return JsonResponse({"message": "exercise does not exist"}, status=404)
+
+        exercise.delete()
+        return JsonResponse({"message": f"exercise {id} has been deleted"}, status=202)
 
 
 def get_all_workout_templates(request):
