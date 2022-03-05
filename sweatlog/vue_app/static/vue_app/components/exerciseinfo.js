@@ -1,5 +1,3 @@
-import { EditExercise } from "./editexercise.js";
-
 let ExerciseInfo = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
@@ -14,9 +12,7 @@ let ExerciseInfo = {
   </div>
   `,
 
-  components: {
-    editexercise: EditExercise,
-  },
+  components: {},
   data() {
     return {};
   },
@@ -25,11 +21,7 @@ let ExerciseInfo = {
   },
   methods: {
     deleteExercise(id) {
-      const body = {
-        id: id,
-      };
-
-      this.$store.dispatch("deleteExercise", { body });
+      this.$store.dispatch("deleteExercise", { id });
     },
   },
   computed: {},

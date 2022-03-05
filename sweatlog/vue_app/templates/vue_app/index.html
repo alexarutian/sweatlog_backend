@@ -7,6 +7,7 @@
       <workouts v-else-if="page == 'workouts'"></workouts>
       <exercises v-else-if="page == 'exercises'"></exercises>
       <other v-else-if="page == 'other'"></other>
+      <exercisetypes v-else-if="page == 'exercisetypes'"></exercisetypes>
     </div>
     <div id="website-footer">
       <div id="footer-content">
@@ -21,6 +22,7 @@
   import { Workouts } from "{% static 'vue_app/components/workouts.js' %}";
   import { Exercises } from "{% static 'vue_app/components/exercises.js' %}";
   import { Other } from "{% static 'vue_app/components/other.js' %}";
+  import { ExerciseTypes } from "{% static 'vue_app/components/exercisetypes.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/footertoolbar.js' %}";
   let { createApp } = Vue; // import multiple things from Vue
 
@@ -31,6 +33,7 @@
       workouts: Workouts,
       exercises: Exercises,
       other: Other,
+      exercisetypes: ExerciseTypes,
       footertoolbar: FooterToolbar,
     },
     data() {
@@ -39,9 +42,9 @@
         mySubtitle: "<h3>Hello again!</h3>",
         menuitems: [
           { id: 1, name: "Agenda", page: "agenda" },
-          { id: 1, name: "Workouts", page: "workouts" },
-          { id: 1, name: "Exercises", page: "exercises" },
-          { id: 1, name: "Other", page: "other" },
+          { id: 2, name: "Workouts", page: "workouts" },
+          { id: 3, name: "Exercises", page: "exercises" },
+          { id: 4, name: "Other", page: "other" },
         ],
       };
     },
@@ -133,7 +136,7 @@
         context.commit("updateWorkoutTemplates", payload);
       },
       async fetchExercises(context) {
-        const response = await getJSONFetch("/webapp/get_all_exercises", {});
+        const response = await getJSONFetch("/webapp/exercises", {});
         let payload = { data: response.all_exercises };
         context.commit("updateExercises", payload);
       },
@@ -155,7 +158,7 @@
       },
       async createNewExercise(context, payload) {
         const response = await postJSONFetch(
-          "/webapp/create_exercise/",
+          "/webapp/exercises/",
           payload.body,
           context.state.csrfToken
         );
@@ -164,8 +167,8 @@
       },
       async deleteExercise(context, payload) {
         const response = await deleteJSONFetch(
-          "/webapp/delete_exercise/",
-          payload.body,
+          "/webapp/exercises/" + payload.id + "/",
+          {},
           context.state.csrfToken
         );
         context.commit("toggleExerciseDetailWindow");
@@ -173,7 +176,7 @@
       },
       async editExercise(context, payload) {
         const response = await putJSONFetch(
-          "/webapp/edit_exercise/",
+          "/webapp/exercises/" + payload.id + "/",
           payload.body,
           context.state.csrfToken
         );

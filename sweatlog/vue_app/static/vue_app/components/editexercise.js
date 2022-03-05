@@ -33,15 +33,16 @@ let EditExercise = {
   },
   methods: {
     editExercise() {
+      const id = this.exercise.id;
+
       const body = {
-        id: this.exercise.id,
         name: this.exerciseName,
         description: this.exerciseDescription,
         equipment_type_id: this.equipmentTypeId,
         exercise_type_id: this.exerciseTypeId,
       };
 
-      this.$store.dispatch("editExercise", { body });
+      this.$store.dispatch("editExercise", { id, body });
     },
     selectAll(e) {
       e.srcElement.select();

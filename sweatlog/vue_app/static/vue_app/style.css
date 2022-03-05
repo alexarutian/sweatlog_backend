@@ -417,3 +417,26 @@ table {
   border-radius: 4px;
   text-align: center;
 }
+
+#exercise-type-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.exercise-type-list-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+  margin: 5px;
+}
+
+.et-inline-modify-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.et-inline-modify-buttons p {
+  margin-left: 10px;
+}

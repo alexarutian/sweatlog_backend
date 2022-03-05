@@ -30,37 +30,6 @@ def _find_data(request):
         return data
 
 
-def exercises(request):
-    all_exercises = Exercise.objects.all()
-    context = {"all_exercises": all_exercises}
-    return render(request, "webapp/exercises.html", context)
-
-
-# eventually change to most recent ten workouts?
-def workouts(request):
-    all_workouts = Workout.objects.all()
-    context = {"all_workouts": all_workouts}
-    return render(request, "webapp/workouts.html", context)
-
-
-def workout_detail(request, workout_id):
-    try:
-        workout = Workout.objects.get(id=workout_id)
-        workoutblocks = workout.workoutblocks.all()
-    except Workout.DoesNotExist:
-        return HttpResponse(status=404)
-    context = {"workout": workout, "workoutblocks": workoutblocks}
-    return render(request, "webapp/workoutdetail.html", context)
-
-
-def exercise_detail(request, exercise_id):
-    try:
-        exercise = Exercise.objects.get(id=exercise_id)
-    except Exercise.DoesNotExist:
-        return HttpResponse(status=404)
-    return render(request, "webapp/exercisedetail.html", {"exercise": exercise})
-
-
 def get_all_exercise_types(request):
     data = _find_data(request)
     if request.method == "GET":
@@ -83,6 +52,94 @@ def get_all_equipment_types(request):
             detail.append(equipment_type.serialize(detail_level=Detail.DETAIL))
 
         return JsonResponse({"all_equipment_types": detail}, status=200)
+
+
+def exercises(request):
+    data = _find_data(request)
+
+    # get all exercises
+    if request.method == "GET":
+        all_exercises = Exercise.objects.all().order_by("name")
+
+        detail = []
+        for exercise in all_exercises:
+            detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+
+        return JsonResponse({"all_exercises": detail}, status=200)
+
+    # create a new exercise
+    if request.method == "POST":
+        name = data.get("name", "").lower()
+        if not name:
+            return HttpResponseBadRequest("name is required")
+        equipment_type_id = data.get("equipment_type_id", False)
+        exercise_type_id = data.get("exercise_type_id", False)
+        description = data.get("description", False)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        elif equipment_type_id is None:
+            equipment_type = None
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        elif exercise_type_id is None:
+            exercise_type = None
+
+        exercise = Exercise.objects.create(
+            name=name,
+            equipment_type=equipment_type,
+            exercise_type=exercise_type,
+            description=description,
+        )
+        return JsonResponse({"exercise_id": exercise.id}, status=201)
+
+
+def exercises_with_id(request, exercise_id):
+    data = _find_data(request)
+    try:
+        exercise = Exercise.objects.get(id=exercise_id)
+    except Exercise.DoesNotExist:
+        return JsonResponse({"message": "exercise does not exist"}, status=404)
+
+    # get a single exercise
+    if request.method == "GET":
+        detail = exercise.serialize(detail_level=Detail.DETAIL)
+        return JsonResponse({"exercise": detail}, status=200)
+
+    # modify a preexisting exercise
+    if request.method == "PUT":
+        equipment_type_id = data.get("equipment_type_id", False)
+        exercise_type_id = data.get("exercise_type_id", False)
+
+        exercise.name = data.get("name", "").lower()
+        exercise.description = data.get("description", False)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        elif equipment_type_id is None:
+            equipment_type = None
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        elif exercise_type_id is None:
+            exercise_type = None
+
+        exercise.equipment_type = equipment_type
+        exercise.exercise_type = exercise_type
+
+        exercise.save()
+
+        return JsonResponse({"exercise_id": exercise.id}, status=200)
+
+    # delete a single exercise
+    if request.method == "DELETE":
+        exercise.delete()
+        return JsonResponse({"message": f"exercise {id} has been deleted"}, status=202)
 
 
 def get_all_exercises(request):
@@ -161,7 +218,6 @@ def edit_exercise(request):
 
 def delete_exercise(request):
     data = _find_data(request)
-    print(data)
     if request.method == "DELETE":
         id = int(data.get("id", ""))
         if not id:
