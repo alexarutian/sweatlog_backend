@@ -1,16 +1,32 @@
+import { WaterDrop } from "./waterdrop.js";
+
 let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div id="agenda-page">AGENDA PAGE
-    <div v-for="date in dateSessionList" class="agenda-item">
-      <p :class="{'agenda-date-header': true, 'today-date-header': todaysDate == date.dateValidator}">[[date.dateString]]</p>
-      <p v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">[[session.workout.name]]</p>
-      <p v-if="date.sessions.length == 0" class="agenda-no-workout">No workouts yet...</p>
+  <div id="agenda-page">
+    <div id="agenda-top-options">
+      <div class="agenda-top-option">Option 1</div>
+      <div class="agenda-top-option">Option 2</div>
+      <div class="agenda-top-option">Option 3</div>
     </div>
+    <div v-for="date in dateSessionList" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
+      <p class="agenda-date-header">[[date.dateString]]</p>
+      <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
+        <waterdrop class="agenda-item-icon agenda-waterdrop"></waterdrop>
+        <p>[[session.workout.name]]</p>
+      </div>
+      <div v-if="date.sessions.length == 0" class="agenda-no-workout">
+        <div class="agenda-item-icon agenda-plus">+</div>
+        <p>Schedule workout</p>
+      </div>
+    </div>
+    <div>Schedule another workout</div>
   </div>
   `,
 
-  components: {},
+  components: {
+    waterdrop: WaterDrop,
+  },
   data() {
     return {};
   },

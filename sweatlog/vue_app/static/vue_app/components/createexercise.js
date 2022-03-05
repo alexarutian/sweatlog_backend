@@ -4,12 +4,19 @@ let CreateExercise = {
   <div>Create a new exercise</div>
   <input id="create-exercise-name" v-model="exerciseName" type="text" autocomplete="off" placeholder="exercise name"/>
   <input id="create-exercise-description" v-model="exerciseDescription" type="text" autocomplete="off" placeholder="exercise description"/>
-  <div id="create-exercise-exercise-types">Exercise Type:
-    <p v-for="et in exerciseTypes" @click="exerciseTypeId = et.id" :class="{'selected-option': et.id == exerciseTypeId }">[[et.name]]</p>
-  </div>
-  <div id="create-exercise-equipment-types">Exercise Type:
-  <p v-for="et in equipmentTypes" @click="equipmentTypeId = et.id" :class="{'selected-option': et.id == equipmentTypeId }">[[et.name]]</p>
-</div>
+  
+  <label for="exercise-type-select">Exercise Type:</label>
+  <select id="exercise-type-select" @change="selectExerciseType($event)">
+    <option>--- None (default) ---</option>
+    <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
+  </select>
+
+  <label for="equipment-type-select">Exercise Type:</label>
+  <select id="equipment-type-select" @change="selectEquipmentType($event)">
+    <option>--- None (default) ---</option>
+    <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
+  </select>
+  
 <button id="add-exercise-button" @click="createNewExercise">ADD EXERCISE</button>
 
   `,
@@ -24,6 +31,12 @@ let CreateExercise = {
     };
   },
   methods: {
+    selectExerciseType(e) {
+      this.exerciseTypeId = e.target.value;
+    },
+    selectEquipmentType(e) {
+      this.equipmentTypeId = e.target.value;
+    },
     createNewExercise() {
       const body = {
         name: this.exerciseName,
@@ -43,9 +56,6 @@ let CreateExercise = {
       return this.$store.state.equipmentTypes;
     },
   },
-  created() {
-    this.$store.dispatch("fetchExerciseTypes");
-    this.$store.dispatch("fetchEquipmentTypes");
-  },
+  created() {},
 };
 export { CreateExercise };

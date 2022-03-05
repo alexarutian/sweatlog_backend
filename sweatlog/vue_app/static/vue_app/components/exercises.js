@@ -6,7 +6,11 @@ let Exercises = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="exercise-page">
-    <div @click="this.$store.commit('toggleAddingExerciseWindow')" id="add-exercise-window-button">ADD EXERCISE</div>
+    <div id="exercises-top-options">
+      <div @click="this.$store.commit('toggleAddingExerciseWindow')" class="exercises-top-option">ADD EXERCISE</div>
+      <div class="exercises-top-option">Search</div>
+      <div class="exercises-top-option">Option 3</div>
+    </div>
     <div v-if="this.$store.state.addingExerciseWindow" id="create-exercise-modal" class="modal">
       <span class="close" @click="this.$store.commit('toggleAddingExerciseWindow')">&times;</span>  
       <createexercise v-if="this.$store.state.addingExerciseWindow"></createexercise>
