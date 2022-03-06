@@ -29,7 +29,7 @@ let ExerciseSearch = {
     return {
       equipmentTypeId: null,
       exerciseTypeId: null,
-      searchString: "",
+      nameDescriptionSearch: "",
     };
   },
   methods: {

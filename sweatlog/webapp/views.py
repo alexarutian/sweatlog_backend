@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils import timezone
 from django.forms.models import model_to_dict
+from django.db.models import Q
 
 
 from .models import Detail, Exercise, Workout, Session, EquipmentType, ExerciseType
@@ -36,6 +37,7 @@ def _find_data(request):
 def exercise_types(request):
     data = _find_data(request)
     if request.method == "GET":
+
         all_exercise_types = ExerciseType.objects.all().order_by("id")
 
         detail = []
@@ -98,13 +100,44 @@ def exercises(request):
 
     # get all exercises
     if request.method == "GET":
-        all_exercises = Exercise.objects.all().order_by("name")
 
-        detail = []
-        for exercise in all_exercises:
-            detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+        # if there are search params
+        if data:
+            name_description_search = data.get("name_description_search", "").lower()
+            equipment_type_id = data.get("equipment_type_id", False)
+            exercise_type_id = data.get("exercise_type_id", False)
 
-        return JsonResponse({"all_exercises": detail}, status=200)
+            all_exercises = Exercise.objects.all().order_by("name")
+
+            if name_description_search:
+                search_list = Exercise.objects.filter(
+                    Q(name__icontains=name_description_search)
+                    | Q(description__icontains=name_description_search)
+                )
+
+            if equipment_type_id is not None:
+                equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+                search_list.filter(equipment_type=equipment_type)
+
+            if exercise_type_id is not None:
+                exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+                search_list.filter(exercise_type=exercise_type)
+
+            detail = []
+            for exercise in search_list:
+                detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+
+            return JsonResponse({"all_exercises": detail}, status=200)
+
+        # if there are no params passed into data, get all exercises
+        else:
+            all_exercises = Exercise.objects.all().order_by("name")
+
+            detail = []
+            for exercise in all_exercises:
+                detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+
+            return JsonResponse({"all_exercises": detail}, status=200)
 
     # create a new exercise
     if request.method == "POST":
