@@ -1,21 +1,36 @@
 let EditExercise = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div>Edit [[exercise.name]]</div>
-  <input @click="selectAll($event)" v-model="exerciseName" type="text" autocomplete="off" :placeholder="exercise.name"/>
-  <input @click="selectAll($event)" v-model="exerciseDescription" type="text" autocomplete="off" :placeholder="exercise.description"/>
+  <div class="modal-title">EDIT [[exercise.name]]</div>
   
-  <label for="exercise-type-select">Exercise Type:</label>
-  <select id="exercise-type-select" @change="selectExerciseType($event)" v-model="exerciseTypeId">
-    <option>--- None ---</option>
-    <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
-  </select>
+  <div class="form-cluster">
+    <label>Name*</label>
+    <input @click="selectAll($event)" v-model="exerciseName" type="text" autocomplete="off" :placeholder="exercise.name"/>
+  </div>
 
-  <label for="equipment-type-select">Equipment Type:</label>
-  <select id="equipment-type-select" @change="selectEquipmentType($event)" v-model="equipmentTypeId">
-    <option>--- None ---</option>
-    <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
-  </select>
+  <div class="form-cluster">
+    <label>Description</label>
+    <input @click="selectAll($event)" v-model="exerciseDescription" type="text" autocomplete="off" :placeholder="exercise.description"/>
+  </div>
+    
+  <div class="form-cluster">
+    <label for="exercise-type-select">Exercise Type</label>
+    <select id="exercise-type-select" @change="selectExerciseType($event)" v-model="exerciseTypeId">
+      <option>--- None ---</option>
+      <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
+    </select>
+  </div>
+
+  <div class="form-cluster">
+    <label for="equipment-type-select">Equipment Type</label>
+    <select id="equipment-type-select" @change="selectEquipmentType($event)" v-model="equipmentTypeId">
+      <option>--- None ---</option>
+      <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
+    </select>
+  </div>
+
+  <button id="edit-exercise-button" @click="editExercise">EDIT EXERCISE</button>
+
   `,
 
   components: {},

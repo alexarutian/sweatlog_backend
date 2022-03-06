@@ -130,22 +130,11 @@ table {
 
 /* END CSS RESET */
 
-#detail-toggle {
-  padding: 5px;
-  margin: 10px;
-  background-color: darkgray;
-  color: white;
-  width: 100px;
-}
-
-#detail-toggle:hover {
-  cursor: pointer;
-}
-
 .workouts-list {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .workout-summarized,
@@ -236,7 +225,7 @@ table {
   text-align: center;
   padding: 1.5px;
   border-radius: 8px;
-  background-color: lightgoldenrodyellow;
+  background-color: hsl(56, 72%, 85%);
 }
 
 .exercise-time p {
@@ -257,8 +246,21 @@ table {
   align-items: center;
 }
 
-#agenda-top-options,
-#exercises-top-options {
+#workout-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#exercises-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* for different positioning of the modal overlay
+  position: relative; */
+}
+
+#page-top-options {
   width: 90%;
   margin: 5px;
   display: flex;
@@ -266,8 +268,7 @@ table {
   justify-content: space-around;
 }
 
-.agenda-top-option,
-.exercises-top-option {
+.page-top-option {
   font-size: 10pt;
   width: 25vw;
   height: 4vh;
@@ -276,6 +277,10 @@ table {
   padding: 5px;
   border-radius: 4px;
   display: inline-block;
+}
+
+.page-top-option:hover {
+  cursor: pointer;
 }
 
 .agenda-item {
@@ -333,7 +338,7 @@ table {
 }
 
 .today-date-agenda-item {
-  background-color: rgb(255, 255, 177);
+  background-color: hsl(56, 72%, 85%);
 }
 
 #exercise-list {
@@ -347,7 +352,8 @@ table {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 3px;
+  padding: 5px;
+  font-size: 14pt;
 }
 
 #create-exercise-exercise-types,
@@ -364,15 +370,7 @@ table {
 }
 
 .selected-option {
-  background-color: lightgoldenrodyellow;
-}
-
-#exercise-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* for different positioning of the modal overlay
-  position: relative; */
+  background-color: hsl(56, 72%, 85%);
 }
 
 .modal {
@@ -381,35 +379,43 @@ table {
   flex-direction: column;
   z-index: 10;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 10vh;
+  transform: translate(-50%);
   max-width: 800px;
   overflow: hidden;
-  padding: 3vw;
-}
-
-#create-exercise-modal {
-  width: 80vw;
+  padding: 5vw;
+  width: 90vw;
   border: 2px solid lightgray;
-  border-radius: 4px;
+  border-radius: 8px;
   background-color: white;
   font-size: 12pt;
 }
 
-#exercise-info-modal {
-  width: 80vw;
-  border: 2px solid lightgray;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 12pt;
+.modal-title {
+  color: gray;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
 }
 
-#create-exercise-modal input {
-  margin: 3px;
-  padding: 2px;
-  background-color: rgb(224, 224, 224);
+#create-exercise-modal input,
+#exercise-info-modal input {
+  padding: 5px;
+  background-color: rgb(233, 233, 233);
   border-radius: 4px;
   height: 30px;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  color: rgb(133, 133, 133);
+  font-size: 12pt;
+}
+
+#create-exercise-modal label,
+#exercise-info-modal label {
+  color: gray;
+  margin-bottom: 5px;
 }
 
 .modal-overlay {
@@ -434,7 +440,7 @@ table {
 
 .close {
   margin-left: auto;
-  color: var(--gold-bright);
+  color: darkgray;
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -450,11 +456,62 @@ table {
   cursor: pointer;
 }
 
-#add-exercise-button {
-  background-color: yellow;
-  padding: 5px;
+#add-exercise-button,
+#open-edit-exercise-button,
+#delete-exercise-button,
+#edit-exercise-button {
+  background-color: rgb(221, 210, 47);
+  box-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
+  padding: 10px;
   border-radius: 4px;
   text-align: center;
+  align-self: center;
+  font-weight: bold;
+  border: none;
+  margin: 10px;
+}
+
+#open-edit-exercise-button,
+#delete-exercise-button {
+  width: 100px;
+}
+
+#modal-bottom-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+}
+
+.form-cluster {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.exercise-info-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 5px;
+  color: rgb(133, 133, 133);
+  border-top: 0.5px solid lightgray;
+}
+
+.info-data {
+  font-weight: bold;
+  text-align: right;
+  margin-left: 10px;
+}
+
+select {
+  border: none;
+  color: rgb(133, 133, 133);
+  border-radius: 4px;
+  background-color: rgb(233, 233, 233);
+  padding: 5px;
+  height: 30px;
+  font-size: 12pt;
 }
 
 #exercise-type-list {

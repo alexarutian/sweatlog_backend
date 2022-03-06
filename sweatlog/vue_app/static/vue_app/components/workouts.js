@@ -3,9 +3,14 @@ import { WorkoutList } from "./workoutlist.js";
 let Workouts = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div>WORKOUTS PAGE</div>
-  <div id="detail-toggle" @click="toggleDetailView()">[[ viewName ]]</div>
+  <div id="workout-page">
+  <div id="page-top-options">
+    <div @click="toggleDetailView()" class="page-top-option">Toggle to [[ viewName ]]</div>
+    <div class="page-top-option">Option 2</div>
+    <div class="page-top-option">Option 3</div>
+  </div>
   <workoutlist :showDetail="detailToggle"></workoutlist>
+  </div>
   `,
 
   components: {

@@ -4,10 +4,10 @@ let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="agenda-page">
-    <div id="agenda-top-options">
-      <div class="agenda-top-option">Option 1</div>
-      <div class="agenda-top-option">Option 2</div>
-      <div class="agenda-top-option">Option 3</div>
+    <div id="page-top-options">
+      <div class="page-top-option">Option 1</div>
+      <div class="page-top-option">Option 2</div>
+      <div class="page-top-option">Option 3</div>
     </div>
     <div v-for="date in dateSessionList" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
       <p class="agenda-date-header">[[date.dateString]]</p>

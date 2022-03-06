@@ -67,7 +67,7 @@
   const store = createStore({
     state() {
       return {
-        currentPage: "workouts",
+        currentPage: "exercises",
         sessions: null,
         workoutTemplates: null,
         exercises: null,
@@ -75,6 +75,7 @@
         equipmentTypes: null,
         csrfToken: "",
         addingExerciseWindow: false,
+        exerciseSearchWindow: false,
         exerciseDetailWindow: false,
         exerciseInfoDisplay: true,
         exerciseEditDisplay: false,
@@ -87,6 +88,9 @@
       },
       toggleAddingExerciseWindow(state) {
         state.addingExerciseWindow = !state.addingExerciseWindow;
+      },
+      toggleExerciseSearchWindow(state) {
+        state.exerciseSearchWindow = !state.exerciseSearchWindow;
       },
       toggleExerciseDetailWindow(state) {
         state.exerciseDetailWindow = !state.exerciseDetailWindow;
