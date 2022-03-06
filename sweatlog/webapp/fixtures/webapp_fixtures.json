@@ -3,63 +3,72 @@
     "model": "webapp.exercisetype",
     "pk": 1,
     "fields": {
-      "name": "cardio"
+      "name": "cardio",
+      "user": null
     }
   },
   {
     "model": "webapp.exercisetype",
     "pk": 2,
     "fields": {
-      "name": "strength"
+      "name": "strength",
+      "user": null
     }
   },
   {
     "model": "webapp.exercisetype",
     "pk": 3,
     "fields": {
-      "name": "stretching/mobility"
+      "name": "stretching/mobility",
+      "user": null
     }
   },
   {
     "model": "webapp.exercisetype",
     "pk": 4,
     "fields": {
-      "name": "other"
+      "name": "other",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 1,
     "fields": {
-      "name": "dumbbell"
+      "name": "dumbbell",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 2,
     "fields": {
-      "name": "barbell"
+      "name": "barbell",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 3,
     "fields": {
-      "name": "machine"
+      "name": "machine",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 4,
     "fields": {
-      "name": "other"
+      "name": "other",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 5,
     "fields": {
-      "name": "none"
+      "name": "none",
+      "user": null
     }
   },
   {
@@ -69,7 +78,8 @@
       "name": "barbell curl",
       "description": "",
       "exercise_type": ["strength"],
-      "equipment_type": ["barbell"]
+      "equipment_type": ["barbell"],
+      "user": null
     }
   },
   {
@@ -79,7 +89,8 @@
       "name": "dumbbell curl",
       "description": "",
       "exercise_type": ["strength"],
-      "equipment_type": ["dumbbell"]
+      "equipment_type": ["dumbbell"],
+      "user": null
     }
   },
   {
@@ -89,7 +100,8 @@
       "name": "dumbbell squat",
       "description": "",
       "exercise_type": ["strength"],
-      "equipment_type": ["dumbbell"]
+      "equipment_type": ["dumbbell"],
+      "user": null
     }
   },
   {
@@ -99,7 +111,8 @@
       "name": "jogging",
       "description": "",
       "exercise_type": ["cardio"],
-      "equipment_type": ["none"]
+      "equipment_type": ["none"],
+      "user": null
     }
   },
   {
@@ -109,7 +122,8 @@
       "name": "rest",
       "description": "",
       "exercise_type": ["other"],
-      "equipment_type": ["none"]
+      "equipment_type": ["none"],
+      "user": null
     }
   },
   {
@@ -159,7 +173,8 @@
       "name": "curls",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": null
+      "template": null,
+      "user": null
     }
   },
   {
@@ -169,7 +184,8 @@
       "name": "jogging intervals",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": null
+      "template": null,
+      "user": null
     }
   },
   {
@@ -179,7 +195,8 @@
       "name": "curls",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": 1
+      "template": 1,
+      "user": null
     }
   },
   {
@@ -189,7 +206,8 @@
       "name": "jogging intervals",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": 2
+      "template": 2,
+      "user": null
     }
   },
   {
@@ -239,7 +257,8 @@
       "name": "My curls only workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": null
+      "template": null,
+      "user": null
     }
   },
   {
@@ -249,7 +268,8 @@
       "name": "Tuesday's workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": null
+      "template": null,
+      "user": null
     }
   },
   {
@@ -259,7 +279,8 @@
       "name": "My curls only workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": 1
+      "template": 1,
+      "user": null
     }
   },
   {
@@ -269,7 +290,8 @@
       "name": "Tuesday's workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": 2
+      "template": 2,
+      "user": null
     }
   },
 

@@ -123,3 +123,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "webapp.User"
+
+# Direct to here with any login-restricted views
+LOGIN_URL = "/accounts/login/"
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = "/vue_app/site/"
+
+# console-logs emails sent FOR NOW (set up google email account)
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

@@ -1,8 +1,18 @@
 from ast import Name
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import formats
 
 from enum import Enum
+
+
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    is_normal_member = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.email
 
 
 class Detail(Enum):
@@ -41,6 +51,12 @@ class ExerciseTypeManager(models.Manager):
 # e.g. Strength, Cardio, Stretching, Other
 class ExerciseType(models.Model, NameableMixin):
     name = models.CharField(max_length=100, unique=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="exercisetypes",
+        null=True,
+    )
 
     objects = ExerciseTypeManager()
 
@@ -62,6 +78,12 @@ class EquipmentTypeManager(models.Manager):
 # e.g. Barbell, Dumbbell, Machine, Other
 class EquipmentType(models.Model, NameableMixin):
     name = models.CharField(max_length=100, unique=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="equipmenttypes",
+        null=True,
+    )
 
     objects = EquipmentTypeManager()
 
@@ -91,6 +113,12 @@ class Exercise(models.Model, NameableMixin):
     )
     equipment_type = models.ForeignKey(
         EquipmentType,
+        on_delete=models.CASCADE,
+        related_name="exercises",
+        null=True,
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="exercises",
         null=True,
@@ -144,6 +172,12 @@ class Block(models.Model, NameableMixin):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="blocks",
+        null=True,
+    )
 
     @property
     def is_template(self):
@@ -196,6 +230,12 @@ class Workout(models.Model, NameableMixin):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workouts",
+        null=True,
+    )
 
     @property
     def is_template(self):

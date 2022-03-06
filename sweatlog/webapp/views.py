@@ -2,12 +2,22 @@ from django.shortcuts import render
 from django.http.response import HttpResponseBadRequest
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.db import IntegrityError
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 
-from .models import Detail, Exercise, Workout, Session, EquipmentType, ExerciseType
+from .models import (
+    User,
+    Detail,
+    Exercise,
+    Workout,
+    Session,
+    EquipmentType,
+    ExerciseType,
+)
 
 from datetime import datetime
 import json
@@ -32,6 +42,30 @@ def _find_data(request):
 
 
 #########################################################################################################
+
+
+def create_user(request):
+    data = _find_data(request)
+    if request.method == "POST":
+        email = data.get("email", False).lower()
+        password = data.get("password", False)
+        if not (email & password):
+            return HttpResponseBadRequest("email and password are required")
+
+        # default usernames to email provided, all lowercase
+        try:
+            user = User.objects.create(username=email, email=email, password=password)
+            return JsonResponse(
+                {"email": user.email, "message": "user successfully created!"}
+            )
+        except IntegrityError:
+            return JsonResponse(
+                {
+                    "email": email,
+                    "message": "We already have this email",
+                },
+                status=409,
+            )
 
 
 def exercise_types(request):

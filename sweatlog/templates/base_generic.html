@@ -23,7 +23,20 @@
         <div id="website-title">SWEATLOG</div>
         <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
       </div>
+      <div id="website-login-pane">
+        {% if user.is_authenticated %}
+        <div>Hello {{user.get_username}}! Thank you for joining us today.</div>
+        {% else %}
+        <div>
+          Sweatlog is better when you make it yours. Create an account or login
+          now.
+        </div>
+        {% endif %}
+      </div>
       <div id="page-content">{% block content %}{% endblock %}</div>
+      {% if user.is_authenticated %}
+      <div id="user-data" data-username="{{user.get_username}}"></div>
+      {% endif %}
     </div>
   </body>
   <style>
@@ -77,12 +90,19 @@
       font-size: 24pt;
       font-weight: bold;
       text-align: center;
-      color: rgb(221, 210, 47);
+      color: rgb(241, 230, 64);
       text-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
       /* -webkit-text-stroke-width: 1px;
       -webkit-text-stroke-color: darkgray; */
       padding-top: 10px;
       padding-bottom: 10px;
+    }
+
+    #website-login-pane {
+      background-color: rgb(221, 210, 47);
+      height: 4vh;
+      font-size: 11pt;
+      text-align: center;
     }
 
     #page-content {
