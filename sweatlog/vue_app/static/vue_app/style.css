@@ -130,22 +130,11 @@ table {
 
 /* END CSS RESET */
 
-#detail-toggle {
-  padding: 5px;
-  margin: 10px;
-  background-color: darkgray;
-  color: white;
-  width: 100px;
-}
-
-#detail-toggle:hover {
-  cursor: pointer;
-}
-
 .workouts-list {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .workout-summarized,
@@ -208,6 +197,10 @@ table {
   font-size: 14pt;
 }
 
+.menu-item:hover {
+  cursor: pointer;
+}
+
 .selected-menu-item {
   color: rgb(221, 210, 47);
 }
@@ -232,7 +225,7 @@ table {
   text-align: center;
   padding: 1.5px;
   border-radius: 8px;
-  background-color: lightgoldenrodyellow;
+  background-color: hsl(56, 72%, 85%);
 }
 
 .exercise-time p {
@@ -245,4 +238,301 @@ table {
 .exercise-line td {
   margin: 1px;
   padding: 2px;
+}
+
+#agenda-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#workout-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#exercises-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* for different positioning of the modal overlay
+  position: relative; */
+}
+
+#page-top-options {
+  width: 90%;
+  margin: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.page-top-option {
+  font-size: 10pt;
+  width: 25vw;
+  height: 4vh;
+  background-color: lightgray;
+  text-align: center;
+  padding: 5px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.page-top-option:hover {
+  cursor: pointer;
+}
+
+.agenda-item {
+  margin: 5px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 90%;
+  border-radius: 4px;
+  color: darkgray;
+}
+
+.agenda-date-header {
+  padding: 5px;
+  width: 90%;
+  text-align: left;
+  border-bottom: solid 1px darkgray;
+}
+
+.agenda-workout,
+.agenda-no-workout {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.agenda-item-icon {
+  padding-right: 10px;
+  width: 20px;
+}
+
+.agenda-plus {
+  color: green;
+  font-weight: bold;
+  font-size: 16pt;
+}
+
+.water-drop-svg {
+  fill: #ddd22f;
+  font-size: 16pt;
+}
+
+.agenda-workout {
+  padding: 5px;
+  font-weight: bold;
+  color: black;
+}
+
+.agenda-no-workout {
+  padding: 5px;
+  color: darkgray;
+  font: 75%;
+}
+
+.today-date-agenda-item {
+  background-color: hsl(56, 72%, 85%);
+}
+
+#exercise-list {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  overflow: auto;
+}
+
+.exercise-list-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 5px;
+  font-size: 14pt;
+}
+
+#create-exercise-exercise-types,
+#create-exercise-equipment-types {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#create-exercise-exercise-types p,
+#create-exercise-equipment-types p {
+  font-size: 10pt;
+  padding: 3px;
+}
+
+.selected-option {
+  background-color: hsl(56, 72%, 85%);
+}
+
+.modal {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  left: 50%;
+  top: 10vh;
+  transform: translate(-50%);
+  max-width: 800px;
+  overflow: hidden;
+  padding: 5vw;
+  width: 90vw;
+  border: 2px solid lightgray;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 12pt;
+}
+
+.modal-title {
+  color: gray;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+#create-exercise-modal input,
+#exercise-info-modal input {
+  padding: 5px;
+  background-color: rgb(233, 233, 233);
+  border-radius: 4px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  color: rgb(133, 133, 133);
+  font-size: 12pt;
+}
+
+#create-exercise-modal label,
+#exercise-info-modal label {
+  color: gray;
+  margin-bottom: 5px;
+}
+
+.modal-overlay {
+  z-index: 9;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: brightness(80%);
+}
+
+.invisible {
+  display: none;
+}
+
+#create-exercise-modal.invisible,
+#exercise-info-modal.invisible,
+.modal-overlay.invisible {
+  display: none;
+}
+
+.close {
+  margin-left: auto;
+  color: darkgray;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#add-exercise-button,
+#open-edit-exercise-button,
+#delete-exercise-button,
+#edit-exercise-button {
+  background-color: rgb(221, 210, 47);
+  box-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  align-self: center;
+  font-weight: bold;
+  border: none;
+  margin: 10px;
+}
+
+#open-edit-exercise-button,
+#delete-exercise-button {
+  width: 100px;
+}
+
+#modal-bottom-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+}
+
+.form-cluster {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.exercise-info-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 5px;
+  color: rgb(133, 133, 133);
+  border-top: 0.5px solid lightgray;
+}
+
+.info-data {
+  font-weight: bold;
+  text-align: right;
+  margin-left: 10px;
+}
+
+select {
+  border: none;
+  color: rgb(133, 133, 133);
+  border-radius: 4px;
+  background-color: rgb(233, 233, 233);
+  padding: 5px;
+  height: 30px;
+  font-size: 12pt;
+}
+
+#exercise-type-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.exercise-type-list-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+  margin: 5px;
+}
+
+.et-inline-modify-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.et-inline-modify-buttons p {
+  margin-left: 10px;
 }

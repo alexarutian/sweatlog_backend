@@ -1,4 +1,6 @@
+from ast import Name
 from django.db import models
+from django.utils import formats
 
 from enum import Enum
 
@@ -9,6 +11,7 @@ class Detail(Enum):
     DETAIL = 3
 
 
+# CASCADE TO ALL EVENTUALLY
 class NameableMixin:
     def _get_search_dict(self):
         d = {}
@@ -44,6 +47,12 @@ class ExerciseType(models.Model, NameableMixin):
     def __str__(self):
         return self.name
 
+    def serialize(self, detail_level=Detail.SUMMARY):
+        d = {}
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+            d = self.search_dict
+        return d
+
 
 class EquipmentTypeManager(models.Manager):
     def get_by_natural_key(self, name):
@@ -58,6 +67,12 @@ class EquipmentType(models.Model, NameableMixin):
 
     def __str__(self):
         return self.name
+
+    def serialize(self, detail_level=Detail.SUMMARY):
+        d = {}
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+            d = self.search_dict
+        return d
 
 
 class ExerciseManager(models.Manager):
@@ -93,17 +108,52 @@ class Exercise(models.Model, NameableMixin):
         elif detail_level == Detail.DETAIL:
             d["name"] = self.name
             d["id"] = self.id
-            d["exercise_type"] = self.exercise_type.name
-            d["equipment_type"] = self.equipment_type.name
+            if self.description:
+                d["description"] = self.description
+            if self.exercise_type:
+                d["exercise_type"] = self.exercise_type.serialize()
+            if self.equipment_type:
+                d["equipment_type"] = self.equipment_type.serialize()
+        return d
+
+
+class Stat(models.Model, NameableMixin):
+    sets = models.IntegerField(null=True, blank=True)
+    reps = models.IntegerField(null=True, blank=True)
+    weight_lb = models.FloatField(null=True, blank=True)
+    time_in_seconds = models.IntegerField(null=True, blank=True)
+
+    def get_search_dict(self):
+        d = {}
+        d["id"] = self.id
+        d["sets"] = self.sets
+        d["reps"] = self.reps
+        d["weight_lb"] = self.weight_lb
+        d["time_in_seconds"] = self.time_in_seconds
+        return d
+
+    def serialize(self, detail_level=Detail.SUMMARY):
+        d = {}
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+            d = self.search_dict
         return d
 
 
 class Block(models.Model, NameableMixin):
     name = models.CharField(max_length=200)
-    date = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+
+    @property
+    def is_template(self):
+        return self.template is None
 
     def __str__(self):
-        return self.name
+        if self.is_template:
+            return self.name + " [TEMPLATE]"
+        else:
+            return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
         d = {}
@@ -116,37 +166,46 @@ class Block(models.Model, NameableMixin):
             d["exercises"] = exercises
             for be in self.blockexercises.all():
                 bed = {}
-                bed["suggested_sets"] = be.suggested_sets
-                bed["suggested_reps"] = be.suggested_reps
-                bed["suggested_weight_lb"] = be.suggested_weight_lb
-                bed["suggested_time_in_seconds"] = be.suggested_time_in_seconds
                 bed["exercise"] = be.exercise.serialize(detail_level)
+                bed["stats"] = be.stat.serialize()
+                bed["exercise_order"] = be.exercise_order
                 exercises.append(bed)
         return d
 
 
-class BlockExercise(models.Model, NameableMixin):
+class BlockExercise(models.Model):
     block = models.ForeignKey(
-        Block, on_delete=models.CASCADE, related_name="blockexercises"
+        Block, on_delete=models.CASCADE, related_name="blockexercises", null=True
     )
     exercise = models.ForeignKey(
         Exercise, on_delete=models.CASCADE, related_name="blockexercises"
     )
-    suggested_sets = models.IntegerField(null=True, blank=True)
-    suggested_reps = models.IntegerField(null=True, blank=True)
-    suggested_weight_lb = models.FloatField(null=True, blank=True)
-    suggested_time_in_seconds = models.IntegerField(null=True, blank=True)
+    exercise_order = (
+        models.IntegerField()
+    )  # order of individual exercises within the block
+    stat = models.ForeignKey(
+        Stat, on_delete=models.CASCADE, related_name="blockexercises"
+    )
 
     def __str__(self):
-        return self.block.name + "-" + self.exercise.name
+        return self.block.name + " - " + self.exercise.name
 
 
 class Workout(models.Model, NameableMixin):
-    name = models.CharField(max_length=200, blank=True)
-    date = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=200)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+
+    @property
+    def is_template(self):
+        return self.template is None
 
     def __str__(self):
-        return self.name
+        if self.is_template:
+            return self.name + " [TEMPLATE]"
+        else:
+            return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
         d = {}
@@ -165,37 +224,43 @@ class Workout(models.Model, NameableMixin):
         return d
 
 
-class WorkoutBlock(models.Model, NameableMixin):
+class WorkoutBlock(models.Model):
     workout = models.ForeignKey(
-        Workout, on_delete=models.CASCADE, related_name="workoutblocks"
+        Workout, on_delete=models.CASCADE, related_name="workoutblocks", null=True
     )
     block = models.ForeignKey(
-        Block, on_delete=models.CASCADE, related_name="workoutblocks"
+        Block, on_delete=models.CASCADE, related_name="workoutblocks", null=True
     )
     block_quantity = models.IntegerField(default=1)
+    block_order = models.IntegerField()
 
     def __str__(self):
-        return self.workout.name + "-" + self.block.name
+        return self.workout.name + " - " + self.block.name
 
 
-# add index - defaults to 1 -
-# interface - just allow person to say yes i finished - creates logs - actuals same as expected
-# challenge - how to create a GUI that allows actual different than expected without much work
-class WorkoutLog(models.Model, NameableMixin):
+class Session(models.Model, NameableMixin):
+    date = models.DateField()
     workout = models.ForeignKey(
-        Workout, on_delete=models.CASCADE, related_name="workoutlogs"
-    )
-    blockexercise = models.ForeignKey(
-        BlockExercise, on_delete=models.CASCADE, related_name="blockexercises"
+        Workout, on_delete=models.CASCADE, related_name="sessions"
     )
 
-    actual_sets = models.IntegerField(null=True, blank=True)
-    actual_reps = models.IntegerField(null=True, blank=True)
-    actual_weight_lb = models.FloatField(null=True, blank=True)
-    actual_time_in_seconds = models.IntegerField(null=True, blank=True)
-    notes = models.TextField(blank=True)
-    date = models.DateTimeField(auto_now=True)
-
-    # add date logic to this later
     def __str__(self):
-        return self.workout.name
+        prettyDate = formats.date_format(self.date, "DATE_FORMAT")
+        return self.workout.name + " - " + prettyDate
+
+    def get_search_dict(self):
+        d = {}
+        d["id"] = self.id
+        d["date"] = self.date
+        d["workout_name"] = self.workout.name
+        return d
+
+    def serialize(self, detail_level=Detail.SUMMARY):
+        d = {}
+        if detail_level in (Detail.SEARCH, Detail.SUMMARY):
+            d = self.search_dict
+        elif detail_level == Detail.DETAIL:
+            d["id"] = self.id
+            d["date"] = self.date
+            d["workout"] = self.workout.serialize(detail_level)
+        return d

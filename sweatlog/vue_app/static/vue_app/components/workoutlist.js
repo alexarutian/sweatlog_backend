@@ -4,10 +4,10 @@ let WorkoutList = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div class="workouts-list">
-    <div v-if="!showDetail" v-for="workout in workouts" class="workout-summarized"> 
+    <div v-if="!showDetail" v-for="workout in workoutTemplates" class="workout-summarized"> 
         <p>[[ workout.name]] </p> 
     </div>
-    <div v-else v-for="workout in workoutsDetail" class="workout-detailed"> 
+    <div v-else v-for="workout in workoutTemplates" class="workout-detailed"> 
         <p class="workout-name">[[ workout.name]]</p>
         <div v-for="block in workout.blocks" class="workout-detailed-block">
             <div class="block-title-info">    
@@ -24,30 +24,12 @@ let WorkoutList = {
     exerciseline: ExerciseLine,
   },
   data() {
-    return {
-      workouts: null,
-      workoutsDetail: null,
-    };
+    return {};
   },
   props: {
     showDetail: Boolean,
   },
   methods: {
-    async getAllWorkoutsSummary() {
-      const response = await getJSONFetch(
-        "/webapp/get_all_workouts/summary/",
-        {}
-      );
-      this.workouts = response.all_workouts_summary;
-    },
-    async getAllWorkoutsDetail() {
-      const response = await getJSONFetch(
-        "/webapp/get_all_workouts/detail/",
-        {}
-      );
-      this.workoutsDetail = response.all_workouts_detail;
-      console.log(response.all_workouts_detail);
-    },
     toggleDetailView() {
       this.detailToggle = !this.detailToggle;
     },
@@ -57,10 +39,12 @@ let WorkoutList = {
     viewName() {
       return this.detailToggle ? "Summary" : "Detail";
     },
+    workoutTemplates() {
+      return this.$store.state.workoutTemplates;
+    },
   },
   created() {
-    this.getAllWorkoutsSummary();
-    this.getAllWorkoutsDetail();
+    this.$store.dispatch("fetchWorkoutTemplates");
   },
 };
 export { WorkoutList };

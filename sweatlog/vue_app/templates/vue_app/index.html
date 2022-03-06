@@ -2,8 +2,10 @@
 <body>
   <div id="vue-app">
     <div id="main-content">
+      {% csrf_token %}
       <agenda v-if="page == 'agenda'"></agenda>
       <workouts v-else-if="page == 'workouts'"></workouts>
+      <blocks v-else-if="page == 'blocks'"></blocks>
       <exercises v-else-if="page == 'exercises'"></exercises>
       <other v-else-if="page == 'other'"></other>
     </div>
@@ -18,6 +20,7 @@
   //   const staticDir = "{% static vue_app %}";
   import { Agenda } from "{% static 'vue_app/components/agenda.js' %}";
   import { Workouts } from "{% static 'vue_app/components/workouts.js' %}";
+  import { Blocks } from "{% static 'vue_app/components/blocks.js' %}";
   import { Exercises } from "{% static 'vue_app/components/exercises.js' %}";
   import { Other } from "{% static 'vue_app/components/other.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/footertoolbar.js' %}";
@@ -28,6 +31,7 @@
     components: {
       agenda: Agenda,
       workouts: Workouts,
+      blocks: Blocks,
       exercises: Exercises,
       other: Other,
       footertoolbar: FooterToolbar,
@@ -38,9 +42,10 @@
         mySubtitle: "<h3>Hello again!</h3>",
         menuitems: [
           { id: 1, name: "Agenda", page: "agenda" },
-          { id: 1, name: "Workouts", page: "workouts" },
-          { id: 1, name: "Exercises", page: "exercises" },
-          { id: 1, name: "Other", page: "other" },
+          { id: 2, name: "Workouts", page: "workouts" },
+          { id: 3, name: "Blocks", page: "blocks" },
+          { id: 4, name: "Exercises", page: "exercises" },
+          { id: 5, name: "Other", page: "other" },
         ],
       };
     },
@@ -50,6 +55,11 @@
         return this.$store.state.currentPage;
       },
     },
+    created() {
+      this.$store.commit("updateCsrfToken", { data: getCookie("csrftoken") });
+      this.$store.dispatch("fetchExerciseTypes");
+      this.$store.dispatch("fetchEquipmentTypes");
+    },
   });
 
   let { createStore } = Vuex;
@@ -57,12 +67,147 @@
   const store = createStore({
     state() {
       return {
-        currentPage: "workouts",
+        currentPage: "exercises",
+        sessions: null,
+        workoutTemplates: null,
+        exercises: null,
+        exerciseTypes: null,
+        equipmentTypes: null,
+        csrfToken: "",
+        addingExerciseWindow: false,
+        exerciseSearchWindow: false,
+        exerciseDetailWindow: false,
+        exerciseInfoDisplay: true,
+        exerciseEditDisplay: false,
+        selectedExercise: "",
       };
     },
     mutations: {
       navigate(state, payload) {
         state.currentPage = payload.page;
+      },
+      toggleAddingExerciseWindow(state) {
+        state.addingExerciseWindow = !state.addingExerciseWindow;
+      },
+      toggleExerciseSearchWindow(state) {
+        state.exerciseSearchWindow = !state.exerciseSearchWindow;
+      },
+      toggleExerciseDetailWindow(state) {
+        state.exerciseDetailWindow = !state.exerciseDetailWindow;
+      },
+      toggleExerciseEditDisplay(state) {
+        state.exerciseEditDisplay = !state.exerciseEditDisplay;
+      },
+      turnoffExerciseEditDisplay(state) {
+        state.exerciseEditDisplay = false;
+      },
+      selectExercise(state, payload) {
+        state.selectedExercise = payload.exercise;
+      },
+      updateSessions(state, payload) {
+        state.sessions = payload.data;
+      },
+      updateWorkoutTemplates(state, payload) {
+        state.workoutTemplates = payload.data;
+      },
+      updateExercises(state, payload) {
+        state.exercises = payload.data;
+      },
+      updateExerciseTypes(state, payload) {
+        state.exerciseTypes = payload.data;
+      },
+      updateEquipmentTypes(state, payload) {
+        state.equipmentTypes = payload.data;
+      },
+      updateCsrfToken(state, payload) {
+        state.csrfToken = payload.data;
+      },
+    },
+    // actions gets context that includes state and a commit object
+    // could also pass a payload
+    actions: {
+      async fetchSessions(context) {
+        const response = await getJSONFetch(
+          "/webapp/get_scheduled_sessions",
+          {}
+        );
+        let payload = { data: response.scheduled_sessions };
+        context.commit("updateSessions", payload);
+      },
+      async fetchWorkoutTemplates(context) {
+        const response = await getJSONFetch(
+          "/webapp/get_all_workout_templates",
+          {}
+        );
+        let payload = { data: response.all_workout_templates };
+        context.commit("updateWorkoutTemplates", payload);
+      },
+      async fetchExercises(context) {
+        const response = await getJSONFetch("/webapp/exercises", {});
+        let payload = { data: response.all_exercises };
+        context.commit("updateExercises", payload);
+      },
+      async fetchExerciseTypes(context) {
+        const response = await getJSONFetch("/webapp/exercisetypes/", {});
+        let payload = { data: response.all_exercise_types };
+        context.commit("updateExerciseTypes", payload);
+      },
+      async createNewExerciseType(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/exercisetypes/",
+          payload.body,
+          context.state.csrfToken
+        );
+        store.dispatch("fetchExerciseTypes");
+      },
+      async editExerciseType(context, payload) {
+        const response = await putJSONFetch(
+          "/webapp/exercisetypes/" + payload.id + "/",
+          payload.body,
+          context.state.csrfToken
+        );
+        store.dispatch("fetchExerciseTypes");
+      },
+      async deleteExerciseType(context, payload) {
+        const response = await deleteJSONFetch(
+          "/webapp/exercisetypes/" + payload.id + "/",
+          {},
+          context.state.csrfToken
+        );
+        store.dispatch("fetchExerciseTypes");
+      },
+      async fetchEquipmentTypes(context) {
+        const response = await getJSONFetch("/webapp/equipmenttypes", {});
+        let payload = { data: response.all_equipment_types };
+        context.commit("updateEquipmentTypes", payload);
+      },
+      async createNewExercise(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/exercises/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("toggleAddingExerciseWindow");
+        store.dispatch("fetchExercises");
+      },
+      async deleteExercise(context, payload) {
+        const response = await deleteJSONFetch(
+          "/webapp/exercises/" + payload.id + "/",
+          {},
+          context.state.csrfToken
+        );
+        context.commit("toggleExerciseDetailWindow");
+        store.dispatch("fetchExercises");
+      },
+      async editExercise(context, payload) {
+        const response = await putJSONFetch(
+          "/webapp/exercises/" + payload.id + "/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("toggleExerciseDetailWindow");
+        context.commit("toggleExerciseEditDisplay");
+        store.dispatch("fetchExercises");
       },
     },
   });
@@ -78,8 +223,10 @@
   }
 
   #main-content {
+    height: 86vh;
     flex-grow: 1;
     flex-shrink: 0;
+    overflow-y: auto;
   }
 
   #website-footer {
