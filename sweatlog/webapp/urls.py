@@ -14,4 +14,8 @@ urlpatterns = [
     # old URL patterns
     path("get_all_workout_templates/", views.get_all_workout_templates),
     path("get_scheduled_sessions/", views.get_scheduled_sessions),
+    path("users/", views.users),
+    path("users/login/", views.login_user),
+    path("users/logout/", views.logout_user),
+    path("users/get_user_email/", views.get_user_email),
 ]

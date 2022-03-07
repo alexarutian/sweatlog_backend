@@ -39,7 +39,7 @@ let Exercises = {
     </div>
     <div v-if="this.$store.state.exerciseDetailWindow" class="modal-overlay"
     @click="this.$store.commit('toggleExerciseDetailWindow')" @click="this.$store.commit('turnoffExerciseEditDisplay')"></div>
-  </div>
+    </div>
   `,
 
   components: {

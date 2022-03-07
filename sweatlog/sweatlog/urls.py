@@ -20,7 +20,6 @@ from vue_app import views as vue_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),
     path("webapp/", include("webapp.urls")),
     path("vue_app/", include("vue_app.urls")),
 ]

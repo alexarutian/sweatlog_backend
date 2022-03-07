@@ -7,11 +7,13 @@ let Other = {
   <div id="other-page-options" v-if="!showOtherPageContent">
     <div @click="otherPageContent = 'exercisetypes'" @click="showOtherPageContent = true">Exercise Types</div>
     <div>Equipment Types</div>
+    <div v-if="this.$store.state.userToken" @click="logoutUser">LOGOUT OF SWEATLOG</div>
   </div>
   <div id="other-page-content" v-if="showOtherPageContent">
     <div @click="showOtherPageContent = false">Back to Other Options</div>
     <exercisetypes v-if="otherPageContent == 'exercisetypes'"></exercisetypes>
   </div>
+
   `,
 
   components: { exercisetypes: ExerciseTypes },
@@ -21,7 +23,11 @@ let Other = {
       otherPageContent: "",
     };
   },
-  methods: {},
+  methods: {
+    logoutUser() {
+      this.$store.dispatch("logoutUser");
+    },
+  },
   computed: {},
   created() {},
 };

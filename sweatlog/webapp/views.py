@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate, login
 
 
 from .models import (
@@ -44,19 +45,26 @@ def _find_data(request):
 #########################################################################################################
 
 
-def create_user(request):
+def users(request):
     data = _find_data(request)
     if request.method == "POST":
         email = data.get("email", False).lower()
         password = data.get("password", False)
-        if not (email & password):
-            return HttpResponseBadRequest("email and password are required")
+        if not email:
+            return HttpResponseBadRequest("email is required")
+        if not password:
+            return HttpResponseBadRequest("password is required")
 
         # default usernames to email provided, all lowercase
         try:
             user = User.objects.create(username=email, email=email, password=password)
+            request.session["user_token"] = str(user.token)
             return JsonResponse(
-                {"email": user.email, "message": "user successfully created!"}
+                {
+                    "email": user.email,
+                    "token": user.token,
+                    "message": "user successfully created!",
+                }
             )
         except IntegrityError:
             return JsonResponse(
@@ -66,6 +74,48 @@ def create_user(request):
                 },
                 status=409,
             )
+
+
+def login_user(request):
+    data = _find_data(request)
+    if request.method == "POST":
+        email = data.get("email", False).lower()
+        password = data.get("password", False)
+        if not email:
+            return HttpResponseBadRequest("email is required")
+        if not password:
+            return HttpResponseBadRequest("password is required")
+    try:
+        user = User.objects.get(username=email, password=password)
+        request.session["user_token"] = str(user.token)
+        return JsonResponse(
+            {"email": email, "token": user.token, "message": "success!"}
+        )
+    except User.DoesNotExist:
+        return JsonResponse({"email": email, "message": "user does not exist"})
+    except PermissionError:
+        return JsonResponse({"email": email, "message": "user cannot be authenticated"})
+
+
+def logout_user(request):
+    # deletes all session data, including user info
+    request.session.flush()
+    print(request.session.items())
+    return JsonResponse({"message": "user has been logged out"})
+
+
+# gets user email to persist despite refreshes (where the data would clear out)
+def get_user_email(request):
+    if request.session.get("user_token") is not None:
+        token = request.session.get("user_token")
+        try:
+            user = User.objects.get(token=token)
+            return JsonResponse(
+                {"email": user.email, "token": user.token, "message": "success!"},
+                status=200,
+            )
+        except User.DoesNotExist:
+            return JsonResponse({"message": "cannot find user"}, status=404)
 
 
 def exercise_types(request):

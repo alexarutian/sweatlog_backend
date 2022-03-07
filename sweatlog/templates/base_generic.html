@@ -23,16 +23,6 @@
         <div id="website-title">SWEATLOG</div>
         <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
       </div>
-      <div id="website-login-pane">
-        {% if user.is_authenticated %}
-        <div>Hello {{user.get_username}}! Thank you for joining us today.</div>
-        {% else %}
-        <div>
-          Sweatlog is better when you make it yours. Create an account or login
-          now.
-        </div>
-        {% endif %}
-      </div>
       <div id="page-content">{% block content %}{% endblock %}</div>
       {% if user.is_authenticated %}
       <div id="user-data" data-username="{{user.get_username}}"></div>

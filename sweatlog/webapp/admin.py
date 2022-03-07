@@ -18,10 +18,23 @@ from .models import (
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
         # *UserAdmin.fieldsets,  # adds OG field
-        (None, {"fields": ("username", "password", "email")}),
+        (
+            None,
+            {
+                "fields": (
+                    "username",
+                    "password",
+                    "email",
+                    "token",
+                )
+            },
+        ),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
         ("Important Dates", {"fields": ("last_login", "date_joined")}),
-        ("Other", {"fields": ("is_normal_member",)}),
+        (
+            "Other",
+            {"fields": ("is_normal_member",)},
+        ),
     )
 
 

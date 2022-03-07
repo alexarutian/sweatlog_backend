@@ -1,8 +1,26 @@
 {% extends "base_generic.html" %} {% block content %} {% load static %}
 <body>
   <div id="vue-app">
+    <div id="website-login-pane">
+      <div v-if="this.$store.state.userToken">
+        Hello
+        <innerText>[[userEmail]]</innerText>
+        ! You are logged in and can customize Sweatlog to your liking.
+      </div>
+      <div
+        v-if="!this.$store.state.userToken"
+        @click="this.$store.commit('toggleLoginScreen')"
+      >
+        Sweatlog is better when you make it yours. Create an account or login
+        now.
+      </div>
+    </div>
+
     <div id="main-content">
       {% csrf_token %}
+      <loginorcreateuser
+        v-if="this.$store.state.showLoginScreen"
+      ></loginorcreateuser>
       <agenda v-if="page == 'agenda'"></agenda>
       <workouts v-else-if="page == 'workouts'"></workouts>
       <blocks v-else-if="page == 'blocks'"></blocks>
@@ -14,6 +32,7 @@
         <footertoolbar :menuitems="menuitems"></footertoolbar>
       </div>
     </div>
+    <div id="user-token" data-token="{{user_token}}"></div>
   </div>
 </body>
 <script type="module">
@@ -24,6 +43,7 @@
   import { Exercises } from "{% static 'vue_app/components/exercises.js' %}";
   import { Other } from "{% static 'vue_app/components/other.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/footertoolbar.js' %}";
+  import { LoginOrCreateUser } from "{% static 'vue_app/components/loginorcreateuser.js' %}";
   let { createApp } = Vue; // import multiple things from Vue
 
   const myApp = createApp({
@@ -35,11 +55,10 @@
       exercises: Exercises,
       other: Other,
       footertoolbar: FooterToolbar,
+      loginorcreateuser: LoginOrCreateUser,
     },
     data() {
       return {
-        myTitle: "Hello Vue!",
-        mySubtitle: "<h3>Hello again!</h3>",
         menuitems: [
           { id: 1, name: "Agenda", page: "agenda" },
           { id: 2, name: "Workouts", page: "workouts" },
@@ -52,13 +71,21 @@
     methods: {},
     computed: {
       page() {
-        return this.$store.state.currentPage;
+        if (!this.$store.state.showLoginScreen) {
+          return this.$store.state.currentPage;
+        }
+      },
+      userEmail() {
+        return this.$store.state.userEmail;
       },
     },
     created() {
       this.$store.commit("updateCsrfToken", { data: getCookie("csrftoken") });
       this.$store.dispatch("fetchExerciseTypes");
       this.$store.dispatch("fetchEquipmentTypes");
+      this.$store.dispatch("getUserEmail", {
+        data: this.$store.state.userToken,
+      });
     },
   });
 
@@ -68,6 +95,7 @@
     state() {
       return {
         currentPage: "exercises",
+        priorPage: "",
         sessions: null,
         workoutTemplates: null,
         exercises: null,
@@ -80,11 +108,17 @@
         exerciseInfoDisplay: true,
         exerciseEditDisplay: false,
         selectedExercise: "",
+        userToken: "",
+        userEmail: "",
+        showLoginScreen: false,
       };
     },
     mutations: {
       navigate(state, payload) {
         state.currentPage = payload.page;
+      },
+      toggleLoginScreen(state) {
+        state.showLoginScreen = !state.showLoginScreen;
       },
       toggleAddingExerciseWindow(state) {
         state.addingExerciseWindow = !state.addingExerciseWindow;
@@ -119,8 +153,15 @@
       updateEquipmentTypes(state, payload) {
         state.equipmentTypes = payload.data;
       },
+      // combine below to "update page load data"
       updateCsrfToken(state, payload) {
         state.csrfToken = payload.data;
+      },
+      updateUserToken(state, payload) {
+        state.userToken = payload.token;
+      },
+      updateUserEmail(state, payload) {
+        state.userEmail = payload.email;
       },
     },
     // actions gets context that includes state and a commit object
@@ -209,10 +250,55 @@
         context.commit("toggleExerciseEditDisplay");
         store.dispatch("fetchExercises");
       },
+      // create diff responses to handle success or failure!
+      async createNewUser(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/users/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("updateUserToken", { token: response.token });
+        context.commit("toggleLoginScreen");
+      },
+      async loginUser(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/users/login/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("updateUserToken", {
+          token: response.token,
+        });
+        context.commit("updateUserEmail", { email: response.email });
+        context.commit("toggleLoginScreen");
+      },
+      async logoutUser(context) {
+        const response = await postJSONFetch(
+          "/webapp/users/logout/",
+          {},
+          context.state.csrfToken
+        );
+        context.commit("updateUserToken", {
+          token: response.token,
+        });
+        context.commit("updateUserEmail", { email: "" });
+        context.commit("toggleLoginScreen");
+      },
+      async getUserEmail(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/users/get_user_email/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("updateUserEmail", { email: response.email });
+      },
     },
   });
   myApp.use(store);
   myApp.mount("#vue-app");
+
+  const token = document.getElementById("user-token").dataset.token;
+  store.commit("updateUserToken", { token });
 </script>
 <style>
   #vue-app {
@@ -220,6 +306,13 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+  }
+
+  #website-login-pane {
+    background-color: rgb(221, 210, 47);
+    height: 4vh;
+    font-size: 11pt;
+    text-align: center;
   }
 
   #main-content {

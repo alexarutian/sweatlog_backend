@@ -4,15 +4,31 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import formats
 
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 from enum import Enum
+
+import uuid
 
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_normal_member = models.BooleanField(default=True)
+    token = models.UUIDField()
 
     def __str__(self):
         return self.email
+
+    @classmethod
+    def get_token(cls):
+        return uuid.uuid4()
+
+
+# router to listen to models' actions, if function registered will go through hoop first
+@receiver(pre_save, sender=User)
+def user_saved(sender, instance, *args, **kwargs):
+    instance.token = instance.get_token()
 
 
 class Detail(Enum):
