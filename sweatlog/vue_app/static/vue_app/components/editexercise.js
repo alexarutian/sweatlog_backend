@@ -67,6 +67,7 @@ let EditExercise = {
         description: this.exerciseDescription,
         equipment_type_id: this.equipmentTypeId,
         exercise_type_id: this.exerciseTypeId,
+        user_token: this.$store.state.userToken,
       };
 
       this.$store.dispatch("editExercise", { id, body });

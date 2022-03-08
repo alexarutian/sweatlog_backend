@@ -2,21 +2,25 @@
 <body>
   <div id="vue-app">
     <div id="website-login-pane">
-      <div v-if="this.$store.state.userToken">
-        Hello
-        <innerText>[[userEmail]]</innerText>
-        ! You are logged in and can customize Sweatlog to your liking.
+      <div class="website-login-alert" v-if="this.$store.state.userToken">
+        <p>
+          Hello
+          <innerText>[[userEmail]]</innerText>
+          ! You are logged in and can customize Sweatlog to your liking.
+        </p><innerText></innerText>[[userToken]]</innerText>
+        <div class="close-banner-alert">&times;</div>
       </div>
-      <div
+      <p
         v-if="!this.$store.state.userToken"
         @click="this.$store.commit('toggleLoginScreen')"
+        class="website-login-alert"
       >
-        Sweatlog is better when you make it yours. Create an account or login
-        now.
-      </div>
+        Sweatlog is better when you make it yours. Click here to create an
+        account or login now.
+      </p>
     </div>
 
-    <div id="main-content">
+    <div id="main-content" v-bind:style="{height: contentHeight}">
       {% csrf_token %}
       <loginorcreateuser
         v-if="this.$store.state.showLoginScreen"
@@ -78,6 +82,9 @@
       userEmail() {
         return this.$store.state.userEmail;
       },
+      userToken() {
+        return this.$store.state.userToken;
+      },
     },
     created() {
       this.$store.commit("updateCsrfToken", { data: getCookie("csrftoken") });
@@ -111,6 +118,8 @@
         userToken: "",
         userEmail: "",
         showLoginScreen: false,
+        statusMessage: "",
+        statusLevel: "", // eg. success, info, error
       };
     },
     mutations: {
@@ -163,33 +172,49 @@
       updateUserEmail(state, payload) {
         state.userEmail = payload.email;
       },
+      updateMessageData(state, payload) {
+        state.statusMessage = payload.message;
+        let level = ""
+        if (payload.code < 300) {
+          level = "success"
+        } else if (payload.code >=400) {
+          level = "error"
+        }
+        else {
+          level = "info"
+        }
+        state.statusLevel = level
+      }
     },
     // actions gets context that includes state and a commit object
     // could also pass a payload
     actions: {
       async fetchSessions(context) {
-        const response = await getJSONFetch(
-          "/webapp/get_scheduled_sessions",
-          {}
-        );
+        const response = await getJSONFetch("/webapp/get_scheduled_sessions", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.scheduled_sessions };
         context.commit("updateSessions", payload);
       },
       async fetchWorkoutTemplates(context) {
         const response = await getJSONFetch(
           "/webapp/get_all_workout_templates",
-          {}
+          { user_token: context.state.userToken }
         );
         let payload = { data: response.all_workout_templates };
         context.commit("updateWorkoutTemplates", payload);
       },
       async fetchExercises(context) {
-        const response = await getJSONFetch("/webapp/exercises", {});
+        const response = await getJSONFetch("/webapp/exercises", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.all_exercises };
         context.commit("updateExercises", payload);
       },
       async fetchExerciseTypes(context) {
-        const response = await getJSONFetch("/webapp/exercisetypes/", {});
+        const response = await getJSONFetch("/webapp/exercisetypes/", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.all_exercise_types };
         context.commit("updateExerciseTypes", payload);
       },
@@ -212,13 +237,15 @@
       async deleteExerciseType(context, payload) {
         const response = await deleteJSONFetch(
           "/webapp/exercisetypes/" + payload.id + "/",
-          {},
+          { user_token: context.state.userToken },
           context.state.csrfToken
         );
         store.dispatch("fetchExerciseTypes");
       },
       async fetchEquipmentTypes(context) {
-        const response = await getJSONFetch("/webapp/equipmenttypes", {});
+        const response = await getJSONFetch("/webapp/equipmenttypes", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.all_equipment_types };
         context.commit("updateEquipmentTypes", payload);
       },
@@ -234,7 +261,7 @@
       async deleteExercise(context, payload) {
         const response = await deleteJSONFetch(
           "/webapp/exercises/" + payload.id + "/",
-          {},
+          { user_token: context.state.userToken },
           context.state.csrfToken
         );
         context.commit("toggleExerciseDetailWindow");
@@ -266,11 +293,25 @@
           payload.body,
           context.state.csrfToken
         );
-        context.commit("updateUserToken", {
-          token: response.token,
-        });
-        context.commit("updateUserEmail", { email: response.email });
-        context.commit("toggleLoginScreen");
+        console.log(response)
+        
+        // handling message right next to where we handle the data - immediately
+        // INTERNAL ERROR - 500 - server could stick message in response - hybrid approach
+        let message = ""
+        if (response._status == 200) {
+          message = "login success"
+        } else if (response._status == 404 || response.status == 403) {
+          message = "login unsuccessful"
+        } else {
+          message = "an error occurred - please try again"
+        }
+        context.commit("updateMessageData", {message, code: response._status})
+
+
+        if (response._status == 200) {
+          context.commit("updateUserToken", {token: response.token});
+          context.commit("updateUserEmail", { email: response.email });
+          context.commit("toggleLoginScreen")}
       },
       async logoutUser(context) {
         const response = await postJSONFetch(
@@ -295,10 +336,12 @@
     },
   });
   myApp.use(store);
-  myApp.mount("#vue-app");
 
+  // make sure token is ready before app is mounted
   const token = document.getElementById("user-token").dataset.token;
   store.commit("updateUserToken", { token });
+
+  myApp.mount("#vue-app");
 </script>
 <style>
   #vue-app {
@@ -311,8 +354,24 @@
   #website-login-pane {
     background-color: rgb(221, 210, 47);
     height: 4vh;
-    font-size: 11pt;
     text-align: center;
+  }
+
+  #website-login-pane p {
+    font-size: 9pt;
+  }
+
+  .close-banner-alert {
+    font-size: 22px;
+    padding: 5px;
+  }
+
+  .website-login-alert {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
   }
 
   #main-content {

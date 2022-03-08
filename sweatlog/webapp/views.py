@@ -66,11 +66,11 @@ def users(request):
                     "message": "user successfully created!",
                 }
             )
+        # we already have this email
         except IntegrityError:
             return JsonResponse(
                 {
                     "email": email,
-                    "message": "We already have this email",
                 },
                 status=409,
             )
@@ -88,13 +88,11 @@ def login_user(request):
     try:
         user = User.objects.get(username=email, password=password)
         request.session["user_token"] = str(user.token)
-        return JsonResponse(
-            {"email": email, "token": user.token, "message": "success!"}
-        )
+        return JsonResponse({"email": email, "token": user.token}, status=200)
     except User.DoesNotExist:
-        return JsonResponse({"email": email, "message": "user does not exist"})
+        return JsonResponse({}, status=404)
     except PermissionError:
-        return JsonResponse({"email": email, "message": "user cannot be authenticated"})
+        return JsonResponse({"email": email}, status=403)
 
 
 def logout_user(request):
@@ -107,15 +105,17 @@ def logout_user(request):
 # gets user email to persist despite refreshes (where the data would clear out)
 def get_user_email(request):
     if request.session.get("user_token") is not None:
-        token = request.session.get("user_token")
+        user_token = request.session.get("user_token")
         try:
-            user = User.objects.get(token=token)
+            user = User.objects.get(token=user_token)
             return JsonResponse(
                 {"email": user.email, "token": user.token, "message": "success!"},
                 status=200,
             )
         except User.DoesNotExist:
             return JsonResponse({"message": "cannot find user"}, status=404)
+    else:
+        return JsonResponse({"message": "user token not available"})
 
 
 def exercise_types(request):
@@ -181,41 +181,56 @@ def equipment_types_with_id(request, equipment_type_id):
 
 def exercises(request):
     data = _find_data(request)
+    print(data)
+
+    # obtain user info from token, if possible
+    user_token = data.get("user_token", "")
+    if user_token is ("" or None):
+        return JsonResponse({}, status=403)
 
     # get all exercises
     if request.method == "GET":
 
+        try:
+            user = User.objects.get(token=user_token)
+        except User.DoesNotExist:
+            user = None
+
         # if there are search params
-        if data:
-            name_description_search = data.get("name_description_search", "").lower()
-            equipment_type_id = data.get("equipment_type_id", False)
-            exercise_type_id = data.get("exercise_type_id", False)
+        # if data:
+        #     name_description_search = data.get("name_description_search", "").lower()
+        #     equipment_type_id = data.get("equipment_type_id", False)
+        #     exercise_type_id = data.get("exercise_type_id", False)
 
-            all_exercises = Exercise.objects.all().order_by("name")
+        #     all_exercises = Exercise.objects.filter(
+        #         Q(user=None) | Q(user=user)
+        #     ).order_by("name")
 
-            if name_description_search:
-                search_list = Exercise.objects.filter(
-                    Q(name__icontains=name_description_search)
-                    | Q(description__icontains=name_description_search)
-                )
+        #     if name_description_search:
+        #         search_list = Exercise.objects.filter(
+        #             Q(name__icontains=name_description_search)
+        #             | Q(description__icontains=name_description_search)
+        #         )
 
-            if equipment_type_id is not None:
-                equipment_type = EquipmentType.objects.get(id=equipment_type_id)
-                search_list.filter(equipment_type=equipment_type)
+        #     if equipment_type_id is not None:
+        #         equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        #         search_list.filter(equipment_type=equipment_type)
 
-            if exercise_type_id is not None:
-                exercise_type = ExerciseType.objects.get(id=exercise_type_id)
-                search_list.filter(exercise_type=exercise_type)
+        #     if exercise_type_id is not None:
+        #         exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        #         search_list.filter(exercise_type=exercise_type)
 
-            detail = []
-            for exercise in search_list:
-                detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+        #     detail = []
+        #     for exercise in search_list:
+        #         detail.append(exercise.serialize(detail_level=Detail.DETAIL))
 
-            return JsonResponse({"all_exercises": detail}, status=200)
+        #     return JsonResponse({"all_exercises": detail}, status=200)
 
         # if there are no params passed into data, get all exercises
         else:
-            all_exercises = Exercise.objects.all().order_by("name")
+            all_exercises = Exercise.objects.filter(
+                Q(user=None) | Q(user=user)
+            ).order_by("name")
 
             detail = []
             for exercise in all_exercises:
@@ -223,8 +238,10 @@ def exercises(request):
 
             return JsonResponse({"all_exercises": detail}, status=200)
 
-    # create a new exercise
+    # create a new exercise, only if valid user!
     if request.method == "POST":
+        user = get_object_or_404(User, token=user_token)
+
         name = data.get("name", "").lower()
         if not name:
             return HttpResponseBadRequest("name is required")
@@ -245,6 +262,7 @@ def exercises(request):
             exercise_type = None
 
         exercise = Exercise.objects.create(
+            user=user,
             name=name,
             equipment_type=equipment_type,
             exercise_type=exercise_type,
@@ -255,49 +273,64 @@ def exercises(request):
 
 def exercises_with_id(request, exercise_id):
     data = _find_data(request)
-    try:
-        exercise = Exercise.objects.get(id=exercise_id)
-    except Exercise.DoesNotExist:
-        return JsonResponse({"message": "exercise does not exist"}, status=404)
+
+    exercise = get_object_or_404(Exercise, id=exercise_id)
 
     # get a single exercise
     if request.method == "GET":
         detail = exercise.serialize(detail_level=Detail.DETAIL)
         return JsonResponse({"exercise": detail}, status=200)
 
+    # this data is noly needed for modify or delete
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
     # modify a preexisting exercise
     if request.method == "PUT":
-        equipment_type_id = data.get("equipment_type_id", False)
-        exercise_type_id = data.get("exercise_type_id", False)
 
-        exercise.name = data.get("name", "").lower()
-        exercise.description = data.get("description", False)
+        # if user has permission to modify this entry
+        if exercise.user == user:
 
-        # process equipment type
-        if equipment_type_id is not None:
-            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
-        elif equipment_type_id is None:
-            equipment_type = None
+            equipment_type_id = data.get("equipment_type_id", False)
+            exercise_type_id = data.get("exercise_type_id", False)
 
-        # process exercise type
-        if exercise_type_id is not None:
-            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
-        elif exercise_type_id is None:
-            exercise_type = None
+            exercise.name = data.get("name", "").lower()
+            exercise.description = data.get("description", False)
 
-        exercise.equipment_type = equipment_type
-        exercise.exercise_type = exercise_type
+            # process equipment type
+            if equipment_type_id is not None:
+                equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+            elif equipment_type_id is None:
+                equipment_type = None
 
-        exercise.save()
+            # process exercise type
+            if exercise_type_id is not None:
+                exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+            elif exercise_type_id is None:
+                exercise_type = None
 
-        return JsonResponse({"exercise_id": exercise.id}, status=200)
+            exercise.equipment_type = equipment_type
+            exercise.exercise_type = exercise_type
+
+            exercise.save()
+
+            return JsonResponse({"exercise_id": exercise.id}, status=200)
+
+        else:
+            return JsonResponse({"message": "change unsuccessful"})
 
     # delete a single exercise
     if request.method == "DELETE":
-        exercise.delete()
-        return JsonResponse(
-            {"message": f"exercise {exercise_id} has been deleted"}, status=202
-        )
+
+        # if user has permission to delete this entry
+        if exercise.user == user:
+
+            exercise.delete()
+            return JsonResponse(
+                {"message": f"exercise {exercise_id} has been deleted"}, status=202
+            )
+        else:
+            return JsonResponse({"message": "delete unsuccessful"})
 
 
 def get_all_workout_templates(request):
