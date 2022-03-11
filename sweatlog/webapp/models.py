@@ -187,7 +187,6 @@ class Block(models.Model, NameableMixin):
     name = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -195,15 +194,8 @@ class Block(models.Model, NameableMixin):
         null=True,
     )
 
-    @property
-    def is_template(self):
-        return self.template is None
-
     def __str__(self):
-        if self.is_template:
-            return self.name + " [TEMPLATE]"
-        else:
-            return self.name
+        return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
         d = {}
@@ -245,7 +237,6 @@ class Workout(models.Model, NameableMixin):
     name = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -253,15 +244,8 @@ class Workout(models.Model, NameableMixin):
         null=True,
     )
 
-    @property
-    def is_template(self):
-        return self.template is None
-
     def __str__(self):
-        if self.is_template:
-            return self.name + " [TEMPLATE]"
-        else:
-            return self.name
+        return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
         d = {}
