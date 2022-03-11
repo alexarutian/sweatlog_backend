@@ -7,6 +7,7 @@ let Other = {
   <div id="other-page-options" v-if="!showOtherPageContent">
     <div @click="otherPageContent = 'exercisetypes'" @click="showOtherPageContent = true">Exercise Types</div>
     <div>Equipment Types</div>
+    <div>You are logged in as [[userEmail]]</div>
     <div v-if="this.$store.state.userToken" @click="logoutUser">LOGOUT OF SWEATLOG</div>
   </div>
   <div id="other-page-content" v-if="showOtherPageContent">
@@ -28,7 +29,11 @@ let Other = {
       this.$store.dispatch("logoutUser");
     },
   },
-  computed: {},
+  computed: {
+    userEmail() {
+      return this.$store.state.userEmail;
+    },
+  },
   created() {},
 };
 export { Other };

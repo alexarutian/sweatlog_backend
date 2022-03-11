@@ -15,6 +15,15 @@ function getCookie(name) {
   return cookieValue;
 }
 
+// used for email input fields
+function validateEmail(email) {
+  return email
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+}
+
 async function postJSONFetch(url, body, csrftoken = null) {
   let headers = new Headers();
   headers.append("Content-Type", "application/json");

@@ -1,30 +1,9 @@
 {% extends "base_generic.html" %} {% block content %} {% load static %}
 <body>
   <div id="vue-app">
-    <div id="website-login-pane">
-      <div class="website-login-alert" v-if="this.$store.state.userToken">
-        <p>
-          Hello
-          <innerText>[[userEmail]]</innerText>
-          ! You are logged in and can customize Sweatlog to your liking.
-        </p><innerText></innerText>[[userToken]]</innerText>
-        <div class="close-banner-alert">&times;</div>
-      </div>
-      <p
-        v-if="!this.$store.state.userToken"
-        @click="this.$store.commit('toggleLoginScreen')"
-        class="website-login-alert"
-      >
-        Sweatlog is better when you make it yours. Click here to create an
-        account or login now.
-      </p>
-    </div>
-
-    <div id="main-content" v-bind:style="{height: contentHeight}">
+    <div id="main-content">
       {% csrf_token %}
-      <loginorcreateuser
-        v-if="this.$store.state.showLoginScreen"
-      ></loginorcreateuser>
+      <loginorcreateuser v-if="page == 'login'"></loginorcreateuser>
       <agenda v-if="page == 'agenda'"></agenda>
       <workouts v-else-if="page == 'workouts'"></workouts>
       <blocks v-else-if="page == 'blocks'"></blocks>
@@ -75,21 +54,15 @@
     methods: {},
     computed: {
       page() {
-        if (!this.$store.state.showLoginScreen) {
+        // CHANGE OUT TO OTHER LOGIC
+        if (this.$store.state.userToken) {
           return this.$store.state.currentPage;
+        } else {
+          return "login";
         }
-      },
-      userEmail() {
-        return this.$store.state.userEmail;
-      },
-      userToken() {
-        return this.$store.state.userToken;
       },
     },
     created() {
-      this.$store.commit("updateCsrfToken", { data: getCookie("csrftoken") });
-      this.$store.dispatch("fetchExerciseTypes");
-      this.$store.dispatch("fetchEquipmentTypes");
       this.$store.dispatch("getUserEmail", {
         data: this.$store.state.userToken,
       });
@@ -162,36 +135,50 @@
       updateEquipmentTypes(state, payload) {
         state.equipmentTypes = payload.data;
       },
-      // combine below to "update page load data"
-      updateCsrfToken(state, payload) {
-        state.csrfToken = payload.data;
+      updateTokens(state, payload) {
+        state.csrfToken = payload.csrfToken;
+        state.userToken = payload.userToken;
       },
-      updateUserToken(state, payload) {
-        state.userToken = payload.token;
-      },
-      updateUserEmail(state, payload) {
+      updateUserData(state, payload) {
         state.userEmail = payload.email;
+        state.userToken = payload.token;
       },
       updateMessageData(state, payload) {
         state.statusMessage = payload.message;
-        let level = ""
+        let level = "";
         if (payload.code < 300) {
-          level = "success"
-        } else if (payload.code >=400) {
-          level = "error"
+          level = "success";
+        } else if (payload.code >= 400) {
+          level = "error";
+        } else {
+          level = "info";
         }
-        else {
-          level = "info"
-        }
-        state.statusLevel = level
-      }
+        state.statusLevel = level;
+      },
+      clearMessageData(state) {
+        state.statusMessage = "";
+        state.statusLevel = "";
+      },
     },
     // actions gets context that includes state and a commit object
     // could also pass a payload
     actions: {
       async fetchSessions(context) {
-        const response = await getJSONFetch("/webapp/get_scheduled_sessions", {
+        context.commit("clearMessageData");
+        const response = await getJSONFetch("/webapp/sessions", {
           user_token: context.state.userToken,
+        });
+        let message = "";
+        if (response._status == 200) {
+          message = "success";
+        } else if (response._status == 404) {
+          message = "no sessions found";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
         });
         let payload = { data: response.scheduled_sessions };
         context.commit("updateSessions", payload);
@@ -201,6 +188,7 @@
           "/webapp/get_all_workout_templates",
           { user_token: context.state.userToken }
         );
+        console.log(response.all_workout_templates);
         let payload = { data: response.all_workout_templates };
         context.commit("updateWorkoutTemplates", payload);
       },
@@ -250,13 +238,28 @@
         context.commit("updateEquipmentTypes", payload);
       },
       async createNewExercise(context, payload) {
+        context.commit("clearMessageData");
         const response = await postJSONFetch(
           "/webapp/exercises/",
           payload.body,
           context.state.csrfToken
         );
-        context.commit("toggleAddingExerciseWindow");
-        store.dispatch("fetchExercises");
+        let message = "";
+        if (response._status == 201) {
+          message = "success";
+        } else if (response._status == 409) {
+          message = "there is already an exercise by this name";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
+        if (response._status == 201) {
+          context.commit("toggleAddingExerciseWindow");
+          store.dispatch("fetchExercises");
+        }
       },
       async deleteExercise(context, payload) {
         const response = await deleteJSONFetch(
@@ -279,39 +282,63 @@
       },
       // create diff responses to handle success or failure!
       async createNewUser(context, payload) {
+        context.commit("clearMessageData");
         const response = await postJSONFetch(
           "/webapp/users/",
           payload.body,
           context.state.csrfToken
         );
-        context.commit("updateUserToken", { token: response.token });
-        context.commit("toggleLoginScreen");
+        let message = "";
+        if (response._status == 200) {
+          message = "account creation success";
+        } else if (response._status == 404 || response.status == 403) {
+          message = "account creation unsuccessful";
+        } else if (response._status == 409) {
+          message = "an account with this email address already exists";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
+
+        if (response._status == 200) {
+          context.commit("updateUserData", {
+            email: response.email,
+            token: response.token,
+          });
+        }
       },
       async loginUser(context, payload) {
+        context.commit("clearMessageData");
         const response = await postJSONFetch(
           "/webapp/users/login/",
           payload.body,
           context.state.csrfToken
         );
-        console.log(response)
-        
+
         // handling message right next to where we handle the data - immediately
         // INTERNAL ERROR - 500 - server could stick message in response - hybrid approach
-        let message = ""
+        let message = "";
         if (response._status == 200) {
-          message = "login success"
+          message = "login success";
         } else if (response._status == 404 || response.status == 403) {
-          message = "login unsuccessful"
+          message = "login unsuccessful";
         } else {
-          message = "an error occurred - please try again"
+          message = "an error occurred - please try again";
         }
-        context.commit("updateMessageData", {message, code: response._status})
-
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
 
         if (response._status == 200) {
-          context.commit("updateUserToken", {token: response.token});
-          context.commit("updateUserEmail", { email: response.email });
-          context.commit("toggleLoginScreen")}
+          context.commit("updateUserData", {
+            email: response.email,
+            token: response.token,
+          });
+        }
       },
       async logoutUser(context) {
         const response = await postJSONFetch(
@@ -319,27 +346,31 @@
           {},
           context.state.csrfToken
         );
-        context.commit("updateUserToken", {
-          token: response.token,
+        context.commit("updateUserData", {
+          email: "",
+          token: "",
         });
-        context.commit("updateUserEmail", { email: "" });
-        context.commit("toggleLoginScreen");
       },
+
       async getUserEmail(context, payload) {
         const response = await postJSONFetch(
           "/webapp/users/get_user_email/",
           payload.body,
           context.state.csrfToken
         );
-        context.commit("updateUserEmail", { email: response.email });
+        context.commit("updateUserData", {
+          email: response.email,
+          token: context.state.userToken,
+        });
       },
     },
   });
   myApp.use(store);
 
   // make sure token is ready before app is mounted
-  const token = document.getElementById("user-token").dataset.token;
-  store.commit("updateUserToken", { token });
+  const userToken = document.getElementById("user-token").dataset.token;
+  const csrfToken = getCookie("csrftoken");
+  store.commit("updateTokens", { userToken, csrfToken });
 
   myApp.mount("#vue-app");
 </script>
@@ -351,31 +382,8 @@
     flex-direction: column;
   }
 
-  #website-login-pane {
-    background-color: rgb(221, 210, 47);
-    height: 4vh;
-    text-align: center;
-  }
-
-  #website-login-pane p {
-    font-size: 9pt;
-  }
-
-  .close-banner-alert {
-    font-size: 22px;
-    padding: 5px;
-  }
-
-  .website-login-alert {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-  }
-
   #main-content {
-    height: 82vh;
+    height: 86vh;
     flex-grow: 1;
     flex-shrink: 0;
     overflow-y: auto;

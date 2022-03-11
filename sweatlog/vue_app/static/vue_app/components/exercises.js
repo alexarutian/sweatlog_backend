@@ -62,6 +62,9 @@ let Exercises = {
   },
   created() {
     this.$store.dispatch("fetchExercises");
+    // put these on the FIRST LANDING PAGE
+    this.$store.dispatch("fetchExerciseTypes");
+    this.$store.dispatch("fetchEquipmentTypes");
   },
 };
 export { Exercises };

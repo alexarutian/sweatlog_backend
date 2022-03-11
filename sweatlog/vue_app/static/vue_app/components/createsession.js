@@ -1,15 +1,12 @@
-let CreateExercise = {
+let CreateSession = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div class="modal-title">NEW EXERCISE</div>
-  <input v-model="exerciseName" type="text" autocomplete="off" placeholder="name*" class="form-cluster"/>
-  <input v-model="exerciseDescription" type="text" autocomplete="off" placeholder="description" class="form-cluster"/>
-  
+  <div class="modal-title">SCHEDULE A WORKOUT</div>
   <div class="form-cluster">
-    <label for="exercise-type-select">exercise type</label>
-    <select id="exercise-type-select" @change="selectExerciseType($event)">
+    <label for="workout-template-select">workout</label>
+    <select id="workout-template-select" @change="selectWorkoutTemplate($event)">
       <option>none (default)</option>
-      <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
+      <option v-for="wt in workoutTemplates" :value="wt.id">[[et.name]]</option>
     </select>
   </div>
 
@@ -21,7 +18,7 @@ let CreateExercise = {
     </select>
   </div>
   
-<button id="add-exercise-button" @click="createNewExercise">ADD EXERCISE</button>
+<button id="add-session-button" @click="createNewSession">SCHEDULE</button>
 <div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
 
   `,
@@ -29,18 +26,13 @@ let CreateExercise = {
   components: {},
   data() {
     return {
-      exerciseName: "",
-      exerciseDescription: "",
-      equipmentTypeId: null,
-      exerciseTypeId: null,
+      workoutId: null,
+      date: null,
     };
   },
   methods: {
-    selectExerciseType(e) {
+    selectWorkoutTemplate(e) {
       this.exerciseTypeId = e.target.value;
-    },
-    selectEquipmentType(e) {
-      this.equipmentTypeId = e.target.value;
     },
     createNewExercise() {
       const body = {
@@ -55,16 +47,10 @@ let CreateExercise = {
     },
   },
   computed: {
-    exerciseTypes() {
-      return this.$store.state.exerciseTypes;
-    },
-    equipmentTypes() {
-      return this.$store.state.equipmentTypes;
-    },
-    message() {
-      return this.$store.state.statusMessage;
+    workoutTemplates() {
+      return this.$store.state.workoutTemplates;
     },
   },
   created() {},
 };
-export { CreateExercise };
+export { CreateSession };

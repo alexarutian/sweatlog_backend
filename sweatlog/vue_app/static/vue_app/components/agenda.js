@@ -9,6 +9,7 @@ let Agenda = {
       <div class="page-top-option">Option 2</div>
       <div class="page-top-option">Option 3</div>
     </div>
+    <div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
     <div v-for="date in dateSessionList" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
       <p class="agenda-date-header">[[date.dateString]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
@@ -69,6 +70,9 @@ let Agenda = {
     todaysDate() {
       const today = new Date();
       return formatDatetoYYYYMMDD(today);
+    },
+    message() {
+      return this.$store.state.statusMessage;
     },
   },
   created() {

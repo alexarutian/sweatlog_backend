@@ -8,6 +8,7 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 
 from .models import (
@@ -57,7 +58,7 @@ def users(request):
 
         # default usernames to email provided, all lowercase
         try:
-            user = User.objects.create(username=email, email=email, password=password)
+            user = User.objects.create_user(email, email, password)
             request.session["user_token"] = str(user.token)
             return JsonResponse(
                 {
@@ -78,6 +79,7 @@ def users(request):
 
 def login_user(request):
     data = _find_data(request)
+    print(data)
     if request.method == "POST":
         email = data.get("email", False).lower()
         password = data.get("password", False)
@@ -85,8 +87,11 @@ def login_user(request):
             return HttpResponseBadRequest("email is required")
         if not password:
             return HttpResponseBadRequest("password is required")
+    # try:
+    #     user = User.objects.get(email=email, password=password)
+    #     request.session["user_token"] = str(user.token)
     try:
-        user = User.objects.get(username=email, password=password)
+        user = authenticate(username=email, password=password)
         request.session["user_token"] = str(user.token)
         return JsonResponse({"email": email, "token": user.token}, status=200)
     except User.DoesNotExist:
@@ -98,7 +103,6 @@ def login_user(request):
 def logout_user(request):
     # deletes all session data, including user info
     request.session.flush()
-    print(request.session.items())
     return JsonResponse({"message": "user has been logged out"})
 
 
@@ -109,20 +113,26 @@ def get_user_email(request):
         try:
             user = User.objects.get(token=user_token)
             return JsonResponse(
-                {"email": user.email, "token": user.token, "message": "success!"},
+                {"email": user.email, "token": user.token},
                 status=200,
             )
         except User.DoesNotExist:
-            return JsonResponse({"message": "cannot find user"}, status=404)
+            return JsonResponse({}, status=404)
     else:
         return JsonResponse({"message": "user token not available"})
 
 
 def exercise_types(request):
     data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
     if request.method == "GET":
 
-        all_exercise_types = ExerciseType.objects.all().order_by("id")
+        all_exercise_types = ExerciseType.objects.filter(
+            Q(user=None) | Q(user=user)
+        ).order_by("id")
 
         detail = []
         for exercise_type in all_exercise_types:
@@ -132,12 +142,16 @@ def exercise_types(request):
 
     if request.method == "POST":
         name = data.get("name", "").lower()
-        exercise_type = ExerciseType.objects.create(name=name)
+        exercise_type = ExerciseType.objects.create(name=name, user=user)
         return JsonResponse({"exercise_type_id": exercise_type.id}, status=201)
 
 
 def exercise_types_with_id(request, exercise_type_id):
     data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
     try:
         exercise_type = ExerciseType.objects.get(id=exercise_type_id)
     except ExerciseType.DoesNotExist:
@@ -151,28 +165,43 @@ def exercise_types_with_id(request, exercise_type_id):
     # edit an exercisetype
     if request.method == "PUT":
         exercise_type.name = data.get("name", "").lower()
+        exercise_type.user = user
         exercise_type.save()
         return JsonResponse({"exercise_type_id": exercise_type.id}, status=200)
 
     # delete an exercisetype
     if request.method == "DELETE":
-        exercise_type.delete()
-        return JsonResponse(
-            {"message": f"exercise type {exercise_type_id} has been deleted"},
-            status=202,
-        )
+        if exercise_type.user == user:
+            exercise_type.delete()
+            return JsonResponse(
+                {"message": f"exercise type {exercise_type_id} has been deleted"},
+                status=202,
+            )
+        else:
+            return JsonResponse({"message": "cannot delete this exercise"}, status=403)
 
 
 def equipment_types(request):
     data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
     if request.method == "GET":
-        all_equipment_types = EquipmentType.objects.all().order_by("id")
+        all_equipment_types = EquipmentType.objects.filter(
+            Q(user=None) | Q(user=user)
+        ).order_by("id")
 
         detail = []
         for equipment_type in all_equipment_types:
             detail.append(equipment_type.serialize(detail_level=Detail.DETAIL))
 
         return JsonResponse({"all_equipment_types": detail}, status=200)
+
+    if request.method == "POST":
+        name = data.get("name", "").lower()
+        equipment_type = EquipmentType.objects.create(name=name, user=user)
+        return JsonResponse({"equipment_type_id": equipment_type.id}, status=201)
 
 
 def equipment_types_with_id(request, equipment_type_id):
@@ -181,23 +210,16 @@ def equipment_types_with_id(request, equipment_type_id):
 
 def exercises(request):
     data = _find_data(request)
-    print(data)
 
-    # obtain user info from token, if possible
-    user_token = data.get("user_token", "")
-    if user_token is ("" or None):
-        return JsonResponse({}, status=403)
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
 
     # get all exercises
     if request.method == "GET":
 
-        try:
-            user = User.objects.get(token=user_token)
-        except User.DoesNotExist:
-            user = None
-
         # if there are search params
         # if data:
+
         #     name_description_search = data.get("name_description_search", "").lower()
         #     equipment_type_id = data.get("equipment_type_id", False)
         #     exercise_type_id = data.get("exercise_type_id", False)
@@ -227,16 +249,15 @@ def exercises(request):
         #     return JsonResponse({"all_exercises": detail}, status=200)
 
         # if there are no params passed into data, get all exercises
-        else:
-            all_exercises = Exercise.objects.filter(
-                Q(user=None) | Q(user=user)
-            ).order_by("name")
+        all_exercises = Exercise.objects.filter(Q(user=None) | Q(user=user)).order_by(
+            "name"
+        )
 
-            detail = []
-            for exercise in all_exercises:
-                detail.append(exercise.serialize(detail_level=Detail.DETAIL))
+        detail = []
+        for exercise in all_exercises:
+            detail.append(exercise.serialize(detail_level=Detail.DETAIL))
 
-            return JsonResponse({"all_exercises": detail}, status=200)
+        return JsonResponse({"all_exercises": detail}, status=200)
 
     # create a new exercise, only if valid user!
     if request.method == "POST":
@@ -261,18 +282,24 @@ def exercises(request):
         elif exercise_type_id is None:
             exercise_type = None
 
-        exercise = Exercise.objects.create(
-            user=user,
-            name=name,
-            equipment_type=equipment_type,
-            exercise_type=exercise_type,
-            description=description,
-        )
-        return JsonResponse({"exercise_id": exercise.id}, status=201)
+        try:
+            exercise = Exercise.objects.create(
+                user=user,
+                name=name,
+                equipment_type=equipment_type,
+                exercise_type=exercise_type,
+                description=description,
+            )
+            return JsonResponse({"exercise_id": exercise.id}, status=201)
+        except IntegrityError:
+            return JsonResponse({}, status=409)
 
 
 def exercises_with_id(request, exercise_id):
     data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
 
     exercise = get_object_or_404(Exercise, id=exercise_id)
 
@@ -280,10 +307,6 @@ def exercises_with_id(request, exercise_id):
     if request.method == "GET":
         detail = exercise.serialize(detail_level=Detail.DETAIL)
         return JsonResponse({"exercise": detail}, status=200)
-
-    # this data is noly needed for modify or delete
-    user_token = data.get("user_token", False)
-    user = get_object_or_404(User, token=user_token)
 
     # modify a preexisting exercise
     if request.method == "PUT":
@@ -317,7 +340,7 @@ def exercises_with_id(request, exercise_id):
             return JsonResponse({"exercise_id": exercise.id}, status=200)
 
         else:
-            return JsonResponse({"message": "change unsuccessful"})
+            return JsonResponse({"message": "cannot modify this exercise"}, status=403)
 
     # delete a single exercise
     if request.method == "DELETE":
@@ -330,14 +353,20 @@ def exercises_with_id(request, exercise_id):
                 {"message": f"exercise {exercise_id} has been deleted"}, status=202
             )
         else:
-            return JsonResponse({"message": "delete unsuccessful"})
+            return JsonResponse({"message": "cannot modify this exercise"}, status=403)
 
 
 def get_all_workout_templates(request):
     data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
     if request.method == "GET":
         all_workout_templates = (
-            Workout.objects.all().filter(template=None).order_by("-date_modified")
+            Workout.objects.filter(Q(user=None) | Q(user=user))
+            .filter(template=None)
+            .order_by("-date_modified")
         )
         if len(all_workout_templates) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
@@ -349,11 +378,19 @@ def get_all_workout_templates(request):
         return JsonResponse({"all_workout_templates": detail}, status=200)
 
 
-def get_scheduled_sessions(request):
+def sessions(request):
     data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
     if request.method == "GET":
         today = timezone.now()
-        scheduled_sessions = Session.objects.filter(date__gte=today).order_by("date")
+        scheduled_sessions = (
+            Session.objects.filter(date__gte=today)
+            .filter(workout__user=user)  # MAKE SURE THIS WORKS!
+            .order_by("date")
+        )
 
         if len(scheduled_sessions) < 1:
             return JsonResponse({"message": "no scheduled sessions"}, status=404)
@@ -363,3 +400,12 @@ def get_scheduled_sessions(request):
             detail.append(session.serialize(detail_level=Detail.DETAIL))
 
         return JsonResponse({"scheduled_sessions": detail}, status=200)
+
+    if request.method == "POST":
+        date = data.get("date", False)
+        workout_id = data.get("workout_id", False)
+
+        workout = get_object_or_404(Workout, id=workout_id)
+        session = Session.objects.create(workout=workout, date=date)
+
+        return JsonResponse({"session_id": session.id}, status=201)
