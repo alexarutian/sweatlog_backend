@@ -173,7 +173,6 @@
       "name": "curls",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": null,
       "user": null
     }
   },
@@ -184,29 +183,6 @@
       "name": "jogging intervals",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": null,
-      "user": null
-    }
-  },
-  {
-    "model": "webapp.block",
-    "pk": 3,
-    "fields": {
-      "name": "curls",
-      "date_created": "2022-02-21T07:12:53.923Z",
-      "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": 1,
-      "user": null
-    }
-  },
-  {
-    "model": "webapp.block",
-    "pk": 4,
-    "fields": {
-      "name": "jogging intervals",
-      "date_created": "2022-02-21T07:12:53.923Z",
-      "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": 2,
       "user": null
     }
   },
@@ -216,7 +192,7 @@
     "fields": {
       "exercise": ["jogging"],
       "exercise_order": 1,
-      "block": 4,
+      "block": 2,
       "stat": 3
     }
   },
@@ -226,7 +202,7 @@
     "fields": {
       "exercise": ["rest"],
       "exercise_order": 2,
-      "block": 4,
+      "block": 2,
       "stat": 4
     }
   },
@@ -257,7 +233,6 @@
       "name": "My curls only workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": null,
       "user": null
     }
   },
@@ -268,29 +243,6 @@
       "name": "Tuesday's workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": null,
-      "user": null
-    }
-  },
-  {
-    "model": "webapp.workout",
-    "pk": 3,
-    "fields": {
-      "name": "My curls only workout",
-      "date_created": "2022-02-21T07:17:48.398Z",
-      "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": 1,
-      "user": null
-    }
-  },
-  {
-    "model": "webapp.workout",
-    "pk": 4,
-    "fields": {
-      "name": "Tuesday's workout",
-      "date_created": "2022-02-21T07:17:48.398Z",
-      "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": 2,
       "user": null
     }
   },
@@ -299,8 +251,8 @@
     "model": "webapp.workoutblock",
     "pk": 1,
     "fields": {
-      "workout": 3,
-      "block": 3,
+      "workout": 1,
+      "block": 1,
       "block_quantity": 3,
       "block_order": 1
     }
@@ -309,8 +261,8 @@
     "model": "webapp.workoutblock",
     "pk": 2,
     "fields": {
-      "workout": 4,
-      "block": 3,
+      "workout": 2,
+      "block": 1,
       "block_quantity": 2,
       "block_order": 1
     }
@@ -319,8 +271,8 @@
     "model": "webapp.workoutblock",
     "pk": 3,
     "fields": {
-      "workout": 4,
-      "block": 4,
+      "workout": 2,
+      "block": 2,
       "block_quantity": 10,
       "block_order": 2
     }
@@ -330,7 +282,7 @@
     "pk": 1,
     "fields": {
       "date": "2022-02-28",
-      "workout": 3
+      "workout": 1
     }
   }
 ]

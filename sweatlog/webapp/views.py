@@ -19,6 +19,7 @@ from .models import (
     Session,
     EquipmentType,
     ExerciseType,
+    Block,
 )
 
 from datetime import datetime
@@ -79,7 +80,6 @@ def users(request):
 
 def login_user(request):
     data = _find_data(request)
-    print(data)
     if request.method == "POST":
         email = data.get("email", False).lower()
         password = data.get("password", False)
@@ -356,26 +356,46 @@ def exercises_with_id(request, exercise_id):
             return JsonResponse({"message": "cannot modify this exercise"}, status=403)
 
 
-def get_all_workout_templates(request):
+def blocks(request):
     data = _find_data(request)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_workout_templates = (
-            Workout.objects.filter(Q(user=None) | Q(user=user))
-            .filter(template=None)
-            .order_by("-date_modified")
+        all_blocks = Block.objects.filter(Q(user=None) | Q(user=user)).order_by(
+            "-date_modified"
         )
-        if len(all_workout_templates) < 1:
+
+        if len(all_blocks) < 1:
+            return JsonResponse({"message": "no blocks yet!"}, status=404)
+
+        detail = []
+        for workout in all_blocks:
+            detail.append(workout.serialize(detail_level=Detail.DETAIL))
+
+        return JsonResponse({"all_blocks": detail}, status=200)
+
+
+def workouts(request):
+    data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
+    if request.method == "GET":
+        all_workouts = Workout.objects.filter(Q(user=None) | Q(user=user)).order_by(
+            "-date_modified"
+        )
+
+        if len(all_workouts) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
 
         detail = []
-        for workout in all_workout_templates:
+        for workout in all_workouts:
             detail.append(workout.serialize(detail_level=Detail.DETAIL))
 
-        return JsonResponse({"all_workout_templates": detail}, status=200)
+        return JsonResponse({"all_workouts": detail}, status=200)
 
 
 def sessions(request):

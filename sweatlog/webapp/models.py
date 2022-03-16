@@ -66,7 +66,7 @@ class ExerciseTypeManager(models.Manager):
 
 # e.g. Strength, Cardio, Stretching, Other
 class ExerciseType(models.Model, NameableMixin):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -75,6 +75,9 @@ class ExerciseType(models.Model, NameableMixin):
     )
 
     objects = ExerciseTypeManager()
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
@@ -93,7 +96,7 @@ class EquipmentTypeManager(models.Manager):
 
 # e.g. Barbell, Dumbbell, Machine, Other
 class EquipmentType(models.Model, NameableMixin):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -102,6 +105,9 @@ class EquipmentType(models.Model, NameableMixin):
     )
 
     objects = EquipmentTypeManager()
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
@@ -119,7 +125,7 @@ class ExerciseManager(models.Manager):
 
 
 class Exercise(models.Model, NameableMixin):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=200, blank=True)
     exercise_type = models.ForeignKey(
         ExerciseType,
@@ -141,6 +147,9 @@ class Exercise(models.Model, NameableMixin):
     )
 
     objects = ExerciseManager()
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
@@ -194,6 +203,9 @@ class Block(models.Model, NameableMixin):
         null=True,
     )
 
+    class Meta:
+        unique_together = ["name", "user"]
+
     def __str__(self):
         return self.name
 
@@ -243,6 +255,9 @@ class Workout(models.Model, NameableMixin):
         related_name="workouts",
         null=True,
     )
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name

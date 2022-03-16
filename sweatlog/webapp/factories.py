@@ -163,14 +163,6 @@ class SingleUserBlockExerciseFactory(DjangoModelFactory):
     stat = factory.Iterator(Stat.objects.all())
 
 
-class SingleUserWorkoutTemplateFactory(DjangoModelFactory):
-    class Meta:
-        model = Workout
-
-    name = factory.Faker("sentence", nb_words=random.randint(1, 5))
-    user = User.objects.get(id=2)
-
-
 class SingleUserWorkoutFactory(DjangoModelFactory):
     class Meta:
         model = Workout

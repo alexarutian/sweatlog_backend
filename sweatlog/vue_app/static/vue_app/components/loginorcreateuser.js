@@ -14,7 +14,6 @@ let LoginOrCreateUser = {
           <button @click="createNewUser">SUBMIT</button>
           <div class="alert-message">[[preServerMessage]]</div>
           <div class="alert-message">[[message]]</div>
-          <div>[[debounceID]]</div>
       </div>
       <div class="login-option" v-if="loginScreen == 'login'">
         <input type="text" v-model="emailLogin" v-on:keyup="checkEmail" @click="selectAll($event)" placeholder="email address"/>

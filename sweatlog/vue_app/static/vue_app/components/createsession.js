@@ -2,20 +2,18 @@ let CreateSession = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div class="modal-title">SCHEDULE A WORKOUT</div>
+
   <div class="form-cluster">
-    <label for="workout-template-select">workout</label>
-    <select id="workout-template-select" @change="selectWorkoutTemplate($event)">
-      <option>none (default)</option>
-      <option v-for="wt in workoutTemplates" :value="wt.id">[[et.name]]</option>
-    </select>
+    <label for="workout-select2">workout</label>
+    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout2($event)" >
+    <datalist id="workout_list">
+    <option v-for="workout in workouts" :data-id="workout.id" :value="workout.name"></option>
+    </datalist>
   </div>
 
   <div class="form-cluster">
-    <label for="equipment-type-select">equipment type</label>
-    <select id="equipment-type-select" @change="selectEquipmentType($event)">
-      <option>none (default)</option>
-      <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
-    </select>
+    <label for="date-select">date</label>
+    <input id="date-select" type="date" @change="selectDate($event)">
   </div>
   
 <button id="add-session-button" @click="createNewSession">SCHEDULE</button>
@@ -31,26 +29,42 @@ let CreateSession = {
     };
   },
   methods: {
-    selectWorkoutTemplate(e) {
-      this.exerciseTypeId = e.target.value;
+    selectWorkout(e) {
+      this.workoutId = e.target.value;
     },
-    createNewExercise() {
+    selectWorkout2(e) {
+      let workoutName = e.target.value;
+      let id = document.querySelector(
+        `#workout_list option[value='${workoutName}']`
+      ).dataset.id;
+      console.log(id);
+      // disable schedule button if workoutID not found
+      this.workoutId = id;
+    },
+    selectDate(e) {
+      this.date = e.target.value;
+    },
+    createNewSession() {
       const body = {
-        name: this.exerciseName,
-        description: this.exerciseDescription,
-        equipment_type_id: this.equipmentTypeId,
-        exercise_type_id: this.exerciseTypeId,
+        workout_id: this.workoutId,
+        date: this.date,
         user_token: this.$store.state.userToken,
       };
 
-      this.$store.dispatch("createNewExercise", { body });
+      this.$store.dispatch("createNewSession", { body });
     },
   },
   computed: {
-    workoutTemplates() {
-      return this.$store.state.workoutTemplates;
+    workouts() {
+      return this.$store.state.workouts;
+    },
+    todaysDate() {
+      const today = new Date();
+      return formatDatetoYYYYMMDD(today);
     },
   },
-  created() {},
+  created() {
+    this.$store.dispatch("fetchWorkouts");
+  },
 };
 export { CreateSession };

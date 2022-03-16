@@ -4,10 +4,10 @@ let WorkoutList = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div class="workouts-list">
-    <div v-if="!showDetail" v-for="workout in workoutTemplates" class="workout-summarized"> 
+    <div v-if="!showDetail" v-for="workout in workouts" class="workout-summarized"> 
         <p>[[ workout.name]] </p> 
     </div>
-    <div v-else v-for="workout in workoutTemplates" class="workout-detailed"> 
+    <div v-else v-for="workout in workouts" class="workout-detailed"> 
         <p class="workout-name">[[ workout.name]]</p>
         <div v-for="block in workout.blocks" class="workout-detailed-block">
             <div class="block-title-info">    
@@ -39,12 +39,12 @@ let WorkoutList = {
     viewName() {
       return this.detailToggle ? "Summary" : "Detail";
     },
-    workoutTemplates() {
-      return this.$store.state.workoutTemplates;
+    workouts() {
+      return this.$store.state.workouts;
     },
   },
   created() {
-    this.$store.dispatch("fetchWorkoutTemplates");
+    this.$store.dispatch("fetchWorkouts");
   },
 };
 export { WorkoutList };

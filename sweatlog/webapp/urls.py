@@ -12,8 +12,9 @@ urlpatterns = [
     path("exercisetypes/", views.exercise_types),
     path("exercisetypes/<int:exercise_type_id>/", views.exercise_types_with_id),
     path("sessions/", views.sessions),
-    # old URL patterns
-    path("get_all_workout_templates/", views.get_all_workout_templates),
+    path("workouts/", views.workouts),
+    path("blocks/", views.blocks),
+    # user based paths
     path("users/", views.users),
     path("users/login/", views.login_user),
     path("users/logout/", views.logout_user),
