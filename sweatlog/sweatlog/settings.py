@@ -42,6 +42,14 @@ if not DEPLOYED:
     )
     MAIN_HOST = "http://127.0.0.1:8000"
 
+elif DEBUG:
+    ALLOWED_HOSTS.extend(
+        [
+            "sweatlog-staging.herokuapp.com",
+        ]
+    )
+    MAIN_HOST = "https://sweatlog-staging.herokuapp.com"
+
 # Application definition
 
 INSTALLED_APPS = [
