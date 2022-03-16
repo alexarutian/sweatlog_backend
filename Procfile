@@ -1,2 +1,2 @@
-release: python3 soundengineering/manage.py migrate
-web: gunicorn --chdir soundengineering soundengineering.wsgi
+release: python3 sweatlog/manage.py migrate
+web: gunicorn --chdir sweatlog sweatlog.wsgi
