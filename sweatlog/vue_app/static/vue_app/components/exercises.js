@@ -39,7 +39,7 @@ let Exercises = {
     </div>
     <div v-if="this.$store.state.exerciseDetailWindow" class="modal-overlay"
     @click="this.$store.commit('toggleExerciseDetailWindow')" @click="this.$store.commit('turnoffExerciseEditDisplay')"></div>
-  </div>
+    </div>
   `,
 
   components: {
@@ -62,6 +62,9 @@ let Exercises = {
   },
   created() {
     this.$store.dispatch("fetchExercises");
+    // put these on the FIRST LANDING PAGE
+    this.$store.dispatch("fetchExerciseTypes");
+    this.$store.dispatch("fetchEquipmentTypes");
   },
 };
 export { Exercises };

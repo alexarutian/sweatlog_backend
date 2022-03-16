@@ -3,6 +3,7 @@
   <div id="vue-app">
     <div id="main-content">
       {% csrf_token %}
+      <loginorcreateuser v-if="page == 'login'"></loginorcreateuser>
       <agenda v-if="page == 'agenda'"></agenda>
       <workouts v-else-if="page == 'workouts'"></workouts>
       <blocks v-else-if="page == 'blocks'"></blocks>
@@ -14,6 +15,7 @@
         <footertoolbar :menuitems="menuitems"></footertoolbar>
       </div>
     </div>
+    <div id="user-token" data-token="{{user_token}}"></div>
   </div>
 </body>
 <script type="module">
@@ -24,6 +26,7 @@
   import { Exercises } from "{% static 'vue_app/components/exercises.js' %}";
   import { Other } from "{% static 'vue_app/components/other.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/footertoolbar.js' %}";
+  import { LoginOrCreateUser } from "{% static 'vue_app/components/loginorcreateuser.js' %}";
   let { createApp } = Vue; // import multiple things from Vue
 
   const myApp = createApp({
@@ -35,11 +38,10 @@
       exercises: Exercises,
       other: Other,
       footertoolbar: FooterToolbar,
+      loginorcreateuser: LoginOrCreateUser,
     },
     data() {
       return {
-        myTitle: "Hello Vue!",
-        mySubtitle: "<h3>Hello again!</h3>",
         menuitems: [
           { id: 1, name: "Agenda", page: "agenda" },
           { id: 2, name: "Workouts", page: "workouts" },
@@ -52,13 +54,18 @@
     methods: {},
     computed: {
       page() {
-        return this.$store.state.currentPage;
+        // CHANGE OUT TO OTHER LOGIC
+        if (this.$store.state.userToken) {
+          return this.$store.state.currentPage;
+        } else {
+          return "login";
+        }
       },
     },
     created() {
-      this.$store.commit("updateCsrfToken", { data: getCookie("csrftoken") });
-      this.$store.dispatch("fetchExerciseTypes");
-      this.$store.dispatch("fetchEquipmentTypes");
+      this.$store.dispatch("getUserEmail", {
+        data: this.$store.state.userToken,
+      });
     },
   });
 
@@ -68,8 +75,10 @@
     state() {
       return {
         currentPage: "exercises",
+        priorPage: "",
         sessions: null,
-        workoutTemplates: null,
+        workouts: null,
+        blocks: null,
         exercises: null,
         exerciseTypes: null,
         equipmentTypes: null,
@@ -80,11 +89,20 @@
         exerciseInfoDisplay: true,
         exerciseEditDisplay: false,
         selectedExercise: "",
+        addingSessionWindow: false,
+        userToken: "",
+        userEmail: "",
+        showLoginScreen: false,
+        statusMessage: "",
+        statusLevel: "", // eg. success, info, error
       };
     },
     mutations: {
       navigate(state, payload) {
         state.currentPage = payload.page;
+      },
+      toggleLoginScreen(state) {
+        state.showLoginScreen = !state.showLoginScreen;
       },
       toggleAddingExerciseWindow(state) {
         state.addingExerciseWindow = !state.addingExerciseWindow;
@@ -104,11 +122,17 @@
       selectExercise(state, payload) {
         state.selectedExercise = payload.exercise;
       },
+      toggleAddingSessionWindow(state) {
+        state.addingSessionWindow = !state.addingSessionWindow;
+      },
       updateSessions(state, payload) {
         state.sessions = payload.data;
       },
-      updateWorkoutTemplates(state, payload) {
-        state.workoutTemplates = payload.data;
+      updateWorkouts(state, payload) {
+        state.workouts = payload.data;
+      },
+      updateBlocks(state, payload) {
+        state.blocks = payload.data;
       },
       updateExercises(state, payload) {
         state.exercises = payload.data;
@@ -119,36 +143,87 @@
       updateEquipmentTypes(state, payload) {
         state.equipmentTypes = payload.data;
       },
-      updateCsrfToken(state, payload) {
-        state.csrfToken = payload.data;
+      updateTokens(state, payload) {
+        state.csrfToken = payload.csrfToken;
+        state.userToken = payload.userToken;
+      },
+      updateUserData(state, payload) {
+        state.userEmail = payload.email;
+        state.userToken = payload.token;
+      },
+      updateMessageData(state, payload) {
+        state.statusMessage = payload.message;
+        let level = "";
+        if (payload.code < 300) {
+          level = "success";
+        } else if (payload.code >= 400) {
+          level = "error";
+        } else {
+          level = "info";
+        }
+        state.statusLevel = level;
+      },
+      clearMessageData(state) {
+        state.statusMessage = "";
+        state.statusLevel = "";
       },
     },
     // actions gets context that includes state and a commit object
     // could also pass a payload
     actions: {
       async fetchSessions(context) {
-        const response = await getJSONFetch(
-          "/webapp/get_scheduled_sessions",
-          {}
-        );
+        context.commit("clearMessageData");
+        const response = await getJSONFetch("/webapp/sessions", {
+          user_token: context.state.userToken,
+        });
+        let message = "";
+        if (response._status == 200) {
+          message = "success";
+        } else if (response._status == 404) {
+          message = "no sessions found";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
         let payload = { data: response.scheduled_sessions };
         context.commit("updateSessions", payload);
       },
-      async fetchWorkoutTemplates(context) {
-        const response = await getJSONFetch(
-          "/webapp/get_all_workout_templates",
-          {}
+      async createNewSession(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/sessions/",
+          payload.body,
+          context.state.csrfToken
         );
-        let payload = { data: response.all_workout_templates };
-        context.commit("updateWorkoutTemplates", payload);
+        store.dispatch("fetchSessions");
+      },
+      async fetchWorkouts(context) {
+        const response = await getJSONFetch("/webapp/workouts", {
+          user_token: context.state.userToken,
+        });
+        let payload = { data: response.all_workouts };
+        context.commit("updateWorkouts", payload);
+      },
+      async fetchBlocks(context) {
+        const response = await getJSONFetch("/webapp/blocks", {
+          user_token: context.state.userToken,
+        });
+        let payload = { data: response.all_blocks };
+        context.commit("updateBlocks", payload);
       },
       async fetchExercises(context) {
-        const response = await getJSONFetch("/webapp/exercises", {});
+        const response = await getJSONFetch("/webapp/exercises", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.all_exercises };
         context.commit("updateExercises", payload);
       },
       async fetchExerciseTypes(context) {
-        const response = await getJSONFetch("/webapp/exercisetypes/", {});
+        const response = await getJSONFetch("/webapp/exercisetypes/", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.all_exercise_types };
         context.commit("updateExerciseTypes", payload);
       },
@@ -171,29 +246,46 @@
       async deleteExerciseType(context, payload) {
         const response = await deleteJSONFetch(
           "/webapp/exercisetypes/" + payload.id + "/",
-          {},
+          { user_token: context.state.userToken },
           context.state.csrfToken
         );
         store.dispatch("fetchExerciseTypes");
       },
       async fetchEquipmentTypes(context) {
-        const response = await getJSONFetch("/webapp/equipmenttypes", {});
+        const response = await getJSONFetch("/webapp/equipmenttypes", {
+          user_token: context.state.userToken,
+        });
         let payload = { data: response.all_equipment_types };
         context.commit("updateEquipmentTypes", payload);
       },
       async createNewExercise(context, payload) {
+        context.commit("clearMessageData");
         const response = await postJSONFetch(
           "/webapp/exercises/",
           payload.body,
           context.state.csrfToken
         );
-        context.commit("toggleAddingExerciseWindow");
-        store.dispatch("fetchExercises");
+        let message = "";
+        if (response._status == 201) {
+          message = "success";
+        } else if (response._status == 409) {
+          message = "there is already an exercise by this name";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
+        if (response._status == 201) {
+          context.commit("toggleAddingExerciseWindow");
+          store.dispatch("fetchExercises");
+        }
       },
       async deleteExercise(context, payload) {
         const response = await deleteJSONFetch(
           "/webapp/exercises/" + payload.id + "/",
-          {},
+          { user_token: context.state.userToken },
           context.state.csrfToken
         );
         context.commit("toggleExerciseDetailWindow");
@@ -209,9 +301,98 @@
         context.commit("toggleExerciseEditDisplay");
         store.dispatch("fetchExercises");
       },
+      // create diff responses to handle success or failure!
+      async createNewUser(context, payload) {
+        context.commit("clearMessageData");
+        const response = await postJSONFetch(
+          "/webapp/users/",
+          payload.body,
+          context.state.csrfToken
+        );
+        let message = "";
+        if (response._status == 200) {
+          message = "account creation success";
+        } else if (response._status == 404 || response.status == 403) {
+          message = "account creation unsuccessful";
+        } else if (response._status == 409) {
+          message = "an account with this email address already exists";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
+
+        if (response._status == 200) {
+          context.commit("updateUserData", {
+            email: response.email,
+            token: response.token,
+          });
+        }
+      },
+      async loginUser(context, payload) {
+        context.commit("clearMessageData");
+        const response = await postJSONFetch(
+          "/webapp/users/login/",
+          payload.body,
+          context.state.csrfToken
+        );
+
+        // handling message right next to where we handle the data - immediately
+        // INTERNAL ERROR - 500 - server could stick message in response - hybrid approach
+        let message = "";
+        if (response._status == 200) {
+          message = "login success";
+        } else if (response._status == 404 || response.status == 403) {
+          message = "login unsuccessful";
+        } else {
+          message = "an error occurred - please try again";
+        }
+        context.commit("updateMessageData", {
+          message,
+          code: response._status,
+        });
+
+        if (response._status == 200) {
+          context.commit("updateUserData", {
+            email: response.email,
+            token: response.token,
+          });
+        }
+      },
+      async logoutUser(context) {
+        const response = await postJSONFetch(
+          "/webapp/users/logout/",
+          {},
+          context.state.csrfToken
+        );
+        context.commit("updateUserData", {
+          email: "",
+          token: "",
+        });
+      },
+
+      async getUserEmail(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/users/get_user_email/",
+          payload.body,
+          context.state.csrfToken
+        );
+        context.commit("updateUserData", {
+          email: response.email,
+          token: context.state.userToken,
+        });
+      },
     },
   });
   myApp.use(store);
+
+  // make sure token is ready before app is mounted
+  const userToken = document.getElementById("user-token").dataset.token;
+  const csrfToken = getCookie("csrftoken");
+  store.commit("updateTokens", { userToken, csrfToken });
+
   myApp.mount("#vue-app");
 </script>
 <style>

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,14 +24,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-z&22n3qmx(1^^xhfxp6zk4$gn2!1ay!ie#-0w072vv-4ssvw#o"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = "DJANGO_PRODUCTION" not in os.environ  # if in production, debug = False
+DEPLOYED = "DJANGO_DEPLOYED" in os.environ
 
 ALLOWED_HOSTS = []
+MAIN_HOST = ""
 
+
+if not DEPLOYED:
+    ALLOWED_HOSTS.extend(
+        [
+            "127.0.0.1",
+            "localhost",
+            "testserver",  # added to allow python Client testing
+        ]
+    )
+    MAIN_HOST = "http://127.0.0.1:8000"
 
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -119,7 +135,21 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "webapp.User"
+
+# Direct to here with any login-restricted views
+LOGIN_URL = "/accounts/login/"
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = "/vue_app/site/"
+
+# console-logs emails sent FOR NOW (set up google email account)
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

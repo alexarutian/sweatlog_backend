@@ -3,63 +3,72 @@
     "model": "webapp.exercisetype",
     "pk": 1,
     "fields": {
-      "name": "cardio"
+      "name": "cardio",
+      "user": null
     }
   },
   {
     "model": "webapp.exercisetype",
     "pk": 2,
     "fields": {
-      "name": "strength"
+      "name": "strength",
+      "user": null
     }
   },
   {
     "model": "webapp.exercisetype",
     "pk": 3,
     "fields": {
-      "name": "stretching/mobility"
+      "name": "stretching/mobility",
+      "user": null
     }
   },
   {
     "model": "webapp.exercisetype",
     "pk": 4,
     "fields": {
-      "name": "other"
+      "name": "other",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 1,
     "fields": {
-      "name": "dumbbell"
+      "name": "dumbbell",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 2,
     "fields": {
-      "name": "barbell"
+      "name": "barbell",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 3,
     "fields": {
-      "name": "machine"
+      "name": "machine",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 4,
     "fields": {
-      "name": "other"
+      "name": "other",
+      "user": null
     }
   },
   {
     "model": "webapp.equipmenttype",
     "pk": 5,
     "fields": {
-      "name": "none"
+      "name": "none",
+      "user": null
     }
   },
   {
@@ -69,7 +78,8 @@
       "name": "barbell curl",
       "description": "",
       "exercise_type": ["strength"],
-      "equipment_type": ["barbell"]
+      "equipment_type": ["barbell"],
+      "user": null
     }
   },
   {
@@ -79,7 +89,8 @@
       "name": "dumbbell curl",
       "description": "",
       "exercise_type": ["strength"],
-      "equipment_type": ["dumbbell"]
+      "equipment_type": ["dumbbell"],
+      "user": null
     }
   },
   {
@@ -89,7 +100,8 @@
       "name": "dumbbell squat",
       "description": "",
       "exercise_type": ["strength"],
-      "equipment_type": ["dumbbell"]
+      "equipment_type": ["dumbbell"],
+      "user": null
     }
   },
   {
@@ -99,7 +111,8 @@
       "name": "jogging",
       "description": "",
       "exercise_type": ["cardio"],
-      "equipment_type": ["none"]
+      "equipment_type": ["none"],
+      "user": null
     }
   },
   {
@@ -109,7 +122,8 @@
       "name": "rest",
       "description": "",
       "exercise_type": ["other"],
-      "equipment_type": ["none"]
+      "equipment_type": ["none"],
+      "user": null
     }
   },
   {
@@ -159,7 +173,7 @@
       "name": "curls",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": null
+      "user": null
     }
   },
   {
@@ -169,27 +183,7 @@
       "name": "jogging intervals",
       "date_created": "2022-02-21T07:12:53.923Z",
       "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": null
-    }
-  },
-  {
-    "model": "webapp.block",
-    "pk": 3,
-    "fields": {
-      "name": "curls",
-      "date_created": "2022-02-21T07:12:53.923Z",
-      "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": 1
-    }
-  },
-  {
-    "model": "webapp.block",
-    "pk": 4,
-    "fields": {
-      "name": "jogging intervals",
-      "date_created": "2022-02-21T07:12:53.923Z",
-      "date_modified": "2022-02-21T07:12:53.923Z",
-      "template": 2
+      "user": null
     }
   },
   {
@@ -198,7 +192,7 @@
     "fields": {
       "exercise": ["jogging"],
       "exercise_order": 1,
-      "block": 4,
+      "block": 2,
       "stat": 3
     }
   },
@@ -208,7 +202,7 @@
     "fields": {
       "exercise": ["rest"],
       "exercise_order": 2,
-      "block": 4,
+      "block": 2,
       "stat": 4
     }
   },
@@ -239,7 +233,7 @@
       "name": "My curls only workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": null
+      "user": null
     }
   },
   {
@@ -249,27 +243,7 @@
       "name": "Tuesday's workout",
       "date_created": "2022-02-21T07:17:48.398Z",
       "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": null
-    }
-  },
-  {
-    "model": "webapp.workout",
-    "pk": 3,
-    "fields": {
-      "name": "My curls only workout",
-      "date_created": "2022-02-21T07:17:48.398Z",
-      "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": 1
-    }
-  },
-  {
-    "model": "webapp.workout",
-    "pk": 4,
-    "fields": {
-      "name": "Tuesday's workout",
-      "date_created": "2022-02-21T07:17:48.398Z",
-      "date_modified": "2022-02-21T07:17:48.398Z",
-      "template": 2
+      "user": null
     }
   },
 
@@ -277,8 +251,8 @@
     "model": "webapp.workoutblock",
     "pk": 1,
     "fields": {
-      "workout": 3,
-      "block": 3,
+      "workout": 1,
+      "block": 1,
       "block_quantity": 3,
       "block_order": 1
     }
@@ -287,8 +261,8 @@
     "model": "webapp.workoutblock",
     "pk": 2,
     "fields": {
-      "workout": 4,
-      "block": 3,
+      "workout": 2,
+      "block": 1,
       "block_quantity": 2,
       "block_order": 1
     }
@@ -297,8 +271,8 @@
     "model": "webapp.workoutblock",
     "pk": 3,
     "fields": {
-      "workout": 4,
-      "block": 4,
+      "workout": 2,
+      "block": 2,
       "block_quantity": 10,
       "block_order": 2
     }
@@ -308,7 +282,7 @@
     "pk": 1,
     "fields": {
       "date": "2022-02-28",
-      "workout": 3
+      "workout": 1
     }
   }
 ]

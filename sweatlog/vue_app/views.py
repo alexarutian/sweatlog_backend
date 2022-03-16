@@ -1,7 +1,12 @@
 from django.shortcuts import render
 
-# Create your views here.
-
 
 def vue_index(request):
-    return render(request, "vue_app/index.html")
+
+    # separating into if-else removes possibility of "none" type being stored as string on client side
+    if request.session.get("user_token") is not None:
+        context = {"user_token": request.session.get("user_token")}
+        return render(request, "vue_app/index.html", context)
+
+    else:
+        return render(request, "vue_app/index.html")

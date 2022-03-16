@@ -22,6 +22,7 @@ let CreateExercise = {
   </div>
   
 <button id="add-exercise-button" @click="createNewExercise">ADD EXERCISE</button>
+<div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
 
   `,
 
@@ -47,6 +48,7 @@ let CreateExercise = {
         description: this.exerciseDescription,
         equipment_type_id: this.equipmentTypeId,
         exercise_type_id: this.exerciseTypeId,
+        user_token: this.$store.state.userToken,
       };
 
       this.$store.dispatch("createNewExercise", { body });
@@ -58,6 +60,9 @@ let CreateExercise = {
     },
     equipmentTypes() {
       return this.$store.state.equipmentTypes;
+    },
+    message() {
+      return this.$store.state.statusMessage;
     },
   },
   created() {},

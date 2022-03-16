@@ -1,8 +1,34 @@
 from ast import Name
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import formats
 
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 from enum import Enum
+
+import uuid
+
+
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    is_normal_member = models.BooleanField(default=True)
+    token = models.UUIDField()
+
+    def __str__(self):
+        return self.email
+
+    @classmethod
+    def get_token(cls):
+        return uuid.uuid4()
+
+
+# router to listen to models' actions, if function registered will go through hoop first
+@receiver(pre_save, sender=User)
+def user_saved(sender, instance, *args, **kwargs):
+    instance.token = instance.get_token()
 
 
 class Detail(Enum):
@@ -40,9 +66,18 @@ class ExerciseTypeManager(models.Manager):
 
 # e.g. Strength, Cardio, Stretching, Other
 class ExerciseType(models.Model, NameableMixin):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="exercisetypes",
+        null=True,
+    )
 
     objects = ExerciseTypeManager()
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
@@ -61,9 +96,18 @@ class EquipmentTypeManager(models.Manager):
 
 # e.g. Barbell, Dumbbell, Machine, Other
 class EquipmentType(models.Model, NameableMixin):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="equipmenttypes",
+        null=True,
+    )
 
     objects = EquipmentTypeManager()
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
@@ -81,7 +125,7 @@ class ExerciseManager(models.Manager):
 
 
 class Exercise(models.Model, NameableMixin):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=200, blank=True)
     exercise_type = models.ForeignKey(
         ExerciseType,
@@ -95,8 +139,17 @@ class Exercise(models.Model, NameableMixin):
         related_name="exercises",
         null=True,
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="exercises",
+        null=True,
+    )
 
     objects = ExerciseManager()
+
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
@@ -143,17 +196,18 @@ class Block(models.Model, NameableMixin):
     name = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="blocks",
+        null=True,
+    )
 
-    @property
-    def is_template(self):
-        return self.template is None
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
-        if self.is_template:
-            return self.name + " [TEMPLATE]"
-        else:
-            return self.name
+        return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
         d = {}
@@ -195,17 +249,18 @@ class Workout(models.Model, NameableMixin):
     name = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    template = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workouts",
+        null=True,
+    )
 
-    @property
-    def is_template(self):
-        return self.template is None
+    class Meta:
+        unique_together = ["name", "user"]
 
     def __str__(self):
-        if self.is_template:
-            return self.name + " [TEMPLATE]"
-        else:
-            return self.name
+        return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
         d = {}

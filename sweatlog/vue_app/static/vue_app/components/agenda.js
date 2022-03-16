@@ -1,14 +1,16 @@
 import { WaterDrop } from "./waterdrop.js";
+import { CreateSession } from "./createsession.js";
 
 let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="agenda-page">
     <div id="page-top-options">
-      <div class="page-top-option">Option 1</div>
+      <div @click="this.$store.commit('toggleAddingSessionWindow')" class="page-top-option">SCHEDULE WORKOUT</div>
       <div class="page-top-option">Option 2</div>
       <div class="page-top-option">Option 3</div>
     </div>
+    <div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
     <div v-for="date in dateSessionList" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
       <p class="agenda-date-header">[[date.dateString]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
@@ -21,11 +23,17 @@ let Agenda = {
       </div>
     </div>
     <div>Schedule another workout</div>
+  <div v-if="this.$store.state.addingSessionWindow" id="create-session-modal" class="modal">
+    <span class="close" @click="this.$store.commit('toggleAddingSessionWindow')">&times;</span>  
+    <createsession v-if="this.$store.state.addingSessionWindow"></createsession>
+  </div>
+  <div v-if="this.$store.state.addingSessionWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingSessionWindow')"></div>
   </div>
   `,
 
   components: {
     waterdrop: WaterDrop,
+    createsession: CreateSession,
   },
   data() {
     return {};
@@ -69,6 +77,9 @@ let Agenda = {
     todaysDate() {
       const today = new Date();
       return formatDatetoYYYYMMDD(today);
+    },
+    message() {
+      return this.$store.state.statusMessage;
     },
   },
   created() {

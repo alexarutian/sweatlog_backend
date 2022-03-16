@@ -41,6 +41,7 @@ let ExerciseTypes = {
     createNewExerciseType() {
       const body = {
         name: this.exerciseTypeName,
+        user_token: this.$store.state.userToken,
       };
       this.$store.dispatch("createNewExerciseType", { body });
       this.exerciseTypeName = "";
@@ -48,6 +49,7 @@ let ExerciseTypes = {
     editExerciseType(id) {
       const body = {
         name: this.selectedETName,
+        user_token: this.$store.state.userToken,
       };
 
       this.$store.dispatch("editExerciseType", { id, body });

@@ -24,7 +24,6 @@ let Workouts = {
   methods: {
     toggleDetailView() {
       this.detailToggle = !this.detailToggle;
-      console.log(this.detailToggle);
     },
   },
   computed: {

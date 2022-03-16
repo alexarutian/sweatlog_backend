@@ -260,6 +260,12 @@ table {
   position: relative; */
 }
 
+#login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #page-top-options {
   width: 90%;
   margin: 5px;
@@ -327,7 +333,7 @@ table {
 
 .agenda-workout {
   padding: 5px;
-  font-weight: bold;
+  /* font-weight: bold; */
   color: black;
 }
 
@@ -400,16 +406,21 @@ table {
 }
 
 #create-exercise-modal input,
-#exercise-info-modal input {
+#exercise-info-modal input,
+input {
   padding: 5px;
   background-color: rgb(233, 233, 233);
   border-radius: 4px;
   height: 30px;
-  display: flex;
-  flex-direction: column;
   border: none;
   color: rgb(133, 133, 133);
   font-size: 12pt;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#login-page input {
+  margin: 5px;
+  width: 200px;
 }
 
 #create-exercise-modal label,
@@ -459,7 +470,8 @@ table {
 #add-exercise-button,
 #open-edit-exercise-button,
 #delete-exercise-button,
-#edit-exercise-button {
+#edit-exercise-button,
+button {
   background-color: rgb(221, 210, 47);
   box-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
   padding: 10px;
@@ -471,12 +483,26 @@ table {
   margin: 10px;
 }
 
+#login-page-buttons button {
+  background-color: gray;
+  box-shadow: 1px 1px 2px rgba(128, 128, 128, 0.5);
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  align-self: center;
+  font-weight: bold;
+  border: none;
+  margin: 10px;
+  width: 125px;
+}
+
 #open-edit-exercise-button,
 #delete-exercise-button {
   width: 100px;
 }
 
-#modal-bottom-buttons {
+#modal-bottom-buttons,
+#login-page-buttons {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -535,4 +561,19 @@ select {
 
 .et-inline-modify-buttons p {
   margin-left: 10px;
+}
+
+#login-header {
+  padding: 10px;
+  margin: 5px;
+}
+
+.login-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.alert-message {
+  text-align: center;
 }
