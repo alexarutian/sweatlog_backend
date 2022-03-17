@@ -206,6 +206,7 @@ def equipment_types_with_id(request, equipment_type_id):
 
 def exercises(request):
     data = _find_data(request)
+    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
@@ -213,39 +214,21 @@ def exercises(request):
     # get all exercises
     if request.method == "GET":
 
-        # if there are search params
-        # if data:
-
-        #     name_description_search = data.get("name_description_search", "").lower()
-        #     equipment_type_id = data.get("equipment_type_id", False)
-        #     exercise_type_id = data.get("exercise_type_id", False)
-
-        #     all_exercises = Exercise.objects.filter(
-        #         Q(user=None) | Q(user=user)
-        #     ).order_by("name")
-
-        #     if name_description_search:
-        #         search_list = Exercise.objects.filter(
-        #             Q(name__icontains=name_description_search)
-        #             | Q(description__icontains=name_description_search)
-        #         )
-
-        #     if equipment_type_id is not None:
-        #         equipment_type = EquipmentType.objects.get(id=equipment_type_id)
-        #         search_list.filter(equipment_type=equipment_type)
-
-        #     if exercise_type_id is not None:
-        #         exercise_type = ExerciseType.objects.get(id=exercise_type_id)
-        #         search_list.filter(exercise_type=exercise_type)
-
-        #     detail = []
-        #     for exercise in search_list:
-        #         detail.append(exercise.serialize(detail_level=Detail.DETAIL))
-
-        #     return JsonResponse({"all_exercises": detail}, status=200)
-
         # if there are no params passed into data, get all exercises
         all_exercises = Exercise.objects.filter(user=user).order_by("name")
+
+        equipment_type_id = data.get("equipment_type_id", None)
+        exercise_type_id = data.get("exercise_type_id", None)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+            all_exercises = all_exercises.filter(equipment_type=equipment_type)
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+            all_exercises = all_exercises.filter(exercise_type=exercise_type)
 
         detail = []
         for exercise in all_exercises:
@@ -367,6 +350,10 @@ def blocks(request):
             detail.append(workout.serialize(detail_level=Detail.DETAIL))
 
         return JsonResponse({"all_blocks": detail}, status=200)
+
+    if request.method == "POST":
+        name = data.get("name", "").lower()
+        exercises = data.get("exercises", False)
 
 
 def workouts(request):

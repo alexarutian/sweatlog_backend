@@ -83,6 +83,7 @@
         workouts: null,
         blocks: null,
         exercises: null,
+        filteredExercises: null,
         exerciseTypes: null,
         equipmentTypes: null,
         csrfToken: "",
@@ -139,6 +140,10 @@
       },
       updateExercises(state, payload) {
         state.exercises = payload.data;
+      },
+      updateFilteredExercises(state, payload) {
+        state.filteredExercises = payload.data;
+        console.log(state.filteredExercises);
       },
       updateExerciseTypes(state, payload) {
         state.exerciseTypes = payload.data;
@@ -293,6 +298,11 @@
         );
         context.commit("toggleExerciseDetailWindow");
         store.dispatch("fetchExercises");
+      },
+      async filterExercises(context, payload) {
+        const response = await getJSONFetch("/webapp/exercises", payload);
+        let r_payload = { data: response.all_exercises };
+        context.commit("updateFilteredExercises", r_payload);
       },
       async editExercise(context, payload) {
         const response = await putJSONFetch(

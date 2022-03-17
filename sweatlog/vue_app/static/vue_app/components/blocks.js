@@ -1,3 +1,5 @@
+import { CreateBlock } from "./createblock.js";
+
 let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -15,7 +17,9 @@ let Blocks = {
   </div>
 `,
 
-  components: {},
+  components: {
+    createblock: CreateBlock,
+  },
   data() {
     return {};
   },

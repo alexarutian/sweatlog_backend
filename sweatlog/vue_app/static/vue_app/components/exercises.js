@@ -29,7 +29,7 @@ let Exercises = {
     <span class="close" @click="this.$store.commit('toggleExerciseSearchWindow')">&times;</span>  
     <exercisesearch v-if="this.$store.state.exerciseSearchWindow"></exercisesearch>
     </div>
-    <div v-if="this.$store.state.addingExerciseWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingExerciseWindow')"></div>
+    <div v-if="this.$store.state.exerciseSearchWindow" class="modal-overlay" @click="this.$store.commit('toggleExerciseSearchWindow')"></div>
 
     <div v-if="this.$store.state.exerciseDetailWindow" id="exercise-info-modal" class="modal">
       <span class="close"
