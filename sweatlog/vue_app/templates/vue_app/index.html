@@ -1,6 +1,11 @@
 {% extends "base_generic.html" %} {% block content %} {% load static %}
 <body>
   <div id="vue-app">
+    <div id="website-footer">
+      <div id="footer-content">
+        <footertoolbar :menuitems="menuitems"></footertoolbar>
+      </div>
+    </div>
     <div id="main-content">
       {% csrf_token %}
       <loginorcreateuser v-if="page == 'login'"></loginorcreateuser>
@@ -9,11 +14,6 @@
       <blocks v-else-if="page == 'blocks'"></blocks>
       <exercises v-else-if="page == 'exercises'"></exercises>
       <other v-else-if="page == 'other'"></other>
-    </div>
-    <div id="website-footer">
-      <div id="footer-content">
-        <footertoolbar :menuitems="menuitems"></footertoolbar>
-      </div>
     </div>
     <div id="user-token" data-token="{{user_token}}"></div>
   </div>
