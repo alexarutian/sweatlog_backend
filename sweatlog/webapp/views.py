@@ -130,9 +130,7 @@ def exercise_types(request):
 
     if request.method == "GET":
 
-        all_exercise_types = ExerciseType.objects.filter(
-            Q(user=None) | Q(user=user)
-        ).order_by("id")
+        all_exercise_types = ExerciseType.objects.filter(user=user).order_by("id")
 
         detail = []
         for exercise_type in all_exercise_types:
@@ -188,9 +186,7 @@ def equipment_types(request):
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_equipment_types = EquipmentType.objects.filter(
-            Q(user=None) | Q(user=user)
-        ).order_by("id")
+        all_equipment_types = EquipmentType.objects.filter(user=user).order_by("id")
 
         detail = []
         for equipment_type in all_equipment_types:
@@ -249,9 +245,7 @@ def exercises(request):
         #     return JsonResponse({"all_exercises": detail}, status=200)
 
         # if there are no params passed into data, get all exercises
-        all_exercises = Exercise.objects.filter(Q(user=None) | Q(user=user)).order_by(
-            "name"
-        )
+        all_exercises = Exercise.objects.filter(user=user).order_by("name")
 
         detail = []
         for exercise in all_exercises:
@@ -363,9 +357,7 @@ def blocks(request):
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_blocks = Block.objects.filter(Q(user=None) | Q(user=user)).order_by(
-            "-date_modified"
-        )
+        all_blocks = Block.objects.filter(user=user).order_by("-date_modified")
 
         if len(all_blocks) < 1:
             return JsonResponse({"message": "no blocks yet!"}, status=404)
@@ -384,9 +376,7 @@ def workouts(request):
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_workouts = Workout.objects.filter(Q(user=None) | Q(user=user)).order_by(
-            "-date_modified"
-        )
+        all_workouts = Workout.objects.filter(user=user).order_by("-date_modified")
 
         if len(all_workouts) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
@@ -408,8 +398,8 @@ def sessions(request):
         today = timezone.now()
         scheduled_sessions = (
             Session.objects.filter(date__gte=today)
-            .filter(workout__user=user)  # MAKE SURE THIS WORKS!
-            .order_by("date")
+            # cannot schedule and use in sessions an example workout!
+            .filter(workout__user=user).order_by("date")  # MAKE SURE THIS WORKS!
         )
 
         if len(scheduled_sessions) < 1:

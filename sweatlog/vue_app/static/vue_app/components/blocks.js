@@ -1,12 +1,19 @@
 let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div>BLOCKS PAGE</div>
-  <div id="block-list">
-  <div v-for="block in blocks">
-    <p>[[block.name]]</p>
+  <div id="blocks-page">
+    <div id="page-top-options">
+      <div class="page-top-option">Option 1</div>
+      <div class="page-top-option">Option 2</div>
+      <div class="page-top-option">Option 3</div>
+    </div>
+    <div id="block-list">
+      <div v-for="block in blocks" class="block-list-line">
+        <p>[[block.name]]</p>
+      </div>
+    </div>
   </div>
-</div>  `,
+`,
 
   components: {},
   data() {

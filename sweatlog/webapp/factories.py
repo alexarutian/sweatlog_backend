@@ -187,8 +187,8 @@ class SingleUserSessionFactory(DjangoModelFactory):
 
     date = factory.Faker(
         "date_between_dates",
-        date_start=datetime.date(2022, 3, 9),
-        date_end=datetime.date(2022, 3, 25),
+        date_start=datetime.date(2022, 3, 17),
+        date_end=datetime.date(2022, 4, 10),
     )
     workout = factory.SubFactory(SingleUserWorkoutFactory)
 
