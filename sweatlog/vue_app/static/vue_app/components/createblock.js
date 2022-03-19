@@ -21,6 +21,7 @@ let CreateBlock = {
   data() {
     return {
       blockName: "",
+      exerciseList: [],
       exerciseId: null,
     };
   },
@@ -29,9 +30,13 @@ let CreateBlock = {
       this.exerciseId = e.target.value;
     },
     createNewBlock() {
+      const exercise = {};
+      exercise.id = this.exerciseId;
+      this.exerciseList.push(exercise);
       const body = {
         name: this.blockName,
         user_token: this.$store.state.userToken,
+        exercise_list: this.exerciseList,
       };
 
       this.$store.dispatch("createNewBlock", { body });

@@ -221,8 +221,9 @@ class Block(models.Model, NameableMixin):
             for be in self.blockexercises.all():
                 bed = {}
                 bed["exercise"] = be.exercise.serialize(detail_level)
-                bed["stats"] = be.stat.serialize()
                 bed["exercise_order"] = be.exercise_order
+                if be.stat:
+                    bed["stats"] = be.stat.serialize()
                 exercises.append(bed)
         return d
 
@@ -238,7 +239,7 @@ class BlockExercise(models.Model):
         models.IntegerField()
     )  # order of individual exercises within the block
     stat = models.ForeignKey(
-        Stat, on_delete=models.CASCADE, related_name="blockexercises"
+        Stat, on_delete=models.CASCADE, related_name="blockexercises", null=True
     )
 
     # do I need this?

@@ -5,8 +5,8 @@ let Blocks = {
   template: /*html*/ `
   <div id="blocks-page">
     <div id="page-top-options">
-      <div class="page-top-option">Option 1</div>
-      <div class="page-top-option">Option 2</div>
+    <div @click="this.$store.commit('toggleAddingBlockWindow')" class="page-top-option">ADD BLOCK</div>
+    <div class="page-top-option">Option 2</div>
       <div class="page-top-option">Option 3</div>
     </div>
     <div id="block-list">
@@ -14,6 +14,11 @@ let Blocks = {
         <p>[[block.name]]</p>
       </div>
     </div>
+    <div v-if="this.$store.state.addingBlockWindow" id="create-block-modal" class="modal">
+    <span class="close" @click="this.$store.commit('toggleAddingBlockWindow')">&times;</span>  
+    <createblock v-if="this.$store.state.addingBlockWindow"></createblock>
+  </div>
+  <div v-if="this.$store.state.addingBlockWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingBlockWindow')"></div>
   </div>
 `,
 
@@ -26,6 +31,7 @@ let Blocks = {
   methods: {},
   computed: {
     blocks() {
+      console.log(this.$store.state.blocks);
       return this.$store.state.blocks;
     },
   },

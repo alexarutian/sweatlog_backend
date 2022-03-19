@@ -20,6 +20,8 @@ from .models import (
     EquipmentType,
     ExerciseType,
     Block,
+    Stat,
+    BlockExercise,
 )
 
 from datetime import datetime
@@ -352,8 +354,40 @@ def blocks(request):
         return JsonResponse({"all_blocks": detail}, status=200)
 
     if request.method == "POST":
+
+        # create block
         name = data.get("name", "").lower()
-        exercises = data.get("exercises", False)
+        block = Block.objects.create(name=name, user=user)
+
+        # post to blockexercise
+        exercise_list = data.get("exercise_list", [])
+        e_order = 0
+        for e in exercise_list:
+            e_order += 1
+            e_id = e["id"]
+            e_sets = e.get("sets")
+            e_reps = e.get("reps")
+            e_weight_lb = e.get("weight_lb")
+            e_time_in_seconds = e.get("time_in_seconds")
+
+            exercise = get_object_or_404(Exercise, id=e_id)
+
+            # create a stat
+            if e_sets or e_reps or e_weight_lb or e_time_in_seconds:
+                stat = Stat.objects.create(
+                    sets=e_sets,
+                    reps=e_reps,
+                    weight_lb=e_weight_lb,
+                    time_in_seconds=e_time_in_seconds,
+                )
+            else:
+                stat = None
+
+            BlockExercise.objects.create(
+                block=block, exercise=exercise, stat=stat, exercise_order=e_order
+            )
+
+        return JsonResponse({"block_id": block.id}, status=201)
 
 
 def workouts(request):

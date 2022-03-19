@@ -94,6 +94,7 @@
         exerciseEditDisplay: false,
         selectedExercise: "",
         addingSessionWindow: false,
+        addingBlockWindow: false,
         userToken: "",
         userEmail: "",
         showLoginScreen: false,
@@ -128,6 +129,9 @@
       },
       toggleAddingSessionWindow(state) {
         state.addingSessionWindow = !state.addingSessionWindow;
+      },
+      toggleAddingBlockWindow(state) {
+        state.addingBlockWindow = !state.addingBlockWindow;
       },
       updateSessions(state, payload) {
         state.sessions = payload.data;
@@ -206,6 +210,14 @@
           context.state.csrfToken
         );
         store.dispatch("fetchSessions");
+      },
+      async createNewBlock(context, payload) {
+        const response = await postJSONFetch(
+          "/webapp/blocks/",
+          payload.body,
+          context.state.csrfToken
+        );
+        store.dispatch("fetchBlocks");
       },
       async fetchWorkouts(context) {
         const response = await getJSONFetch("/webapp/workouts", {
