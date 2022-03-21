@@ -95,6 +95,10 @@
         selectedExercise: "",
         addingSessionWindow: false,
         addingBlockWindow: false,
+        blockDetailWindow: false,
+        blockInfoDisplay: true,
+        blockEditDisplay: false,
+        selectedBlock: "",
         userToken: "",
         userEmail: "",
         showLoginScreen: false,
@@ -132,6 +136,18 @@
       },
       toggleAddingBlockWindow(state) {
         state.addingBlockWindow = !state.addingBlockWindow;
+      },
+      toggleBlockDetailWindow(state) {
+        state.blockDetailWindow = !state.blockDetailWindow;
+      },
+      toggleBlockEditDisplay(state) {
+        state.blockEditDisplay = !state.blockEditDisplay;
+      },
+      turnoffBlockEditDisplay(state) {
+        state.blockEditDisplay = false;
+      },
+      selectBlock(state, payload) {
+        state.selectedBlock = payload.block;
       },
       updateSessions(state, payload) {
         state.sessions = payload.data;
@@ -440,8 +456,8 @@
     height: 7vh;
     flex-grow: 0;
     flex-shrink: 0;
-    position: sticky;
-    top: 7vh; /*css sticky position needs a reference to parent div*/
+    position: fixed;
+    bottom: 0;
   }
 
   #footer-content {

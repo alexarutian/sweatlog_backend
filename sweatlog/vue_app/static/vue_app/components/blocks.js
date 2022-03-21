@@ -1,4 +1,5 @@
 import { CreateBlock } from "./createblock.js";
+import { BlockInfo } from "./blockinfo.js";
 
 let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
@@ -11,7 +12,7 @@ let Blocks = {
     </div>
     <div id="block-list">
       <div v-for="block in blocks" class="block-list-line">
-        <p>[[block.name]]</p>
+        <p @click="this.$store.commit('selectBlock',{block: block})" @click="this.$store.commit('toggleBlockDetailWindow')">[[block.name]]</p>
       </div>
     </div>
     <div v-if="this.$store.state.addingBlockWindow" id="create-block-modal" class="modal">
@@ -20,10 +21,21 @@ let Blocks = {
   </div>
   <div v-if="this.$store.state.addingBlockWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingBlockWindow')"></div>
   </div>
+
+  <div v-if="this.$store.state.blockDetailWindow" id="block-info-modal" class="modal">
+  <span class="close"
+  @click="this.$store.commit('toggleBlockDetailWindow')" @click="this.$store.commit('turnoffBlockEditDisplay')">&times;</span>  
+  <blockinfo v-if="!this.$store.state.blockEditDisplay" :block="this.$store.state.selectedBlock"></blockinfo>
+</div>
+<div v-if="this.$store.state.blockDetailWindow" class="modal-overlay"
+@click="this.$store.commit('toggleBlockDetailWindow')" @click="this.$store.commit('turnoffBlockEditDisplay')"></div>
+</div>
+
 `,
 
   components: {
     createblock: CreateBlock,
+    blockinfo: BlockInfo,
   },
   data() {
     return {};

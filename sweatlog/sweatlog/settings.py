@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import netifaces as ni
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,11 +36,17 @@ MAIN_HOST = ""
 
 
 if not DEPLOYED:
+
+    ip = ni.ifaddresses("en0")[ni.AF_INET][0]["addr"]
+    print(ip)
+    print(f"externally accessible through {ip}")
+
     ALLOWED_HOSTS.extend(
         [
             "127.0.0.1",
             "localhost",
             "testserver",  # added to allow python Client testing
+            ip,
         ]
     )
     MAIN_HOST = "http://127.0.0.1:8000"
