@@ -23,13 +23,13 @@
   document.getElementsByTagName("body").item(0).style.height = availH + "px";
 
   //   const staticDir = "{% static vue_app %}";
-  import { Agenda } from "{% static 'vue_app/components/agenda.js' %}";
-  import { Workouts } from "{% static 'vue_app/components/workouts.js' %}";
-  import { Blocks } from "{% static 'vue_app/components/blocks.js' %}";
-  import { Exercises } from "{% static 'vue_app/components/exercises.js' %}";
-  import { Other } from "{% static 'vue_app/components/other.js' %}";
-  import { FooterToolbar } from "{% static 'vue_app/components/footertoolbar.js' %}";
-  import { LoginOrCreateUser } from "{% static 'vue_app/components/loginorcreateuser.js' %}";
+  import { Agenda } from "{% static 'vue_app/components/main/agenda.js' %}";
+  import { Workouts } from "{% static 'vue_app/components/main/workouts.js' %}";
+  import { Blocks } from "{% static 'vue_app/components/main/blocks.js' %}";
+  import { Exercises } from "{% static 'vue_app/components/main/exercises.js' %}";
+  import { Other } from "{% static 'vue_app/components/main/other.js' %}";
+  import { FooterToolbar } from "{% static 'vue_app/components/main/footertoolbar.js' %}";
+  import { LoginOrCreateUser } from "{% static 'vue_app/components/main/loginorcreateuser.js' %}";
   let { createApp } = Vue; // import multiple things from Vue
 
   const myApp = createApp({

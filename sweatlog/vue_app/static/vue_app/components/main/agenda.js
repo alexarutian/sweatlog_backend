@@ -1,5 +1,5 @@
-import { WaterDrop } from "./waterdrop.js";
-import { CreateSession } from "./createsession.js";
+import { WaterDrop } from "../child/waterdrop.js";
+import { CreateSession } from "../child/createsession.js";
 
 let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax

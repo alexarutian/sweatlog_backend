@@ -1,5 +1,5 @@
-import { CreateBlock } from "./createblock.js";
-import { BlockInfo } from "./blockinfo.js";
+import { CreateBlock } from "../child/createblock.js";
+import { BlockInfo } from "../child/blockinfo.js";
 
 let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax

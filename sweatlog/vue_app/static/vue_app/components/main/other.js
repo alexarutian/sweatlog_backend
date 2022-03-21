@@ -1,4 +1,4 @@
-import { ExerciseTypes } from "./exercisetypes.js";
+import { ExerciseTypes } from "../child/exercisetypes.js";
 
 let Other = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax

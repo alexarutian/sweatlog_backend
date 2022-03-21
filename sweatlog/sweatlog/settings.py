@@ -38,8 +38,6 @@ MAIN_HOST = ""
 if not DEPLOYED:
 
     ip = ni.ifaddresses("en0")[ni.AF_INET][0]["addr"]
-    print(ip)
-    print(f"externally accessible through {ip}")
 
     ALLOWED_HOSTS.extend(
         [

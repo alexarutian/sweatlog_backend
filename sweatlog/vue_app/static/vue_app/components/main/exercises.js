@@ -1,7 +1,7 @@
-import { CreateExercise } from "./createexercise.js";
-import { ExerciseInfo } from "./exerciseinfo.js";
-import { EditExercise } from "./editexercise.js";
-import { ExerciseSearch } from "./exercisesearch.js";
+import { CreateExercise } from "../child/createexercise.js";
+import { ExerciseInfo } from "../child/exerciseinfo.js";
+import { EditExercise } from "../child/editexercise.js";
+import { ExerciseSearch } from "../child/exercisesearch.js";
 
 let Exercises = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
