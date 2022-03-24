@@ -32,6 +32,8 @@
   import { Other } from "{% static 'vue_app/components/main/other.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/main/footertoolbar.js' %}";
   import { LoginOrCreateUser } from "{% static 'vue_app/components/main/loginorcreateuser.js' %}";
+  import { store } from "{% static 'vue_app/js/store.js' %}";
+
   let { createApp } = Vue; // import multiple things from Vue
 
   const myApp = createApp({
@@ -73,8 +75,6 @@
       });
     },
   });
-
-  let { createStore } = Vuex;
 
   myApp.use(store);
 

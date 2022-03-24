@@ -19,25 +19,25 @@ let Exercises = {
       </div>
     </div>
     
-    <div v-if="this.$store.state.addingExerciseWindow" id="create-exercise-modal" class="modal">
+    <div v-if="this.$store.state.exercise.addingExerciseWindow" id="create-exercise-modal" class="modal">
       <span class="close" @click="this.$store.commit('toggleAddingExerciseWindow')">&times;</span>  
-      <createexercise v-if="this.$store.state.addingExerciseWindow"></createexercise>
+      <createexercise v-if="this.$store.state.exercise.addingExerciseWindow"></createexercise>
     </div>
-    <div v-if="this.$store.state.addingExerciseWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingExerciseWindow')"></div>
+    <div v-if="this.$store.state.exercise.addingExerciseWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingExerciseWindow')"></div>
     
-    <div v-if="this.$store.state.exerciseSearchWindow" class="modal">
+    <div v-if="this.$store.state.exercise.exerciseSearchWindow" class="modal">
     <span class="close" @click="this.$store.commit('toggleExerciseSearchWindow')">&times;</span>  
-    <exercisesearch v-if="this.$store.state.exerciseSearchWindow"></exercisesearch>
+    <exercisesearch v-if="this.$store.state.exercise.exerciseSearchWindow"></exercisesearch>
     </div>
-    <div v-if="this.$store.state.exerciseSearchWindow" class="modal-overlay" @click="this.$store.commit('toggleExerciseSearchWindow')"></div>
+    <div v-if="this.$store.state.exercise.exerciseSearchWindow" class="modal-overlay" @click="this.$store.commit('toggleExerciseSearchWindow')"></div>
 
-    <div v-if="this.$store.state.exerciseDetailWindow" id="exercise-info-modal" class="modal">
+    <div v-if="this.$store.state.exercise.exerciseDetailWindow" id="exercise-info-modal" class="modal">
       <span class="close"
       @click="this.$store.commit('toggleExerciseDetailWindow')" @click="this.$store.commit('turnoffExerciseEditDisplay')">&times;</span>  
-      <exerciseinfo v-if="!this.$store.state.exerciseEditDisplay" :exercise="this.$store.state.selectedExercise"></exerciseinfo>
-      <editexercise v-if="this.$store.state.exerciseEditDisplay" :exercise="this.$store.state.selectedExercise"></editexercise>
+      <exerciseinfo v-if="!this.$store.state.exercise.exerciseEditDisplay" :exercise="this.$store.state.exercise.selectedExercise"></exerciseinfo>
+      <editexercise v-if="this.$store.state.exercise.exerciseEditDisplay" :exercise="this.$store.state.exercise.selectedExercise"></editexercise>
     </div>
-    <div v-if="this.$store.state.exerciseDetailWindow" class="modal-overlay"
+    <div v-if="this.$store.state.exercise.exerciseDetailWindow" class="modal-overlay"
     @click="this.$store.commit('toggleExerciseDetailWindow')" @click="this.$store.commit('turnoffExerciseEditDisplay')"></div>
     </div>
   `,

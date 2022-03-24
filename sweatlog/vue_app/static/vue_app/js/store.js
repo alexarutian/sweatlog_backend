@@ -1,6 +1,102 @@
-import Vuex from "vuex";
+let { createStore } = Vuex;
 
-export const store = new Vuex.Store({
+const exercise = {
+  state() {
+    return {
+      exercises: null,
+      filteredExercises: null,
+      addingExerciseWindow: false,
+      exerciseSearchWindow: false,
+      exerciseDetailWindow: false,
+      exerciseInfoDisplay: true,
+      exerciseEditDisplay: false,
+      selectedExercise: "",
+    };
+  },
+  getters: {},
+  mutations: {
+    toggleAddingExerciseWindow(state) {
+      state.addingExerciseWindow = !state.addingExerciseWindow;
+    },
+    toggleExerciseSearchWindow(state) {
+      state.exerciseSearchWindow = !state.exerciseSearchWindow;
+    },
+    toggleExerciseDetailWindow(state) {
+      state.exerciseDetailWindow = !state.exerciseDetailWindow;
+    },
+    toggleExerciseEditDisplay(state) {
+      state.exerciseEditDisplay = !state.exerciseEditDisplay;
+    },
+    turnoffExerciseEditDisplay(state) {
+      state.exerciseEditDisplay = false;
+    },
+    selectExercise(state, payload) {
+      state.selectedExercise = payload.exercise;
+    },
+  },
+  actions: {
+    async fetchExercises(context) {
+      const response = await getJSONFetch("/webapp/exercises", {
+        user_token: context.rootState.userToken,
+      });
+      let payload = { data: response.all_exercises };
+      context.commit("updateExercises", payload);
+    },
+    async createNewExercise(context, payload) {
+      context.commit("clearMessageData");
+      const response = await postJSONFetch(
+        "/webapp/exercises/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      let message = "";
+      if (response._status == 201) {
+        message = "success";
+      } else if (response._status == 409) {
+        message = "there is already an exercise by this name";
+      } else {
+        message = "an error occurred - please try again";
+      }
+      context.commit("updateMessageData", {
+        message,
+        code: response._status,
+      });
+      if (response._status == 201) {
+        context.commit("toggleAddingExerciseWindow");
+        store.dispatch("fetchExercises");
+      }
+    },
+    async deleteExercise(context, payload) {
+      const response = await deleteJSONFetch(
+        "/webapp/exercises/" + payload.id + "/",
+        { user_token: context.rootState.userToken },
+        context.state.rootState.csrfToken
+      );
+      context.commit("toggleExerciseDetailWindow");
+      store.dispatch("fetchExercises");
+    },
+    async filterExercises(context, payload) {
+      const response = await getJSONFetch("/webapp/exercises", payload);
+      let r_payload = { data: response.all_exercises };
+      context.commit("updateFilteredExercises", r_payload);
+    },
+    async editExercise(context, payload) {
+      const response = await putJSONFetch(
+        "/webapp/exercises/" + payload.id + "/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      context.commit("toggleExerciseDetailWindow");
+      context.commit("toggleExerciseEditDisplay");
+      store.dispatch("fetchExercises");
+    },
+  },
+};
+
+let store = createStore({
+  modules: {
+    exercise: exercise,
+  },
   state() {
     return {
       currentPage: "exercises",
@@ -8,17 +104,9 @@ export const store = new Vuex.Store({
       sessions: null,
       workouts: null,
       blocks: null,
-      exercises: null,
-      filteredExercises: null,
       exerciseTypes: null,
       equipmentTypes: null,
       csrfToken: "",
-      addingExerciseWindow: false,
-      exerciseSearchWindow: false,
-      exerciseDetailWindow: false,
-      exerciseInfoDisplay: true,
-      exerciseEditDisplay: false,
-      selectedExercise: "",
       addingSessionWindow: false,
       selectedSessionWorkout: "",
       sessionWorkoutDetailWindow: false,
@@ -51,24 +139,6 @@ export const store = new Vuex.Store({
     },
     toggleLoginScreen(state) {
       state.showLoginScreen = !state.showLoginScreen;
-    },
-    toggleAddingExerciseWindow(state) {
-      state.addingExerciseWindow = !state.addingExerciseWindow;
-    },
-    toggleExerciseSearchWindow(state) {
-      state.exerciseSearchWindow = !state.exerciseSearchWindow;
-    },
-    toggleExerciseDetailWindow(state) {
-      state.exerciseDetailWindow = !state.exerciseDetailWindow;
-    },
-    toggleExerciseEditDisplay(state) {
-      state.exerciseEditDisplay = !state.exerciseEditDisplay;
-    },
-    turnoffExerciseEditDisplay(state) {
-      state.exerciseEditDisplay = false;
-    },
-    selectExercise(state, payload) {
-      state.selectedExercise = payload.exercise;
     },
     toggleAddingSessionWindow(state) {
       state.addingSessionWindow = !state.addingSessionWindow;
@@ -215,13 +285,6 @@ export const store = new Vuex.Store({
       let payload = { data: response.all_blocks };
       context.commit("updateBlocks", payload);
     },
-    async fetchExercises(context) {
-      const response = await getJSONFetch("/webapp/exercises", {
-        user_token: context.state.userToken,
-      });
-      let payload = { data: response.all_exercises };
-      context.commit("updateExercises", payload);
-    },
     async fetchExerciseTypes(context) {
       const response = await getJSONFetch("/webapp/exercisetypes/", {
         user_token: context.state.userToken,
@@ -259,54 +322,6 @@ export const store = new Vuex.Store({
       });
       let payload = { data: response.all_equipment_types };
       context.commit("updateEquipmentTypes", payload);
-    },
-    async createNewExercise(context, payload) {
-      context.commit("clearMessageData");
-      const response = await postJSONFetch(
-        "/webapp/exercises/",
-        payload.body,
-        context.state.csrfToken
-      );
-      let message = "";
-      if (response._status == 201) {
-        message = "success";
-      } else if (response._status == 409) {
-        message = "there is already an exercise by this name";
-      } else {
-        message = "an error occurred - please try again";
-      }
-      context.commit("updateMessageData", {
-        message,
-        code: response._status,
-      });
-      if (response._status == 201) {
-        context.commit("toggleAddingExerciseWindow");
-        store.dispatch("fetchExercises");
-      }
-    },
-    async deleteExercise(context, payload) {
-      const response = await deleteJSONFetch(
-        "/webapp/exercises/" + payload.id + "/",
-        { user_token: context.state.userToken },
-        context.state.csrfToken
-      );
-      context.commit("toggleExerciseDetailWindow");
-      store.dispatch("fetchExercises");
-    },
-    async filterExercises(context, payload) {
-      const response = await getJSONFetch("/webapp/exercises", payload);
-      let r_payload = { data: response.all_exercises };
-      context.commit("updateFilteredExercises", r_payload);
-    },
-    async editExercise(context, payload) {
-      const response = await putJSONFetch(
-        "/webapp/exercises/" + payload.id + "/",
-        payload.body,
-        context.state.csrfToken
-      );
-      context.commit("toggleExerciseDetailWindow");
-      context.commit("toggleExerciseEditDisplay");
-      store.dispatch("fetchExercises");
     },
     // create diff responses to handle success or failure!
     async createNewUser(context, payload) {
@@ -393,3 +408,14 @@ export const store = new Vuex.Store({
     },
   },
 });
+
+// const exercisetype = {
+//   state() {
+//     return {};
+//   },
+//   getters: {},
+//   mutations: {},
+//   actions: {},
+// };
+
+export { store };
