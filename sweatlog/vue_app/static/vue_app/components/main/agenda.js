@@ -24,18 +24,18 @@ let Agenda = {
       </div>
     </div>
     <div>Schedule another workout</div>
-  <div v-if="this.$store.state.addingSessionWindow" id="create-session-modal" class="modal">
+  <div v-if="this.$store.state.session.addingSessionWindow" id="create-session-modal" class="modal">
     <span class="close" @click="this.$store.commit('toggleAddingSessionWindow')">&times;</span>  
-    <createsession v-if="this.$store.state.addingSessionWindow"></createsession>
+    <createsession v-if="this.$store.state.session.addingSessionWindow"></createsession>
   </div>
-  <div v-if="this.$store.state.addingSessionWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingSessionWindow')"></div>
+  <div v-if="this.$store.state.session.addingSessionWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingSessionWindow')"></div>
 
-  <div v-if="this.$store.state.sessionWorkoutDetailWindow" class="modal">
+  <div v-if="this.$store.state.session.sessionWorkoutDetailWindow" class="modal">
   <span class="close"
   @click="this.$store.commit('toggleSessionWorkoutDetailWindow')">&times;</span>  
-  <workoutinfo :workout="this.$store.state.selectedSessionWorkout"></workoutinfo>
+  <workoutinfo :workout="this.$store.state.session.selectedSessionWorkout"></workoutinfo>
 </div>
-<div v-if="this.$store.state.sessionWorkoutDetailWindow" class="modal-overlay"
+<div v-if="this.$store.state.session.sessionWorkoutDetailWindow" class="modal-overlay"
 @click="this.$store.commit('toggleSessionWorkoutDetailWindow')"></div>
 </div>
 
@@ -56,10 +56,10 @@ let Agenda = {
   methods: {},
   computed: {
     sessions() {
-      return this.$store.state.sessions;
+      return this.$store.state.session.sessions;
     },
     lastDay() {
-      const s = this.$store.state.sessions;
+      const s = this.$store.state.session.sessions;
       if (s) {
         const lastSession = s[s.length - 1];
         return convertDateFromYYYYMMDDtoJSDate(lastSession.date);

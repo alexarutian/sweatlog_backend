@@ -15,19 +15,19 @@ let Blocks = {
         <p @click="this.$store.commit('selectBlock',{block: block})" @click="this.$store.commit('toggleBlockDetailWindow')">[[block.name]]</p>
       </div>
     </div>
-    <div v-if="this.$store.state.addingBlockWindow" id="create-block-modal" class="modal">
+    <div v-if="this.$store.state.block.addingBlockWindow" id="create-block-modal" class="modal">
     <span class="close" @click="this.$store.commit('toggleAddingBlockWindow')">&times;</span>  
-    <createblock v-if="this.$store.state.addingBlockWindow"></createblock>
+    <createblock v-if="this.$store.state.block.addingBlockWindow"></createblock>
   </div>
-  <div v-if="this.$store.state.addingBlockWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingBlockWindow')"></div>
+  <div v-if="this.$store.state.block.addingBlockWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingBlockWindow')"></div>
   </div>
 
-  <div v-if="this.$store.state.blockDetailWindow" id="block-info-modal" class="modal">
+  <div v-if="this.$store.state.block.blockDetailWindow" id="block-info-modal" class="modal">
   <span class="close"
   @click="this.$store.commit('toggleBlockDetailWindow')" @click="this.$store.commit('turnoffBlockEditDisplay')">&times;</span>  
-  <blockinfo v-if="!this.$store.state.blockEditDisplay" :block="this.$store.state.selectedBlock"></blockinfo>
+  <blockinfo v-if="!this.$store.state.block.blockEditDisplay" :block="this.$store.state.block.selectedBlock"></blockinfo>
 </div>
-<div v-if="this.$store.state.blockDetailWindow" class="modal-overlay"
+<div v-if="this.$store.state.block.blockDetailWindow" class="modal-overlay"
 @click="this.$store.commit('toggleBlockDetailWindow')" @click="this.$store.commit('turnoffBlockEditDisplay')"></div>
 </div>
 
@@ -43,8 +43,8 @@ let Blocks = {
   methods: {},
   computed: {
     blocks() {
-      console.log(this.$store.state.blocks);
-      return this.$store.state.blocks;
+      console.log(this.$store.state.block.blocks);
+      return this.$store.state.block.blocks;
     },
   },
   created() {

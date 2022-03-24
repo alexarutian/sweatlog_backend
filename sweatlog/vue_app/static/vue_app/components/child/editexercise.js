@@ -35,15 +35,16 @@ let EditExercise = {
 
   components: {},
   data() {
-    const extype = this.$store.state.selectedExercise.exercise_type;
+    const extype = this.$store.state.exercise.selectedExercise.exercise_type;
     const exerciseTypeId = extype ? extype.id : undefined;
 
-    const eqtype = this.$store.state.selectedExercise.equipment_type;
+    const eqtype = this.$store.state.exercise.selectedExercise.equipment_type;
     const equipmentTypeId = eqtype ? eqtype.id : undefined;
 
     return {
-      exerciseName: this.$store.state.selectedExercise.name,
-      exerciseDescription: this.$store.state.selectedExercise.description,
+      exerciseName: this.$store.state.exercise.selectedExercise.name,
+      exerciseDescription:
+        this.$store.state.exercise.selectedExercise.description,
       equipmentTypeId,
       exerciseTypeId,
     };
@@ -78,10 +79,10 @@ let EditExercise = {
   },
   computed: {
     exerciseTypes() {
-      return this.$store.state.exerciseTypes;
+      return this.$store.state.exercisetype.exerciseTypes;
     },
     equipmentTypes() {
-      return this.$store.state.equipmentTypes;
+      return this.$store.state.equipmenttype.equipmentTypes;
     },
   },
   created() {},

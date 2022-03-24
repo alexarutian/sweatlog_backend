@@ -27,11 +27,6 @@ let BlockExerciseStat = {
     checkmark: CheckMark,
   },
   data() {
-    // const sets = this.exercise.sets ? this.exercise.sets : null;
-    // const reps = this.exercise.reps ? this.exercise.reps : null;
-    // const weight = this.exercise.weight ? this.exercise.weight : null;
-    // const time = this.exercise.time ? this.exercise.time : null;
-
     return {
       statExpanded: false,
       sets: null,

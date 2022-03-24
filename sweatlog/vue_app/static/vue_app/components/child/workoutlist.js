@@ -33,7 +33,7 @@ let WorkoutList = {
       return this.detailToggle ? "Summary" : "Detail";
     },
     workouts() {
-      return this.$store.state.workouts;
+      return this.$store.state.workout.workouts;
     },
   },
   created() {

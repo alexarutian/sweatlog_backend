@@ -77,16 +77,16 @@ let ExerciseSearch = {
   },
   computed: {
     exerciseTypes() {
-      return this.$store.state.exerciseTypes;
+      return this.$store.state.exercisetype.exerciseTypes;
     },
     equipmentTypes() {
-      return this.$store.state.equipmentTypes;
+      return this.$store.state.equipmenttype.equipmentTypes;
     },
     exercises() {
-      return this.$store.state.exercises;
+      return this.$store.state.exercise.exercises;
     },
     filteredExercises() {
-      return this.$store.state.filteredExercises;
+      return this.$store.state.exercise.filteredExercises;
     },
   },
   created() {},

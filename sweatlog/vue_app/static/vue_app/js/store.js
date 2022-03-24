@@ -33,6 +33,14 @@ const exercise = {
     selectExercise(state, payload) {
       state.selectedExercise = payload.exercise;
     },
+    updateExercises(state, payload) {
+      state.exercises = payload.data;
+    },
+
+    updateFilteredExercises(state, payload) {
+      state.filteredExercises = payload.data;
+      console.log(state.filteredExercises);
+    },
   },
   actions: {
     async fetchExercises(context) {
@@ -93,34 +101,86 @@ const exercise = {
   },
 };
 
-let store = createStore({
-  modules: {
-    exercise: exercise,
-  },
+const exercisetype = {
   state() {
     return {
-      currentPage: "exercises",
-      priorPage: "",
-      sessions: null,
-      workouts: null,
-      blocks: null,
       exerciseTypes: null,
+    };
+  },
+  getters: {},
+  mutations: {
+    updateExerciseTypes(state, payload) {
+      state.exerciseTypes = payload.data;
+    },
+  },
+  actions: {
+    async fetchExerciseTypes(context) {
+      const response = await getJSONFetch("/webapp/exercisetypes/", {
+        user_token: context.rootState.userToken,
+      });
+      let payload = { data: response.all_exercise_types };
+      context.commit("updateExerciseTypes", payload);
+    },
+    async createNewExerciseType(context, payload) {
+      const response = await postJSONFetch(
+        "/webapp/exercisetypes/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchExerciseTypes");
+    },
+    async editExerciseType(context, payload) {
+      const response = await putJSONFetch(
+        "/webapp/exercisetypes/" + payload.id + "/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchExerciseTypes");
+    },
+    async deleteExerciseType(context, payload) {
+      const response = await deleteJSONFetch(
+        "/webapp/exercisetypes/" + payload.id + "/",
+        { user_token: context.rootState.userToken },
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchExerciseTypes");
+    },
+  },
+};
+
+const equipmenttype = {
+  state() {
+    return {
       equipmentTypes: null,
-      csrfToken: "",
-      addingSessionWindow: false,
-      selectedSessionWorkout: "",
-      sessionWorkoutDetailWindow: false,
+    };
+  },
+  getters: {},
+  mutations: {
+    updateEquipmentTypes(state, payload) {
+      state.equipmentTypes = payload.data;
+    },
+  },
+  actions: {
+    async fetchEquipmentTypes(context) {
+      const response = await getJSONFetch("/webapp/equipmenttypes", {
+        user_token: context.rootState.userToken,
+      });
+      let payload = { data: response.all_equipment_types };
+      context.commit("updateEquipmentTypes", payload);
+    },
+  },
+};
+
+const block = {
+  state() {
+    return {
+      blocks: null,
       addingBlockWindow: false,
       blockDetailWindow: false,
       blockInfoDisplay: true,
       blockEditDisplay: false,
       blockSelectedExerciseList: [],
       selectedBlock: "",
-      userToken: "",
-      userEmail: "",
-      showLoginScreen: false,
-      statusMessage: "",
-      statusLevel: "", // eg. success, info, error
     };
   },
   getters: {
@@ -134,21 +194,6 @@ let store = createStore({
     },
   },
   mutations: {
-    navigate(state, payload) {
-      state.currentPage = payload.page;
-    },
-    toggleLoginScreen(state) {
-      state.showLoginScreen = !state.showLoginScreen;
-    },
-    toggleAddingSessionWindow(state) {
-      state.addingSessionWindow = !state.addingSessionWindow;
-    },
-    selectSessionWorkout(state, payload) {
-      state.selectedSessionWorkout = payload.workout;
-    },
-    toggleSessionWorkoutDetailWindow(state) {
-      state.sessionWorkoutDetailWindow = !state.sessionWorkoutDetailWindow;
-    },
     toggleAddingBlockWindow(state) {
       state.addingBlockWindow = !state.addingBlockWindow;
     },
@@ -185,27 +230,137 @@ let store = createStore({
     selectBlock(state, payload) {
       state.selectedBlock = payload.block;
     },
-    updateSessions(state, payload) {
-      state.sessions = payload.data;
-    },
-    updateWorkouts(state, payload) {
-      state.workouts = payload.data;
-    },
     updateBlocks(state, payload) {
       state.blocks = payload.data;
     },
-    updateExercises(state, payload) {
-      state.exercises = payload.data;
+  },
+  actions: {
+    async createNewBlock(context, payload) {
+      const response = await postJSONFetch(
+        "/webapp/blocks/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchBlocks");
     },
-    updateFilteredExercises(state, payload) {
-      state.filteredExercises = payload.data;
-      console.log(state.filteredExercises);
+    async fetchBlocks(context) {
+      const response = await getJSONFetch("/webapp/blocks", {
+        user_token: context.rootState.userToken,
+      });
+      let payload = { data: response.all_blocks };
+      context.commit("updateBlocks", payload);
     },
-    updateExerciseTypes(state, payload) {
-      state.exerciseTypes = payload.data;
+  },
+};
+
+const session = {
+  state() {
+    return {
+      sessions: null,
+      addingSessionWindow: false,
+      selectedSessionWorkout: "",
+      sessionWorkoutDetailWindow: false,
+    };
+  },
+  getters: {},
+  mutations: {
+    toggleAddingSessionWindow(state) {
+      state.addingSessionWindow = !state.addingSessionWindow;
     },
-    updateEquipmentTypes(state, payload) {
-      state.equipmentTypes = payload.data;
+    selectSessionWorkout(state, payload) {
+      state.selectedSessionWorkout = payload.workout;
+    },
+    toggleSessionWorkoutDetailWindow(state) {
+      state.sessionWorkoutDetailWindow = !state.sessionWorkoutDetailWindow;
+    },
+
+    updateSessions(state, payload) {
+      state.sessions = payload.data;
+    },
+  },
+  actions: {
+    async fetchSessions(context) {
+      context.commit("clearMessageData");
+      const response = await getJSONFetch("/webapp/sessions", {
+        user_token: context.rootState.userToken,
+      });
+      let message = "";
+      if (response._status == 200) {
+        message = "success";
+      } else if (response._status == 404) {
+        message = "no sessions found";
+      } else {
+        message = "an error occurred - please try again";
+      }
+      context.commit("updateMessageData", {
+        message,
+        code: response._status,
+      });
+      let payload = { data: response.scheduled_sessions };
+      context.commit("updateSessions", payload);
+    },
+    async createNewSession(context, payload) {
+      const response = await postJSONFetch(
+        "/webapp/sessions/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchSessions");
+    },
+  },
+};
+
+const workout = {
+  state() {
+    return {
+      workouts: null,
+    };
+  },
+  getters: {},
+  mutations: {
+    updateWorkouts(state, payload) {
+      state.workouts = payload.data;
+    },
+  },
+  actions: {
+    async fetchWorkouts(context) {
+      const response = await getJSONFetch("/webapp/workouts", {
+        user_token: context.rootState.userToken,
+      });
+      let payload = { data: response.all_workouts };
+      context.commit("updateWorkouts", payload);
+    },
+  },
+};
+
+let store = createStore({
+  modules: {
+    exercise: exercise,
+    exercisetype: exercisetype,
+    equipmenttype: equipmenttype,
+    block: block,
+    session: session,
+    workout: workout,
+  },
+  state() {
+    return {
+      currentPage: "exercises",
+      priorPage: "",
+      csrfToken: "",
+      userToken: "",
+      userEmail: "",
+      showLoginScreen: false,
+      statusMessage: "",
+      statusLevel: "", // eg. success, info, error
+    };
+  },
+  getters: {},
+  mutations: {
+    navigate(state, payload) {
+      state.currentPage = payload.page;
+    },
+    toggleLoginScreen(state) {
+      state.showLoginScreen = !state.showLoginScreen;
     },
     updateTokens(state, payload) {
       state.csrfToken = payload.csrfToken;
@@ -235,94 +390,6 @@ let store = createStore({
   // actions gets context that includes state and a commit object
   // could also pass a payload
   actions: {
-    async fetchSessions(context) {
-      context.commit("clearMessageData");
-      const response = await getJSONFetch("/webapp/sessions", {
-        user_token: context.state.userToken,
-      });
-      let message = "";
-      if (response._status == 200) {
-        message = "success";
-      } else if (response._status == 404) {
-        message = "no sessions found";
-      } else {
-        message = "an error occurred - please try again";
-      }
-      context.commit("updateMessageData", {
-        message,
-        code: response._status,
-      });
-      let payload = { data: response.scheduled_sessions };
-      context.commit("updateSessions", payload);
-    },
-    async createNewSession(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/sessions/",
-        payload.body,
-        context.state.csrfToken
-      );
-      store.dispatch("fetchSessions");
-    },
-    async createNewBlock(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/blocks/",
-        payload.body,
-        context.state.csrfToken
-      );
-      store.dispatch("fetchBlocks");
-    },
-    async fetchWorkouts(context) {
-      const response = await getJSONFetch("/webapp/workouts", {
-        user_token: context.state.userToken,
-      });
-      let payload = { data: response.all_workouts };
-      context.commit("updateWorkouts", payload);
-    },
-    async fetchBlocks(context) {
-      const response = await getJSONFetch("/webapp/blocks", {
-        user_token: context.state.userToken,
-      });
-      let payload = { data: response.all_blocks };
-      context.commit("updateBlocks", payload);
-    },
-    async fetchExerciseTypes(context) {
-      const response = await getJSONFetch("/webapp/exercisetypes/", {
-        user_token: context.state.userToken,
-      });
-      let payload = { data: response.all_exercise_types };
-      context.commit("updateExerciseTypes", payload);
-    },
-    async createNewExerciseType(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/exercisetypes/",
-        payload.body,
-        context.state.csrfToken
-      );
-      store.dispatch("fetchExerciseTypes");
-    },
-    async editExerciseType(context, payload) {
-      const response = await putJSONFetch(
-        "/webapp/exercisetypes/" + payload.id + "/",
-        payload.body,
-        context.state.csrfToken
-      );
-      store.dispatch("fetchExerciseTypes");
-    },
-    async deleteExerciseType(context, payload) {
-      const response = await deleteJSONFetch(
-        "/webapp/exercisetypes/" + payload.id + "/",
-        { user_token: context.state.userToken },
-        context.state.csrfToken
-      );
-      store.dispatch("fetchExerciseTypes");
-    },
-    async fetchEquipmentTypes(context) {
-      const response = await getJSONFetch("/webapp/equipmenttypes", {
-        user_token: context.state.userToken,
-      });
-      let payload = { data: response.all_equipment_types };
-      context.commit("updateEquipmentTypes", payload);
-    },
     // create diff responses to handle success or failure!
     async createNewUser(context, payload) {
       context.commit("clearMessageData");
@@ -408,14 +475,5 @@ let store = createStore({
     },
   },
 });
-
-// const exercisetype = {
-//   state() {
-//     return {};
-//   },
-//   getters: {},
-//   mutations: {},
-//   actions: {},
-// };
 
 export { store };

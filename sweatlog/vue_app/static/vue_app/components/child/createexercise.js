@@ -56,10 +56,10 @@ let CreateExercise = {
   },
   computed: {
     exerciseTypes() {
-      return this.$store.state.exerciseTypes;
+      return this.$store.state.exercisetype.exerciseTypes;
     },
     equipmentTypes() {
-      return this.$store.state.equipmentTypes;
+      return this.$store.state.equipmenttype.equipmentTypes;
     },
     message() {
       return this.$store.state.statusMessage;

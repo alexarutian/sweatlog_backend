@@ -57,7 +57,7 @@ let Exercises = {
   methods: {},
   computed: {
     exercises() {
-      return this.$store.state.exercises;
+      return this.$store.state.exercise.exercises;
     },
   },
   created() {

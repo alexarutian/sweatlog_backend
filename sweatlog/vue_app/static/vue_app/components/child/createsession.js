@@ -53,7 +53,7 @@ let CreateSession = {
   },
   computed: {
     workouts() {
-      return this.$store.state.workouts;
+      return this.$store.state.workout.workouts;
     },
     todaysDate() {
       const today = new Date();
