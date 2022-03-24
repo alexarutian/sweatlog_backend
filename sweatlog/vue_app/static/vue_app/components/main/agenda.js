@@ -1,5 +1,6 @@
 import { WaterDrop } from "../child/waterdrop.js";
 import { CreateSession } from "../child/createsession.js";
+import { WorkoutInfo } from "../child/workoutinfo.js";
 
 let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
@@ -15,7 +16,7 @@ let Agenda = {
       <p class="agenda-date-header">[[date.dateString]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
         <waterdrop class="agenda-item-icon agenda-waterdrop"></waterdrop>
-        <p>[[session.workout.name]]</p>
+        <p @click="this.$store.commit('selectSessionWorkout',{ workout: session.workout })" @click="this.$store.commit('toggleSessionWorkoutDetailWindow')">[[session.workout.name]]</p>
       </div>
       <div v-if="date.sessions.length == 0" class="agenda-no-workout">
         <div class="agenda-item-icon agenda-plus">+</div>
@@ -28,12 +29,23 @@ let Agenda = {
     <createsession v-if="this.$store.state.addingSessionWindow"></createsession>
   </div>
   <div v-if="this.$store.state.addingSessionWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingSessionWindow')"></div>
+
+  <div v-if="this.$store.state.sessionWorkoutDetailWindow" class="modal">
+  <span class="close"
+  @click="this.$store.commit('toggleSessionWorkoutDetailWindow')">&times;</span>  
+  <workoutinfo :workout="this.$store.state.selectedSessionWorkout"></workoutinfo>
+</div>
+<div v-if="this.$store.state.sessionWorkoutDetailWindow" class="modal-overlay"
+@click="this.$store.commit('toggleSessionWorkoutDetailWindow')"></div>
+</div>
+
   </div>
   `,
 
   components: {
     waterdrop: WaterDrop,
     createsession: CreateSession,
+    workoutinfo: WorkoutInfo,
   },
   data() {
     return {};

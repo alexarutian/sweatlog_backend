@@ -337,6 +337,7 @@ def exercises_with_id(request, exercise_id):
 
 def blocks(request):
     data = _find_data(request)
+    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)

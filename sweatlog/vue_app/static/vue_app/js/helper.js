@@ -144,3 +144,23 @@ function getFutureDates(startDate, noOfDays) {
 
   return dateList;
 }
+
+function moveInArray(arr, from, to) {
+  //delete item from its current position
+  let item = arr.splice(from, 1);
+
+  // move to new position
+  arr.splice(to, 0, item[0]);
+
+  return arr;
+}
+
+function replaceInPlaceInArray(arr, index, replacementItem) {
+  //delete original item
+  arr.splice(index, 1);
+
+  //replace with new item
+  arr.splice(index, 0, replacementItem);
+
+  return arr;
+}

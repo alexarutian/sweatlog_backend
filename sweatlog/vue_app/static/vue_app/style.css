@@ -580,3 +580,83 @@ select {
 .alert-message {
   text-align: center;
 }
+
+.drop-zone {
+  padding: 10px;
+}
+
+.exercise-row {
+  padding: 5px;
+  border: 1px solid lightgray;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.exercise-stats-row {
+  padding: 5px;
+  border: 1px solid lightgray;
+  background-color: lightgray;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exercise-stats-row input {
+  background-color: white;
+}
+
+.input-sets {
+  width: 15%;
+}
+
+.input-reps,
+.input-weight {
+  width: 23%;
+}
+
+.input-time {
+  width: 30%;
+}
+
+.draggable-item {
+  width: 90%;
+}
+
+.draghandle-svg {
+  fill: #c7c6b7;
+}
+
+.checkmark-svg {
+  fill: green;
+  padding: 2px;
+}
+
+.checkmark-icon {
+  height: 20px;
+  width: 20px;
+}
+
+.draggable-handle-icon {
+  height: 15px;
+  cursor: grab;
+  padding: 2px;
+  margin-left: 5px;
+}
+
+.draggable-delete-icon,
+.draggable-extra-input-icon,
+.stat-delete-icon {
+  cursor: pointer;
+  color: #c7c6b7;
+  padding: 2px;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.stat-populated {
+  color: green;
+}

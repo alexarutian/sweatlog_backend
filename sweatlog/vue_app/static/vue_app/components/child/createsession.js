@@ -5,7 +5,7 @@ let CreateSession = {
 
   <div class="form-cluster">
     <label for="workout-select2">workout</label>
-    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout2($event)" >
+    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout($event)" >
     <datalist id="workout_list">
     <option v-for="workout in workouts" :data-id="workout.id" :value="workout.name"></option>
     </datalist>
@@ -30,9 +30,6 @@ let CreateSession = {
   },
   methods: {
     selectWorkout(e) {
-      this.workoutId = e.target.value;
-    },
-    selectWorkout2(e) {
       let workoutName = e.target.value;
       let id = document.querySelector(
         `#workout_list option[value='${workoutName}']`
