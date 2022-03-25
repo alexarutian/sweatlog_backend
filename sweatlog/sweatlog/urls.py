@@ -22,4 +22,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("webapp/", include("webapp.urls")),
     path("vue_app/", include("vue_app.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]

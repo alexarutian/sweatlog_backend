@@ -19,6 +19,7 @@ let LoginOrCreateUser = {
         <input type="text" v-model="emailLogin" v-on:keyup="checkEmail" @click="selectAll($event)" placeholder="email address"/>
         <input type="password" v-model="passwordLogin" @click="selectAll($event)" placeholder="password"/>
         <button @click="loginUser">SUBMIT</button>
+        <a href='/accounts/password_reset/'>Forgot password?</a>
         <div class="alert-message">[[preServerMessage]]</div>
         <div class="alert-message">[[message]]</div>
   </div>

@@ -164,3 +164,43 @@ function replaceInPlaceInArray(arr, index, replacementItem) {
 
   return arr;
 }
+
+const CONSTANTS = {
+  timeOptions: [
+    { display: "0:05", value: 5 },
+    { display: "0:10", value: 10 },
+    { display: "0:15", value: 15 },
+    { display: "0:20", value: 20 },
+    { display: "0:25", value: 25 },
+    { display: "0:30", value: 30 },
+    { display: "0:35", value: 35 },
+    { display: "0:40", value: 40 },
+    { display: "0:45", value: 45 },
+    { display: "0:50", value: 50 },
+    { display: "0:55", value: 55 },
+    { display: "1:30", value: 90 },
+    { display: "2:00", value: 120 },
+    { display: "2:30", value: 150 },
+    { display: "3:00", value: 180 },
+    { display: "3:30", value: 210 },
+    { display: "4:00", value: 240 },
+    { display: "4:30", value: 270 },
+    { display: "5:00", value: 300 },
+    { display: "6:00", value: 360 },
+    { display: "7:00", value: 420 },
+    { display: "8:00", value: 480 },
+    { display: "9:00", value: 540 },
+    { display: "10:00", value: 600 },
+    { display: "11:00", value: 660 },
+    { display: "12:00", value: 720 },
+    { display: "13:00", value: 780 },
+    { display: "14:00", value: 840 },
+    { display: "15:00", value: 900 },
+    { display: "20:00", value: 1200 },
+    { display: "25:00", value: 1500 },
+    { display: "30:00", value: 1800 },
+    { display: "40:00", value: 2400 },
+    { display: "50:00", value: 3000 },
+    { display: "60:00", value: 3600 },
+  ],
+};
