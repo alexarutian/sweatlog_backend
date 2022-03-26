@@ -1,5 +1,7 @@
 import { ExerciseTypes } from "../child/exercisetypes.js";
 
+let { mapState, mapActions } = Vuex;
+
 let Other = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -30,15 +32,11 @@ let Other = {
     };
   },
   methods: {
-    logoutUser() {
-      this.$store.dispatch("logoutUser");
-    },
+    ...mapActions(["logoutUser"]),
   },
-  computed: {
-    userEmail() {
-      return this.$store.state.userEmail;
-    },
-  },
+  computed: mapState({
+    userEmail: (state) => state.userEmail,
+  }),
   created() {},
 };
 export { Other };

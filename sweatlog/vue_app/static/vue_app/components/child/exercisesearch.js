@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let ExerciseSearch = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -45,10 +47,7 @@ let ExerciseSearch = {
   methods: {
     selectExercise(e) {
       let exerciseName = e.target.value;
-      let id = document.querySelector(
-        `#exercise_list option[value='${exerciseName}']`
-      ).dataset.id;
-      console.log(id);
+      let id = document.querySelector(`#exercise_list option[value='${exerciseName}']`).dataset.id;
       // disable schedule button if workoutID not found
       this.exerciseId = id;
     },
@@ -60,7 +59,7 @@ let ExerciseSearch = {
     },
     filterExercises() {
       const params = {
-        user_token: this.$store.state.userToken,
+        user_token: this.userToken,
       };
       if (this.equipmentTypeId) {
         params.equipment_type_id = this.equipmentTypeId;
@@ -68,27 +67,20 @@ let ExerciseSearch = {
       if (this.exerciseTypeId) {
         params.exercise_type_id = this.exerciseTypeId;
       }
-      console.log(params);
-      this.$store.dispatch("filterExercises", params);
+      this.filterExercises(params);
       if (this.equipmentTypeId || this.exerciseTypeId) {
         this.filteredList = true;
       }
     },
+    ...mapActions(["filterExercises"]),
   },
-  computed: {
-    exerciseTypes() {
-      return this.$store.state.exercisetype.exerciseTypes;
-    },
-    equipmentTypes() {
-      return this.$store.state.equipmenttype.equipmentTypes;
-    },
-    exercises() {
-      return this.$store.state.exercise.exercises;
-    },
-    filteredExercises() {
-      return this.$store.state.exercise.filteredExercises;
-    },
-  },
+  computed: mapState({
+    exerciseTypes: (state) => state.exercisetype.exercisetypes,
+    equipmentTypes: (state) => state.equipmenttype.equipmenttypes,
+    exercises: (state) => state.exercise.exercises,
+    filteredExercises: (state) => state.exercise.filteredExercises,
+    userToken: (state) => state.userToken,
+  }),
   created() {},
 };
 export { ExerciseSearch };

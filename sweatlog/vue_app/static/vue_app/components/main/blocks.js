@@ -1,34 +1,36 @@
 import { CreateBlock } from "../child/createblock.js";
 import { BlockInfo } from "../child/blockinfo.js";
 
+let { mapState, mapMutations } = Vuex;
+
 let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="blocks-page">
     <div id="page-top-options">
-    <div @click="this.$store.commit('toggleAddingBlockWindow')" class="page-top-option">ADD BLOCK</div>
+    <div @click="toggleAddingBlockWindow" class="page-top-option">ADD BLOCK</div>
     <div class="page-top-option">Option 2</div>
       <div class="page-top-option">Option 3</div>
     </div>
     <div id="block-list">
       <div v-for="block in blocks" class="block-list-line">
-        <p @click="this.$store.commit('selectBlock',{block: block})" @click="this.$store.commit('toggleBlockDetailWindow')">[[block.name]]</p>
+        <p @click="selectBlock({block})" @click="toggleBlockDetailWindow">[[block.name]]</p>
       </div>
     </div>
-    <div v-if="this.$store.state.block.addingBlockWindow" id="create-block-modal" class="modal">
-    <span class="close" @click="this.$store.commit('toggleAddingBlockWindow')">&times;</span>  
-    <createblock v-if="this.$store.state.block.addingBlockWindow"></createblock>
+    <div v-if="adding" id="create-block-modal" class="modal">
+    <span class="close" @click="toggleAddingBlockWindow">&times;</span>  
+    <createblock v-if="adding"></createblock>
   </div>
-  <div v-if="this.$store.state.block.addingBlockWindow" class="modal-overlay" @click="this.$store.commit('toggleAddingBlockWindow')"></div>
+  <div v-if="adding" class="modal-overlay" @click="toggleAddingBlockWindow"></div>
   </div>
 
-  <div v-if="this.$store.state.block.blockDetailWindow" id="block-info-modal" class="modal">
+  <div v-if="detail" id="block-info-modal" class="modal">
   <span class="close"
-  @click="this.$store.commit('toggleBlockDetailWindow')" @click="this.$store.commit('turnoffBlockEditDisplay')">&times;</span>  
-  <blockinfo v-if="!this.$store.state.block.blockEditDisplay" :block="this.$store.state.block.selectedBlock"></blockinfo>
+  @click="toggleBlockDetailWindow" @click="turnoffBlockEditDisplay">&times;</span>  
+  <blockinfo v-if="!editing" :block="selected"></blockinfo>
 </div>
-<div v-if="this.$store.state.block.blockDetailWindow" class="modal-overlay"
-@click="this.$store.commit('toggleBlockDetailWindow')" @click="this.$store.commit('turnoffBlockEditDisplay')"></div>
+<div v-if="detail" class="modal-overlay"
+@click="toggleBlockDetailWindow" @click="turnoffBlockEditDisplay"></div>
 </div>
 
 `,
@@ -40,13 +42,16 @@ let Blocks = {
   data() {
     return {};
   },
-  methods: {},
-  computed: {
-    blocks() {
-      console.log(this.$store.state.block.blocks);
-      return this.$store.state.block.blocks;
-    },
+  methods: {
+    ...mapMutations(["toggleAddingBlockWindow", "toggleBlockDetailWindow", "selectBlock", "turnoffBlockEditDisplay"]),
   },
+  computed: mapState({
+    blocks: (state) => state.block.blocks,
+    adding: (state) => state.block.addingBlockWindow,
+    detail: (state) => state.block.blockDetailWindow,
+    editing: (state) => state.block.blockEditDisplay,
+    selected: (state) => state.block.selectedBlock,
+  }),
   created() {
     this.$store.dispatch("fetchBlocks");
   },

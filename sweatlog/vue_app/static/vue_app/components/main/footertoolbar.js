@@ -1,9 +1,11 @@
+let { mapState, mapMutations } = Vuex;
+
 let FooterToolbar = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
       <div class="footer-toolbar" >
       <p v-for="item in menuitems" v-bind:key="item.id"
-         @click="this.$store.commit('navigate',{page: item.page})"
+         @click="navigate({page: item.page})"
          :class="{'menu-item': true, 'selected-menu-item': item.page == currentPage }">
          [[item.name]]</p>    
       </div>    
@@ -16,11 +18,11 @@ let FooterToolbar = {
   props: {
     menuitems: Object,
   },
-  computed: {
-    currentPage() {
-      return this.$store.state.currentPage;
-    },
+  computed: mapState({
+    currentPage: (state) => state.currentPage,
+  }),
+  methods: {
+    ...mapMutations(["navigate"]),
   },
-  methods: {},
 };
 export { FooterToolbar };

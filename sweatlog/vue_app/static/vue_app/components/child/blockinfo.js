@@ -1,5 +1,7 @@
 import { ExerciseLine } from "./exerciseline.js";
 
+let { mapState, mapMutations } = Vuex;
+
 let BlockInfo = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
@@ -9,7 +11,7 @@ let BlockInfo = {
   <exerciseline :exercise="exercise" v-for="exercise in block.exercises" class="block-detailed-exercise"></exerciseline>
   
   <div id="modal-bottom-buttons">
-    <button id="open-edit-exercise-button" @click="this.$store.commit('toggleExerciseEditDisplay')">EDIT</button>
+    <button id="open-edit-exercise-button" @click="toggleExerciseEditDisplay">EDIT</button>
     <button id="delete-exercise-button" @click="deleteExercise(exercise.id)">DELETE</button>
   </div>
   </div>
@@ -25,9 +27,7 @@ let BlockInfo = {
     block: Object,
   },
   methods: {
-    // deleteExercise(id) {
-    //   this.$store.dispatch("deleteExercise", { id });
-    // },
+    ...mapMutations(["toggleExerciseEditDisplay"]),
   },
   computed: {},
   created() {},

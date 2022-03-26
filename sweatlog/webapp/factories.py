@@ -118,8 +118,8 @@ class SingleUserExerciseFactory(DjangoModelFactory):
 
     name = factory.Faker("word")
     description = factory.Faker("text")
-    exercise_type = factory.Iterator(ExerciseType.objects.all())
-    equipment_type = factory.Iterator(EquipmentType.objects.all())
+    exercise_type = factory.Iterator(ExerciseType.objects.filter(user__id=2))
+    equipment_type = factory.Iterator(EquipmentType.objects.filter(user__id=2))
     user = User.objects.get(id=2)
 
 

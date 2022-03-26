@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let CreateSession = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -16,8 +18,8 @@ let CreateSession = {
     <input id="date-select" type="date" @change="selectDate($event)">
   </div>
   
-<button id="add-session-button" @click="createNewSession">SCHEDULE</button>
-<div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
+<button id="add-session-button" @click="submitCreate">SCHEDULE</button>
+<div v-if="statusLevel == 'error'">[[message]]</div>
 
   `,
 
@@ -31,9 +33,7 @@ let CreateSession = {
   methods: {
     selectWorkout(e) {
       let workoutName = e.target.value;
-      let id = document.querySelector(
-        `#workout_list option[value='${workoutName}']`
-      ).dataset.id;
+      let id = document.querySelector(`#workout_list option[value='${workoutName}']`).dataset.id;
       console.log(id);
       // disable schedule button if workoutID not found
       this.workoutId = id;
@@ -41,27 +41,24 @@ let CreateSession = {
     selectDate(e) {
       this.date = e.target.value;
     },
-    createNewSession() {
+    submitCreate() {
       const body = {
         workout_id: this.workoutId,
         date: this.date,
         user_token: this.$store.state.userToken,
       };
 
-      this.$store.dispatch("createNewSession", { body });
+      this.createNewSession({ body });
     },
+    ...mapActions(["fetchWorkouts", "createNewSession"]),
   },
-  computed: {
-    workouts() {
-      return this.$store.state.workout.workouts;
-    },
-    todaysDate() {
-      const today = new Date();
-      return formatDatetoYYYYMMDD(today);
-    },
-  },
+  computed: mapState({
+    workouts: (state) => state.workout.workouts,
+    statusLevel: (state) => state.statusLevel,
+    message: (state) => state.statusMessage,
+  }),
   created() {
-    this.$store.dispatch("fetchWorkouts");
+    this.fetchWorkouts();
   },
 };
 export { CreateSession };

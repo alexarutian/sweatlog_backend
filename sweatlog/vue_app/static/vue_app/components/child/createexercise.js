@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let CreateExercise = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -21,8 +23,8 @@ let CreateExercise = {
     </select>
   </div>
   
-<button id="add-exercise-button" @click="createNewExercise">ADD EXERCISE</button>
-<div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
+<button id="add-exercise-button" @click="submitCreate">ADD EXERCISE</button>
+<div v-if="statusLevel == 'error'">[[message]]</div>
 
   `,
 
@@ -42,7 +44,7 @@ let CreateExercise = {
     selectEquipmentType(e) {
       this.equipmentTypeId = e.target.value;
     },
-    createNewExercise() {
+    submitCreate() {
       const body = {
         name: this.exerciseName,
         description: this.exerciseDescription,
@@ -51,20 +53,16 @@ let CreateExercise = {
         user_token: this.$store.state.userToken,
       };
 
-      this.$store.dispatch("createNewExercise", { body });
+      this.createNewExercise({ body });
     },
+    ...mapActions(["createNewExercise"]),
   },
-  computed: {
-    exerciseTypes() {
-      return this.$store.state.exercisetype.exerciseTypes;
-    },
-    equipmentTypes() {
-      return this.$store.state.equipmenttype.equipmentTypes;
-    },
-    message() {
-      return this.$store.state.statusMessage;
-    },
-  },
+  computed: mapState({
+    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
+    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
+    message: (state) => state.statusMessage,
+    statusLevel: (state) => state.statusLevel,
+  }),
   created() {},
 };
 export { CreateExercise };

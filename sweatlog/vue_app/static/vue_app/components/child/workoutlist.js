@@ -1,6 +1,8 @@
 import { ExerciseLine } from "./exerciseline.js";
 import { WorkoutInfo } from "./workoutinfo.js";
 
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let WorkoutList = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -32,9 +34,9 @@ let WorkoutList = {
     viewName() {
       return this.detailToggle ? "Summary" : "Detail";
     },
-    workouts() {
-      return this.$store.state.workout.workouts;
-    },
+    ...mapState({
+      workouts: (state) => state.workout.workouts,
+    }),
   },
   created() {
     this.$store.dispatch("fetchWorkouts");

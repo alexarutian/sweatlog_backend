@@ -92,14 +92,16 @@ def login_user(request):
     # try:
     #     user = User.objects.get(email=email, password=password)
     #     request.session["user_token"] = str(user.token)
-    try:
-        user = authenticate(username=email, password=password)
+    user = authenticate(username=email, password=password)
+    if user is not None:
         request.session["user_token"] = str(user.token)
         return JsonResponse({"email": email, "token": user.token}, status=200)
-    except User.DoesNotExist:
-        return JsonResponse({}, status=404)
-    except PermissionError:
-        return JsonResponse({"email": email}, status=403)
+    else:
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({}, status=404)
+        return JsonResponse({}, status=403)
 
 
 def logout_user(request):

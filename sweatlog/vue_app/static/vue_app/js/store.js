@@ -52,11 +52,7 @@ const exercise = {
     },
     async createNewExercise(context, payload) {
       context.commit("clearMessageData");
-      const response = await postJSONFetch(
-        "/webapp/exercises/",
-        payload.body,
-        context.rootState.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/exercises/", payload.body, context.rootState.csrfToken);
       let message = "";
       if (response._status == 201) {
         message = "success";
@@ -122,11 +118,7 @@ const exercisetype = {
       context.commit("updateExerciseTypes", payload);
     },
     async createNewExerciseType(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/exercisetypes/",
-        payload.body,
-        context.rootState.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/exercisetypes/", payload.body, context.rootState.csrfToken);
       store.dispatch("fetchExerciseTypes");
     },
     async editExerciseType(context, payload) {
@@ -185,9 +177,7 @@ const block = {
   },
   getters: {
     getBlockSelectedExerciseById: (state) => (id) => {
-      return state.blockSelectedExerciseList.find(
-        (exercise) => exercise.id === id
-      );
+      return state.blockSelectedExerciseList.find((exercise) => exercise.id === id);
     },
     getBlockSelectedExerciseByIndex: (state) => (index) => {
       return state.blockSelectedExerciseList[index];
@@ -207,9 +197,7 @@ const block = {
       state.blockEditDisplay = false;
     },
     removeFromBlockSelectedExerciseList(state, payload) {
-      state.blockSelectedExerciseList = state.blockSelectedExerciseList.filter(
-        (li) => li != payload.item
-      );
+      state.blockSelectedExerciseList = state.blockSelectedExerciseList.filter((li) => li != payload.item);
     },
     addToBlockSelectedExerciseList(state, payload) {
       state.blockSelectedExerciseList.push({
@@ -221,11 +209,7 @@ const block = {
       moveInArray(state.blockSelectedExerciseList, payload.from, payload.to);
     },
     swapBlockSelectedExerciseItem(state, payload) {
-      replaceInPlaceInArray(
-        state.blockSelectedExerciseList,
-        payload.index,
-        payload.replacementItem
-      );
+      replaceInPlaceInArray(state.blockSelectedExerciseList, payload.index, payload.replacementItem);
     },
     selectBlock(state, payload) {
       state.selectedBlock = payload.block;
@@ -236,11 +220,7 @@ const block = {
   },
   actions: {
     async createNewBlock(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/blocks/",
-        payload.body,
-        context.rootState.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/blocks/", payload.body, context.rootState.csrfToken);
       store.dispatch("fetchBlocks");
     },
     async fetchBlocks(context) {
@@ -300,11 +280,7 @@ const session = {
       context.commit("updateSessions", payload);
     },
     async createNewSession(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/sessions/",
-        payload.body,
-        context.rootState.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/sessions/", payload.body, context.rootState.csrfToken);
       store.dispatch("fetchSessions");
     },
   },
@@ -393,18 +369,14 @@ let store = createStore({
     // create diff responses to handle success or failure!
     async createNewUser(context, payload) {
       context.commit("clearMessageData");
-      const response = await postJSONFetch(
-        "/webapp/users/",
-        payload.body,
-        context.state.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/users/", payload.body, context.state.csrfToken);
       let message = "";
       if (response._status == 200) {
         message = "account creation success";
       } else if (response._status == 404 || response.status == 403) {
         message = "account creation unsuccessful";
       } else if (response._status == 409) {
-        message = "an account with this email address already exists";
+        message = "an account with this email address already exists - please login";
       } else {
         message = "an error occurred - please try again";
       }
@@ -422,19 +394,17 @@ let store = createStore({
     },
     async loginUser(context, payload) {
       context.commit("clearMessageData");
-      const response = await postJSONFetch(
-        "/webapp/users/login/",
-        payload.body,
-        context.state.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/users/login/", payload.body, context.state.csrfToken);
 
       // handling message right next to where we handle the data - immediately
       // INTERNAL ERROR - 500 - server could stick message in response - hybrid approach
       let message = "";
       if (response._status == 200) {
         message = "login success";
-      } else if (response._status == 404 || response.status == 403) {
-        message = "login unsuccessful";
+      } else if (response._status == 403) {
+        message = "invalid password - please try again";
+      } else if (response._status == 404) {
+        message = "account with this email address does not exist - please create a new account";
       } else {
         message = "an error occurred - please try again";
       }
@@ -451,11 +421,7 @@ let store = createStore({
       }
     },
     async logoutUser(context) {
-      const response = await postJSONFetch(
-        "/webapp/users/logout/",
-        {},
-        context.state.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/users/logout/", {}, context.state.csrfToken);
       context.commit("updateUserData", {
         email: "",
         token: "",
@@ -463,11 +429,7 @@ let store = createStore({
     },
 
     async getUserEmail(context, payload) {
-      const response = await postJSONFetch(
-        "/webapp/users/get_user_email/",
-        payload.body,
-        context.state.csrfToken
-      );
+      const response = await postJSONFetch("/webapp/users/get_user_email/", payload.body, context.state.csrfToken);
       context.commit("updateUserData", {
         email: response.email,
         token: context.state.userToken,

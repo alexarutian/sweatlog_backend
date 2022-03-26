@@ -1,5 +1,7 @@
 import { BlockExerciseStat } from "./blockexercisestat.js";
 
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let CreateBlock = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -14,11 +16,11 @@ let CreateBlock = {
   </datalist>
 </div>
   <div class="drop-zone" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
-  <blockexercisestat v-if="this.$store.state.block.blockSelectedExerciseList" v-for="(exercise, index) in this.$store.state.block.blockSelectedExerciseList" :exercise=exercise :index=index :data-index="index" draggable="true" @dragstart="startDrag($event, exercise, index)">
+  <blockexercisestat v-if="selectedExerciseList" v-for="(exercise, index) in selectedExerciseList" :exercise=exercise :index=index :data-index="index" draggable="true" @dragstart="startDrag($event, exercise, index)">
   </blockexercisestat>
   </div>
-  <button id="add-block-button" @click="createNewBlock">ADD BLOCK</button>
-<div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
+  <button id="add-block-button" @click="submitCreate">ADD BLOCK</button>
+<div v-if="statusLevel == 'error'">[[message]]</div>
 
   `,
 
@@ -28,7 +30,6 @@ let CreateBlock = {
   data() {
     return {
       blockName: "",
-      selectedExerciseList: [],
     };
   },
   methods: {
@@ -42,13 +43,12 @@ let CreateBlock = {
       let to = e.target.dataset.index;
       let from = e.dataTransfer.getData("index");
       let item = e.dataTransfer.getData("item");
-      this.$store.commit("reorderBlockSelectedExerciseList", { from, to });
+      this.reorderBlockSelectedExerciseList({ from, to });
     },
     selectExercise(e) {
       let name = e.target.value;
-      let id = document.querySelector(`#exercise_list option[value='${name}']`)
-        .dataset.id;
-      this.$store.commit("addToBlockSelectedExerciseList", { id, name });
+      let id = document.querySelector(`#exercise_list option[value='${name}']`).dataset.id;
+      this.addToBlockSelectedExerciseList({ id, name });
       document.getElementById("exercise-select2").value = "";
     },
     toggleAddStat(id) {
@@ -62,24 +62,25 @@ let CreateBlock = {
     addStatContains(id) {
       return this.addStat.indexOf(id) >= 0;
     },
-    createNewBlock() {
+    submitCreate() {
       const body = {
         name: this.blockName,
-        user_token: this.$store.state.userToken,
-        exercise_list: this.$store.state.block.blockSelectedExerciseList,
+        user_token: this.userToken,
+        exercise_list: this.selectedExerciseList,
       };
 
-      this.$store.dispatch("createNewBlock", { body });
+      this.createNewBlock({ body });
     },
+    ...mapMutations(["reorderBlockSelectedExerciseList", "addToBlockSelectedExerciseList"]),
+    ...mapActions(["createNewBlock"]),
   },
-  computed: {
-    exercises() {
-      return this.$store.state.exercise.exercises;
-    },
-    message() {
-      return this.$store.state.statusMessage;
-    },
-  },
+  computed: mapState({
+    exercises: (state) => state.exercise.exercises,
+    message: (state) => state.statusMessage,
+    selectedExerciseList: (state) => state.block.blockSelectedExerciseList,
+    statusLevel: (state) => state.statusLevel,
+    userToken: (state) => state.userToken,
+  }),
   created() {},
 };
 export { CreateBlock };

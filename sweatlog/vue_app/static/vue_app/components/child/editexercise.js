@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let EditExercise = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -29,12 +31,13 @@ let EditExercise = {
     </select>
   </div>
 
-  <button id="edit-exercise-button" @click="editExercise">EDIT EXERCISE</button>
+  <button id="edit-exercise-button" @click="submitEdit">EDIT EXERCISE</button>
 
   `,
 
   components: {},
   data() {
+    // these somehow don't work when converted to mapState
     const extype = this.$store.state.exercise.selectedExercise.exercise_type;
     const exerciseTypeId = extype ? extype.id : undefined;
 
@@ -43,8 +46,7 @@ let EditExercise = {
 
     return {
       exerciseName: this.$store.state.exercise.selectedExercise.name,
-      exerciseDescription:
-        this.$store.state.exercise.selectedExercise.description,
+      exerciseDescription: this.$store.state.exercise.selectedExercise.description,
       equipmentTypeId,
       exerciseTypeId,
     };
@@ -60,7 +62,7 @@ let EditExercise = {
       this.equipmentTypeId = e.target.value;
     },
 
-    editExercise() {
+    submitEdit() {
       const id = this.exercise.id;
 
       const body = {
@@ -71,20 +73,22 @@ let EditExercise = {
         user_token: this.$store.state.userToken,
       };
 
-      this.$store.dispatch("editExercise", { id, body });
+      this.editExercise({ id, body });
     },
     selectAll(e) {
       e.srcElement.select();
     },
+    ...mapActions(["editExercise"]),
   },
-  computed: {
-    exerciseTypes() {
-      return this.$store.state.exercisetype.exerciseTypes;
-    },
-    equipmentTypes() {
-      return this.$store.state.equipmenttype.equipmentTypes;
-    },
-  },
+  computed: mapState({
+    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
+    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
+    // these don't work with the above!
+    selectedExerciseExType: (state) => state.exercise.selectedExercise.exercise_type,
+    selectedExerciseEqType: (state) => state.exercise.selectedExercise.equipment_type,
+    selectedExerciseName: (state) => state.exercise.selectedExercise.name,
+    selectedExerciseDescription: (state) => state.exercise.selectedExercise.description,
+  }),
   created() {},
 };
 export { EditExercise };
