@@ -652,3 +652,13 @@ select {
   flex-direction: column;
   justify-content: space-between;
 }
+
+/* (B) DRAG-AND-DROP HINT */
+.block-exercise-item.hint {
+  border: 1px solid #ffc49a;
+  background: #feffb4;
+}
+.block-exercise-item.active {
+  border: 1px solid #ffa5a5;
+  background: #ffe7e7;
+}

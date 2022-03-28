@@ -15,10 +15,11 @@ let CreateBlock = {
   <option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
   </datalist>
 </div>
-  <div class="drop-zone"  @drop="onDrop($event)"   @dragover.prevent @dragenter.prevent>
-  <blockexercisestat v-if="selectedExerciseList" v-for="(exercise, index) in selectedExerciseList" :exercise=exercise :index=index :data-index="index" draggable="true" @dragstart="startDrag($event, exercise, index)">
+<div class="drop-zone"  >
+  <blockexercisestat class="exercise-drop-target" v-if="selectedExerciseList" v-for="(exercise, index) in selectedExerciseList" :exercise="exercise" :index="index" :data-index="index" 
+  draggable="true" @dragstart="startDrag($event)" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
   </blockexercisestat>
-  </div>
+</div>
   <button id="add-block-button" @click="submitCreate">ADD BLOCK</button>
 <div v-if="statusLevel == 'error'">[[message]]</div>
 
@@ -30,23 +31,28 @@ let CreateBlock = {
   data() {
     return {
       blockName: "",
+      draggingIndex: null,
     };
   },
   methods: {
-    startDrag(e, item, index) {
+    startDrag(e) {
+      const index = parseInt(e.target.dataset.index);
       e.dataTransfer.dropEffect = "move";
       e.dataTransfer.effectAllowed = "move";
-      console.log("startdragindex" + index);
-      e.dataTransfer.setData("item", item);
-      e.dataTransfer.setData("index", index);
+      console.log("startdragindex " + index);
+      // e.dataTransfer.setData("index", e.target.dataset.index);
+      this.draggingIndex = index;
     },
     onDrop(e) {
-      console.log("value" + e.target.value);
-      let to = e.target.dataset.index;
-      console.log("enddragindex" + to);
-      let from = e.dataTransfer.getData("index");
-      let item = e.dataTransfer.getData("item");
-      this.reorderBlockSelectedExerciseList({ from, to });
+      if (this.draggingIndex != null) {
+        let dropTarget = e.target.closest(".exercise-drop-target");
+        console.log(dropTarget);
+        let to = parseInt(dropTarget.dataset.index);
+        console.log("enddragindex " + to);
+        let from = this.draggingIndex;
+        this.reorderBlockSelectedExerciseList({ from, to });
+        this.draggingIndex = null;
+      }
     },
     selectExercise(e) {
       let name = e.target.value;

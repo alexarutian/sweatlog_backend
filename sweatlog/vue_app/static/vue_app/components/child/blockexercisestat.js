@@ -55,9 +55,7 @@ let BlockExerciseStat = {
     },
 
     saveStats() {
-      let exercise = this.$store.getters.getBlockSelectedExerciseByIndex(
-        this.index
-      );
+      let exercise = this.$store.getters.getBlockSelectedExerciseByIndex(this.index);
       console.log(exercise);
 
       // CHECK TO MAKE SURE TIME WORKS!
@@ -81,15 +79,8 @@ let BlockExerciseStat = {
   computed: {
     statPopulated() {
       // convert to computed property
-      let exercise = this.$store.getters.getBlockSelectedExerciseByIndex(
-        this.index
-      );
-      if (
-        exercise.sets ||
-        exercise.reps ||
-        exercise.weight_lb ||
-        exercise.time_in_seconds
-      ) {
+      let exercise = this.$store.getters.getBlockSelectedExerciseByIndex(this.index);
+      if (exercise.sets || exercise.reps || exercise.weight_lb || exercise.time_in_seconds) {
         return true;
       } else {
         return false;
