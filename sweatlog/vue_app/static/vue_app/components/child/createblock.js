@@ -15,7 +15,7 @@ let CreateBlock = {
   <option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
   </datalist>
 </div>
-  <div class="drop-zone" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+  <div class="drop-zone"  @drop="onDrop($event)"   @dragover.prevent @dragenter.prevent>
   <blockexercisestat v-if="selectedExerciseList" v-for="(exercise, index) in selectedExerciseList" :exercise=exercise :index=index :data-index="index" draggable="true" @dragstart="startDrag($event, exercise, index)">
   </blockexercisestat>
   </div>
@@ -36,11 +36,14 @@ let CreateBlock = {
     startDrag(e, item, index) {
       e.dataTransfer.dropEffect = "move";
       e.dataTransfer.effectAllowed = "move";
+      console.log("startdragindex" + index);
       e.dataTransfer.setData("item", item);
       e.dataTransfer.setData("index", index);
     },
     onDrop(e) {
+      console.log("value" + e.target.value);
       let to = e.target.dataset.index;
+      console.log("enddragindex" + to);
       let from = e.dataTransfer.getData("index");
       let item = e.dataTransfer.getData("item");
       this.reorderBlockSelectedExerciseList({ from, to });
