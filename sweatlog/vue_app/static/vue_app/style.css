@@ -577,6 +577,7 @@ select {
   justify-content: space-between;
   align-items: center;
   margin-top: 5px;
+  height: 60px;
 }
 
 .exercise-stats-row {
@@ -655,10 +656,8 @@ select {
 
 /* (B) DRAG-AND-DROP HINT */
 .block-exercise-item.hint {
-  border: 1px solid #ffc49a;
-  background: #feffb4;
+  background: yellow;
 }
 .block-exercise-item.active {
-  border: 1px solid #ffa5a5;
-  background: #ffe7e7;
+  background: red;
 }

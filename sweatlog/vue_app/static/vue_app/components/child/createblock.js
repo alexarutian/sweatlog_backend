@@ -15,14 +15,14 @@ let CreateBlock = {
   <option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
   </datalist>
 </div>
-<div class="drop-zone"  >
-  <blockexercisestat class="exercise-drop-target" v-if="selectedExerciseList" v-for="(exercise, index) in selectedExerciseList" :exercise="exercise" :index="index" :data-index="index" 
-  draggable="true" @dragstart="startDrag($event)" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+<div class="drop-zone">
+  <blockexercisestat class="block-exercise-item" v-if="selectedExerciseList" v-for="(exercise, index) in selectedExerciseList" :exercise="exercise" :index="index" :data-index="index" 
+  draggable="true" @dragstart="startDrag($event)" @drop="onDrop($event)" @dragover.prevent @dragenter="dragEnter($event)" @dragleave="dragLeave($event)"
+  @touchstart="startTouch($event)" @touchmove="moveFinger($event)" @touchend="endTouch($event)">
   </blockexercisestat>
 </div>
   <button id="add-block-button" @click="submitCreate">ADD BLOCK</button>
 <div v-if="statusLevel == 'error'">[[message]]</div>
-
   `,
 
   components: {
@@ -39,16 +39,83 @@ let CreateBlock = {
       const index = parseInt(e.target.dataset.index);
       e.dataTransfer.dropEffect = "move";
       e.dataTransfer.effectAllowed = "move";
-      console.log("startdragindex " + index);
-      // e.dataTransfer.setData("index", e.target.dataset.index);
       this.draggingIndex = index;
+      let allItems = document.getElementsByClassName("block-exercise-item");
+      for (let i of allItems) {
+        if (i.dataset.index != this.draggingIndex) {
+          i.classList.add("hint");
+        }
+      }
+    },
+    startTouch(e) {
+      e.preventDefault();
+      let touchTarget = e.target.closest(".block-exercise-item");
+      const index = parseInt(touchTarget.dataset.index);
+      this.draggingIndex = index;
+      let allItems = document.getElementsByClassName("block-exercise-item");
+      for (let i of allItems) {
+        if (i.dataset.index != this.draggingIndex) {
+          i.classList.add("hint");
+        }
+      }
+    },
+    dragEnter(e) {
+      e.preventDefault();
+      let target = e.target.closest(".block-exercise-item");
+      if (target.dataset.index != this.draggingIndex) {
+        target.classList.add("active");
+      }
+    },
+    dragLeave(e) {
+      let target = e.target.closest(".block-exercise-item");
+      target.classList.remove("active");
+    },
+    moveFinger(e) {
+      e.preventDefault();
+      let changedTouch = e.changedTouches[0];
+      let elemUnderFinger = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+      let onChoice = elemUnderFinger.closest(".block-exercise-item");
+
+      if (onChoice && onChoice.dataset.index != this.draggingIndex) {
+        onChoice.classList.add("active");
+      } else {
+        let allItems = document.getElementsByClassName("block-exercise-item");
+        for (let i of allItems) {
+          i.classList.remove("active");
+        }
+      }
     },
     onDrop(e) {
+      // remove formatting from all
+      let allItems = document.getElementsByClassName("block-exercise-item");
+      for (let i of allItems) {
+        i.classList.remove("hint");
+        i.classList.remove("active");
+      }
+
       if (this.draggingIndex != null) {
-        let dropTarget = e.target.closest(".exercise-drop-target");
-        console.log(dropTarget);
+        let dropTarget = e.target.closest(".block-exercise-item");
         let to = parseInt(dropTarget.dataset.index);
-        console.log("enddragindex " + to);
+        let from = this.draggingIndex;
+        this.reorderBlockSelectedExerciseList({ from, to });
+        this.draggingIndex = null;
+      }
+    },
+    endTouch(e) {
+      e.preventDefault();
+
+      // remove formatting from all
+      let allItems = document.getElementsByClassName("block-exercise-item");
+      for (let i of allItems) {
+        i.classList.remove("hint");
+        i.classList.remove("active");
+      }
+
+      if (this.draggingIndex != null) {
+        let changedTouch = e.changedTouches[0];
+        let elemUnderFinger = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+        let dropTarget = elemUnderFinger.closest(".block-exercise-item");
+        let to = parseInt(dropTarget.dataset.index);
         let from = this.draggingIndex;
         this.reorderBlockSelectedExerciseList({ from, to });
         this.draggingIndex = null;

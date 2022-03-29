@@ -7,9 +7,9 @@ let BlockExerciseStat = {
   <div>
     <div class="exercise-row">
       <div class="draggable-item">[[exercise.name]]</div>
-      <div :class="{'draggable-extra-input-icon': true, 'stat-populated': statPopulated}" @click="toggleStatExpanded">S</div>
+      <div :class="{'draggable-extra-input-icon': true, 'stat-populated': statPopulated}" @click="toggleStatExpanded" @touchstart="toggleStatExpanded">S</div>
       <draghandle class="draggable-handle-icon"></draghandle>
-      <div class="draggable-delete-icon" @click="deleteDraggable(exercise)">X</div>
+      <div class="draggable-delete-icon" @click="deleteDraggable(exercise)" @touchstart="deleteDraggable(exercise)">X</div>
     </div>
     <div v-if="statExpanded==true" class="exercise-stats-row">
       <input type="text" class="input-sets" placeholder="sets" v-model="sets">
@@ -19,7 +19,7 @@ let BlockExerciseStat = {
         <option value="">MM:SS</option>
         <option v-for="time in timeOptions" :value="time.value">[[time.display]]</option>
       </select>
-      <checkmark class="checkmark-icon" @click="saveStats"></checkmark>
+      <checkmark class="checkmark-icon" @click="saveStats" @touchstart="saveStats"></checkmark>
       <div class="stat-delete-icon">X</div>
     </div>
   </div>
