@@ -9,7 +9,7 @@ let CreateExercise = {
   
   <div class="form-cluster">
     <label for="exercise-type-select">exercise type</label>
-    <select id="exercise-type-select" @change="selectExerciseType($event)">
+    <select id="exercise-type-select" @change="selectExerciseType">
       <option>none (default)</option>
       <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
     </select>
@@ -17,7 +17,7 @@ let CreateExercise = {
 
   <div class="form-cluster">
     <label for="equipment-type-select">equipment type</label>
-    <select id="equipment-type-select" @change="selectEquipmentType($event)">
+    <select id="equipment-type-select" @change="selectEquipmentType">
       <option>none (default)</option>
       <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
     </select>

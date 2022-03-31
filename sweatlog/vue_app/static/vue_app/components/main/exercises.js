@@ -17,29 +17,32 @@ let Exercises = {
   
     <div id="exercise-list">
       <div v-for="exercise in exercises" class="exercise-list-line">
-        <p @click="selectExercise({exercise})" @click="toggleExerciseDetailWindow" @click="console(exercise)">[[exercise.name]]</p>
+        <p @click="selectExercise({exercise})" @click="toggleExerciseDetailWindow">[[exercise.name]]</p>
       </div>
     </div>
     
-    <div v-if="adding" id="create-exercise-modal" class="modal">
-      <span class="close" @click="toggleAddingExerciseWindow">&times;</span>  
+    <div v-if="adding" id="create-exercise-box" class="full-page-box">
+      <span class="close-full-page-box" @click="toggleAddingExerciseWindow">&times;</span>  
       <createexercise v-if="adding"></createexercise>
     </div>
-    <div v-if="adding" class="modal-overlay" @click="toggleAddingExerciseWindow"></div>
     
+    <div v-if="editing" class="full-page-box">
+      <span class="close-full-page-box" @click="toggleExerciseEditDisplay">&times;</span>  
+      <editexercise :exercise="selected"></editexercise>
+    </div>
+
     <div v-if="searching" class="modal">
     <span class="close" @click="toggleExerciseSearchWindow">&times;</span>  
     <exercisesearch v-if="searching"></exercisesearch>
     </div>
     <div v-if="searching" class="modal-overlay" @click="toggleExerciseSearchWindow"></div>
 
-    <div v-if="detail" id="exercise-info-modal" class="modal">
+    <div v-if="detail && !editing" id="exercise-info-modal" class="modal">
       <span class="close"
       @click="toggleExerciseDetailWindow" @click="turnoffExerciseEditDisplay">&times;</span>  
       <exerciseinfo v-if="!editing" :exercise="selected"></exerciseinfo>
-      <editexercise v-if="editing" :exercise="selected"></editexercise>
     </div>
-    <div v-if="detail" class="modal-overlay"
+    <div v-if="detail && !editing" class="modal-overlay"
     @click="toggleExerciseDetailWindow" @click="turnoffExerciseEditDisplay"></div>
     </div>
   `,
@@ -59,6 +62,7 @@ let Exercises = {
     },
     ...mapMutations([
       "toggleExerciseSearchWindow",
+      "toggleExerciseEditDisplay",
       "toggleAddingExerciseWindow",
       "turnoffExerciseEditDisplay",
       "toggleExerciseDetailWindow",

@@ -130,12 +130,12 @@ table {
 
 /* END CSS RESET */
 
-.workouts-list {
+/* .workouts-list {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-}
+} */
 
 .workout-summarized,
 .workout-detailed {
@@ -246,7 +246,6 @@ table {
 #blocks-page,
 #login-page,
 #other-page {
-  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -333,11 +332,13 @@ table {
 }
 
 #exercise-list,
-#block-list {
+#block-list,
+#workout-list {
   display: flex;
   flex-direction: column;
   width: 100%;
   overflow: auto;
+  padding: 10px;
 }
 
 .exercise-list-line,
@@ -366,6 +367,24 @@ table {
   background-color: hsl(56, 72%, 85%);
 }
 
+.full-page-box {
+  position: absolute;
+  width: 100%;
+  height: 86vh;
+  background-color: white;
+  padding: 10px;
+}
+
+.close-full-page-box {
+  margin-left: auto;
+  color: darkgray;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
 .modal {
   position: fixed;
   display: flex;
@@ -392,7 +411,7 @@ table {
   text-transform: uppercase;
 }
 
-#create-exercise-modal input,
+#create-exercise-box input,
 #exercise-info-modal input,
 input {
   padding: 5px;
@@ -410,7 +429,7 @@ input {
   width: 200px;
 }
 
-#create-exercise-modal label,
+#create-exercise-box label,
 #exercise-info-modal label {
   color: gray;
   margin-bottom: 5px;
@@ -430,7 +449,7 @@ input {
   display: none;
 }
 
-#create-exercise-modal.invisible,
+#create-exercise-box.invisible,
 #exercise-info-modal.invisible,
 .modal-overlay.invisible {
   display: none;

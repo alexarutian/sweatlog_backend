@@ -7,17 +7,17 @@ let EditExercise = {
   
   <div class="form-cluster">
     <label>Name*</label>
-    <input @click="selectAll($event)" v-model="exerciseName" type="text" autocomplete="off" :placeholder="exercise.name"/>
+    <input @click="selectAll" v-model="exerciseName" type="text" autocomplete="off" :placeholder="exercise.name"/>
   </div>
 
   <div class="form-cluster">
     <label>Description</label>
-    <input @click="selectAll($event)" v-model="exerciseDescription" type="text" autocomplete="off" :placeholder="exercise.description"/>
+    <input @click="selectAll" v-model="exerciseDescription" type="text" autocomplete="off" :placeholder="exercise.description"/>
   </div>
     
   <div class="form-cluster">
     <label for="exercise-type-select">Exercise Type</label>
-    <select id="exercise-type-select" @change="selectExerciseType($event)" v-model="exerciseTypeId">
+    <select id="exercise-type-select" @change="selectExerciseType" v-model="exerciseTypeId">
       <option>--- None ---</option>
       <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
     </select>
@@ -25,7 +25,7 @@ let EditExercise = {
 
   <div class="form-cluster">
     <label for="equipment-type-select">Equipment Type</label>
-    <select id="equipment-type-select" @change="selectEquipmentType($event)" v-model="equipmentTypeId">
+    <select id="equipment-type-select" @change="selectEquipmentType" v-model="equipmentTypeId">
       <option>--- None ---</option>
       <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
     </select>

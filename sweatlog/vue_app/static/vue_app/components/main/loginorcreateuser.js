@@ -10,16 +10,16 @@ let LoginOrCreateUser = {
       <button @click="loginScreen = 'create'" @click="preServerMessage = ''" @click="clearMessageData">CREATE USER</button>
     </div>
       <div class="login-option" v-if="loginScreen == 'create'">
-          <input type="text" v-model="email" v-on:keyup="checkEmail" @click="selectAll($event)" placeholder="email address"/>
-          <input type="password" v-model="password" v-on:keyup="validatePasswords" @click="selectAll($event)" placeholder="password"/>
-          <input type="password" v-model="passwordConfirm" v-on:keyup="validatePasswords" @click="selectAll($event)" placeholder="confirm password"/>
+          <input type="text" v-model="email" v-on:keyup="checkEmail" @click="selectAll" placeholder="email address"/>
+          <input type="password" v-model="password" v-on:keyup="validatePasswords" @click="selectAll" placeholder="password"/>
+          <input type="password" v-model="passwordConfirm" v-on:keyup="validatePasswords" @click="selectAll" placeholder="confirm password"/>
           <button @click="createNewUser">SUBMIT</button>
           <div class="alert-message">[[preServerMessage]]</div>
           <div class="alert-message">[[message]]</div>
       </div>
       <div class="login-option" v-if="loginScreen == 'login'">
-        <input type="text" v-model="emailLogin" v-on:keyup="checkEmail" @click="selectAll($event)" placeholder="email address"/>
-        <input type="password" v-model="passwordLogin" @click="selectAll($event)" placeholder="password"/>
+        <input type="text" v-model="emailLogin" v-on:keyup="checkEmail" @click="selectAll" placeholder="email address"/>
+        <input type="password" v-model="passwordLogin" @click="selectAll" placeholder="password"/>
         <button @click="loginUser">SUBMIT</button>
 
         <div class="alert-message">[[preServerMessage]]</div>

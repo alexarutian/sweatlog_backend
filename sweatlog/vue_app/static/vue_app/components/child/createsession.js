@@ -7,7 +7,7 @@ let CreateSession = {
 
   <div class="form-cluster">
     <label for="workout-select2">workout</label>
-    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout($event)" >
+    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout" >
     <datalist id="workout_list">
     <option v-for="workout in workouts" :data-id="workout.id" :value="workout.name"></option>
     </datalist>
@@ -15,7 +15,7 @@ let CreateSession = {
 
   <div class="form-cluster">
     <label for="date-select">date</label>
-    <input id="date-select" type="date" @change="selectDate($event)">
+    <input id="date-select" type="date" @change="selectDate">
   </div>
   
 <button id="add-session-button" @click="submitCreate">SCHEDULE</button>
@@ -34,8 +34,7 @@ let CreateSession = {
     selectWorkout(e) {
       let workoutName = e.target.value;
       let id = document.querySelector(`#workout_list option[value='${workoutName}']`).dataset.id;
-      console.log(id);
-      // disable schedule button if workoutID not found
+      // ADD disable schedule button if workoutID not found
       this.workoutId = id;
     },
     selectDate(e) {

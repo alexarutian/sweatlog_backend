@@ -15,7 +15,7 @@ let BlockExerciseStat = {
       <input type="text" class="input-sets" placeholder="sets" v-model="sets">
       <input type="text" class="input-reps" placeholder="reps" v-model="reps">
       <input type="text" class="input-weight" placeholder="weight" v-model="weight_lb">
-      <select @change="selectTime($event)">
+      <select @change="selectTime">
         <option value="">MM:SS</option>
         <option v-for="time in timeOptions" :value="time.value">[[time.display]]</option>
       </select>
@@ -53,10 +53,8 @@ let BlockExerciseStat = {
     selectTime(e) {
       this.time_in_seconds = e.target.value;
     },
-
     saveStats() {
       let exercise = this.$store.getters.getBlockSelectedExerciseByIndex(this.index);
-      console.log(exercise);
 
       // CHECK TO MAKE SURE TIME WORKS!
       for (const key of ["reps", "sets", "weight_lb", "time_in_seconds"]) {

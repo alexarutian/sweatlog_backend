@@ -165,6 +165,27 @@ function replaceInPlaceInArray(arr, index, replacementItem) {
   return arr;
 }
 
+function findDivUnderCursor(e, selector = null) {
+  const isTouch = e.type.startsWith("touch");
+  if (isTouch) {
+    e.preventDefault();
+  }
+  let clientPointObj = isTouch ? e.changedTouches[0] : e;
+  let elemUnderCursor = document.elementFromPoint(clientPointObj.clientX, clientPointObj.clientY);
+  if (!selector) {
+    return elemUnderCursor;
+  } else {
+    return elemUnderCursor.closest(selector);
+  }
+}
+
+function doStuffToClass(className, callback) {
+  let items = document.getElementsByClassName(className);
+  for (let i of items) {
+    callback(i);
+  }
+}
+
 const CONSTANTS = {
   timeOptions: [
     { display: "0:05", value: 5 },

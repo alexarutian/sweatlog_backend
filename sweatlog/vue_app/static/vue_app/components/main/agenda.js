@@ -60,7 +60,7 @@ let Agenda = {
   },
   computed: {
     lastDay() {
-      const s = this.$store.state.session.sessions;
+      const s = this.sessions;
       if (s) {
         const lastSession = s[s.length - 1];
         return convertDateFromYYYYMMDDtoJSDate(lastSession.date);

@@ -17,11 +17,10 @@ let Blocks = {
         <p @click="selectBlock({block})" @click="toggleBlockDetailWindow">[[block.name]]</p>
       </div>
     </div>
-    <div v-if="adding" id="create-block-modal" class="modal">
-    <span class="close" @click="toggleAddingBlockWindow">&times;</span>  
+    <div v-if="adding" id="create-block-modal" class="full-page-box">
+    <span class="close-full-page-box" @click="toggleAddingBlockWindow">&times;</span>  
     <createblock v-if="adding"></createblock>
   </div>
-  <div v-if="adding" class="modal-overlay" @click="toggleAddingBlockWindow"></div>
   </div>
 
   <div v-if="detail" id="block-info-modal" class="modal">

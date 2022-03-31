@@ -6,7 +6,7 @@ let { mapState, mapMutations, mapActions } = Vuex;
 let WorkoutList = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div class="workouts-list">
+  <div id="workout-list">
     <div v-if="!showDetail" v-for="workout in workouts" class="workout-summarized"> 
         <p>[[ workout.name]] </p> 
     </div>
@@ -24,16 +24,8 @@ let WorkoutList = {
   props: {
     showDetail: Boolean,
   },
-  methods: {
-    toggleDetailView() {
-      this.detailToggle = !this.detailToggle;
-    },
-  },
+  methods: {},
   computed: {
-    // names the toggle button
-    viewName() {
-      return this.detailToggle ? "Summary" : "Detail";
-    },
     ...mapState({
       workouts: (state) => state.workout.workouts,
     }),

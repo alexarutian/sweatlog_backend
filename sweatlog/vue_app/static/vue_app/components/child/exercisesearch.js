@@ -7,7 +7,7 @@ let ExerciseSearch = {
 
   <div class="form-cluster">
     <label for="exercise-type-select">exercise type</label>
-    <select id="exercise-type-select" @change="selectExerciseType($event)" @change="filterExercises">
+    <select id="exercise-type-select" @change="selectExerciseType" @change="filterExercises">
       <option value="">all exercise types</option>
       <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
     </select>
@@ -15,7 +15,7 @@ let ExerciseSearch = {
 
   <div class="form-cluster">
     <label for="equipment-type-select">equipment type</label>
-    <select id="equipment-type-select" @change="selectEquipmentType($event)" @change="filterExercises">
+    <select id="equipment-type-select" @change="selectEquipmentType" @change="filterExercises">
       <option value="">all equipment types</option>
       <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
     </select>
@@ -23,7 +23,7 @@ let ExerciseSearch = {
 
   <div class="form-cluster">
     <label></label>
-    <input type="text" list="exercise_list" placeholder="search exercises" @change="selectExercise($event)" >
+    <input type="text" list="exercise_list" placeholder="search exercises" @change="selectExercise" >
     <datalist v-if="!filteredList" id="exercise_list">
     <option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
     </datalist>

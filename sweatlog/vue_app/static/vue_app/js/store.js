@@ -290,12 +290,32 @@ const workout = {
   state() {
     return {
       workouts: null,
+      addingWorkoutWindow: false,
+      workoutSelectedItemList: [],
     };
   },
   getters: {},
   mutations: {
     updateWorkouts(state, payload) {
       state.workouts = payload.data;
+    },
+    toggleAddingWorkoutWindow(state) {
+      state.addingWorkoutWindow = !state.addingWorkoutWindow;
+    },
+    removeFromWorkoutSelectedItemList(state, payload) {
+      state.workoutSelectedItemList = state.workoutSelectedItemList.filter((li) => li != payload.item);
+    },
+    addToWorkoutSelectedItemList(state, payload) {
+      state.workoutSelectedItemList.push({
+        id: payload.id,
+        name: payload.name,
+      });
+    },
+    reorderWorkoutSelectedItemList(state, payload) {
+      moveInArray(state.workoutSelectedItemList, payload.from, payload.to);
+    },
+    swapWorkoutSelectedItemItem(state, payload) {
+      replaceInPlaceInArray(state.workoutSelectedItemList, payload.index, payload.replacementItem);
     },
   },
   actions: {
