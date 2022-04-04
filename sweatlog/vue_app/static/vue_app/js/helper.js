@@ -165,6 +165,22 @@ function replaceInPlaceInArray(arr, index, replacementItem) {
   return arr;
 }
 
+function moveInNestedArray(arr, fromOuter, fromInner, toOuter, toInner) {
+  // delete item from its current position
+  let item = arr[fromOuter].splice(fromInner, 1);
+
+  // move to new position
+  arr[toOuter].splice(toInner, 0, item[0]);
+}
+
+function replaceInPlaceInNestedArray(arr, indexOuter, indexInner, replacementItem) {
+  // delete original item
+  arr[indexOuter].splice(indexInner, 1);
+
+  //replace with new item
+  arr[indexOuter].splice(indexInner, 0, replacementItem);
+}
+
 function findDivUnderCursor(e, selector = null) {
   const isTouch = e.type.startsWith("touch");
   if (isTouch) {

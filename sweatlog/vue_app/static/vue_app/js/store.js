@@ -294,7 +294,11 @@ const workout = {
       workoutSelectedItemList: [],
     };
   },
-  getters: {},
+  getters: {
+    getWorkoutSelectedExerciseByIndexes: (state) => (blockIndex, exerciseIndex) => {
+      return state.workoutSelectedItemList[blockIndex][exerciseIndex];
+    },
+  },
   mutations: {
     updateWorkouts(state, payload) {
       state.workouts = payload.data;
@@ -306,16 +310,40 @@ const workout = {
       state.workoutSelectedItemList = state.workoutSelectedItemList.filter((li) => li != payload.item);
     },
     addToWorkoutSelectedItemList(state, payload) {
-      state.workoutSelectedItemList.push({
+      let obj = {
         id: payload.id,
         name: payload.name,
-      });
+      };
+      let lst = state.workoutSelectedItemList;
+      // if no objects in list yet, make this first item in first list
+      if (lst.length == 0) {
+        lst.push([obj]);
+        // make this the last item in the only list
+      } else if (lst.length == 1) {
+        lst[0].push(obj);
+        // make this the last item in the last list
+      } else {
+        lst[lst.length - 1].push(obj);
+      }
+      console.log(lst);
     },
+    // WORK ON THESE TWO!! NEED TO MOVE ITEMS THROUGH A NESTED ARRAY STRUCTURE
     reorderWorkoutSelectedItemList(state, payload) {
-      moveInArray(state.workoutSelectedItemList, payload.from, payload.to);
+      moveInNestedArray(
+        state.workoutSelectedItemList,
+        payload.fromBlock,
+        payload.fromExercise,
+        payload.toBlock,
+        payload.toExercise
+      );
     },
-    swapWorkoutSelectedItemItem(state, payload) {
-      replaceInPlaceInArray(state.workoutSelectedItemList, payload.index, payload.replacementItem);
+    swapWorkoutSelectedItem(state, payload) {
+      replaceInPlaceInNestedArray(
+        state.workoutSelectedItemList,
+        payload.blockIndex,
+        payload.exerciseIndex,
+        payload.replacementItem
+      );
     },
   },
   actions: {
@@ -325,6 +353,10 @@ const workout = {
       });
       let payload = { data: response.all_workouts };
       context.commit("updateWorkouts", payload);
+    },
+    async createNewWorkout(context, payload) {
+      const response = await postJSONFetch("/webapp/workouts/", payload.body, context.rootState.csrfToken);
+      store.dispatch("fetchWorkouts");
     },
   },
 };

@@ -1,3 +1,5 @@
+import { WorkoutExerciseStat } from "./workoutexercisestat.js";
+
 let { mapState, mapMutations, mapActions } = Vuex;
 
 let CreateWorkout = {
@@ -7,23 +9,33 @@ let CreateWorkout = {
   <input v-model="workoutName" type="text" autocomplete="off" placeholder="name*" class="form-cluster"/>
   
   <div class="form-cluster">
-  <label for="workout-select">add from another workout</label>
+  <label for="workout-exercise-select">add an exercise</label>
+  <input id="workout-exercise-select" type="text" list="exercise_list" placeholder="search exercises" @change="selectExercise($event)" >
+  <datalist id="exercise_list">
+  <option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
+  </datalist>
+  </div>
+
+  <div class="form-cluster">
+  <label for="workout-select">bulk add from another workout</label>
   <input id="workout-select" type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout($event)" >
   <datalist id="workout_list">
   <option v-for="workout in workouts" :data-id="workout.id" :value="workout.name"></option>
   </datalist>
 </div>
 
-<div class="form-cluster">
-<label for="workout-exercise-select">add an exercise</label>
-<input id="workout-exercise-select" type="text" list="exercise_list" placeholder="search exercises" @change="selectExercise($event)" >
-<datalist id="exercise_list">
-<option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
-</datalist>
-</div>
-
-<div class="drop-zone">
-  <div v-if="selectedItemList" v-for="(item, index) in selectedItemList">[[item.name]]</div>
+<div>
+  <div class="selected-block" v-if="selectedItemList.length > 0" v-for="(block, index) in selectedItemList" :data-index="index">[[index]]
+  <workoutexercisestat class="selected-exercise" v-for="(exercise, index) in block" 
+  :exercise="exercise" :index="index" :data-index="index"
+        draggable="true" 
+        @dragstart="startMove" 
+        @touchstart="startMove" 
+        @dragover="moveOver" 
+        @touchmove="moveOver" 
+        @drop="drop" 
+        @touchend="drop">
+  </workoutexercisestat>
 </div>
   
 <button id="add-workout-button" @click="submitCreate">ADD WORKOUT</button>
@@ -31,13 +43,58 @@ let CreateWorkout = {
 
   `,
 
-  components: {},
+  components: {
+    workoutexercisestat: WorkoutExerciseStat,
+  },
   data() {
     return {
       workoutName: "",
+      draggingIndex: null,
     };
   },
   methods: {
+    startMove(e) {
+      let target = findDivUnderCursor(e, ".selected-exercise");
+      if (target) {
+        const index = parseInt(target.dataset.index);
+        this.draggingIndex = index;
+        doStuffToClass("selected-exercise", (i) => {
+          if (i.dataset.index != this.draggingIndex) {
+            i.classList.add("hint");
+          }
+        });
+      }
+    },
+
+    moveOver(e) {
+      e.preventDefault();
+      let target = findDivUnderCursor(e, ".selected-exercise");
+      let entering = target !== null;
+      doStuffToClass("selected-exercise", (i) => {
+        i.classList.remove("active");
+      });
+      if (entering && target.dataset.index != this.draggingIndex) {
+        target.classList.add("active");
+      }
+    },
+
+    drop(e) {
+      doStuffToClass("selected-exercise", (i) => {
+        i.classList.remove("hint");
+        i.classList.remove("active");
+      });
+      if (this.draggingIndex != null) {
+        let exerciseTarget = findDivUnderCursor(e, ".selected-exercise");
+        // let blockTarget = findDivUnderCursor(e, ".selected-block");
+        if (exerciseTarget) {
+          let toExercise = parseInt(exerciseTarget.dataset.index);
+          let fromExercise = this.draggingIndex;
+          this.reorderWorkoutSelectedItemList({ fromBlock: 0, fromExercise, toBlock: 0, toExercise });
+          this.draggingIndex = null;
+        }
+      }
+    },
+
     // rework this - are you adding the block inside the workout?
     selectWorkout(e) {
       let name = e.target.value;
@@ -53,11 +110,9 @@ let CreateWorkout = {
     },
     submitCreate() {
       const body = {
-        name: this.exerciseName,
-        description: this.exerciseDescription,
-        equipment_type_id: this.equipmentTypeId,
-        exercise_type_id: this.exerciseTypeId,
-        user_token: this.$store.state.userToken,
+        name: this.workoutName,
+        user_token: this.userToken,
+        exercise_list: this.selectedItemList,
       };
 
       this.createNewWorkout({ body });

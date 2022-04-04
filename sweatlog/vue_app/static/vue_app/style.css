@@ -680,3 +680,12 @@ select {
 .block-exercise-item.active {
   background: red;
 }
+
+.selected-block {
+  padding: 10px;
+  border: 1px dashed gray;
+}
+
+.selected-exercise {
+  padding: 5px;
+}
