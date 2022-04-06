@@ -24,7 +24,6 @@
   const availH = parseInt(window.innerHeight);
   document.getElementsByTagName("body").item(0).style.height = availH + "px";
 
-  //   const staticDir = "{% static vue_app %}";
   import { Agenda } from "{% static 'vue_app/components/main/agenda.js' %}";
   import { Workouts } from "{% static 'vue_app/components/main/workouts.js' %}";
   import { Blocks } from "{% static 'vue_app/components/main/blocks.js' %}";

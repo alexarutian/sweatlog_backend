@@ -22,6 +22,7 @@ from .models import (
     Block,
     Stat,
     BlockExercise,
+    WorkoutBlock,
 )
 
 from datetime import datetime
@@ -395,6 +396,7 @@ def blocks(request):
 
 def workouts(request):
     data = _find_data(request)
+    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
@@ -410,6 +412,58 @@ def workouts(request):
             detail.append(workout.serialize(detail_level=Detail.DETAIL))
 
         return JsonResponse({"all_workouts": detail}, status=200)
+
+    if request.method == "POST":
+
+        # create workout
+        name = data.get("name", "").lower()
+        workout = Workout.objects.create(name=name, user=user)
+
+        # process each block in item_list
+        item_list = data.get("item_list", [])
+        b_order = 0
+        for b in item_list:
+            b_order += 1
+            b_name = b.get("name", "").lower()
+            b_quantity = b.get("quantity")
+
+            block = Block.objects.create(name=b_name, user=user)
+            WorkoutBlock.objects.create(
+                workout=workout,
+                block=block,
+                block_quantity=b_quantity,
+                block_order=b_order,
+            )
+
+            # process exercise list within the block
+            exercise_list = b.get("exercise_list", [])
+            e_order = 0
+            for e in exercise_list:
+                e_order += 1
+                e_id = e["id"]
+                e_sets = e.get("sets")
+                e_reps = e.get("reps")
+                e_weight_lb = e.get("weight_lb")
+                e_time_in_seconds = e.get("time_in_seconds")
+
+                exercise = get_object_or_404(Exercise, id=e_id)
+
+                # create a stat
+                if e_sets or e_reps or e_weight_lb or e_time_in_seconds:
+                    stat = Stat.objects.create(
+                        sets=e_sets,
+                        reps=e_reps,
+                        weight_lb=e_weight_lb,
+                        time_in_seconds=e_time_in_seconds,
+                    )
+                else:
+                    stat = None
+
+                BlockExercise.objects.create(
+                    block=block, exercise=exercise, stat=stat, exercise_order=e_order
+                )
+
+        return JsonResponse({"workout_id": workout.id}, status=201)
 
 
 def sessions(request):

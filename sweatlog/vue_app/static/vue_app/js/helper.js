@@ -165,25 +165,70 @@ function replaceInPlaceInArray(arr, index, replacementItem) {
   return arr;
 }
 
-function moveInNestedArray(arr, fromOuter, fromInner, toOuter, toInner) {
-  // delete item from its current position
-  let item = arr[fromOuter].splice(fromInner, 1);
-
-  // move to new position
-  arr[toOuter].splice(toInner, 0, item[0]);
+/* 
+remove an item from the list in the property and return it
+*/
+function propPop(arr, index, prop, propIndex, remove = true) {
+  if (remove) {
+    return arr[index][prop].splice(propIndex, 1);
+  } else {
+    return arr[index][prop][propIndex];
+  }
 }
 
-function replaceInPlaceInNestedArray(arr, indexOuter, indexInner, replacementItem) {
-  // delete original item
-  arr[indexOuter].splice(indexInner, 1);
-
-  //replace with new item
-  arr[indexOuter].splice(indexInner, 0, replacementItem);
+function propInsert(arr, index, prop, propIndex, item, replace = false) {
+  if (replace) {
+    arr[index][prop][propIndex] = item;
+  } else {
+    arr[index][prop].splice(propIndex, 0, item);
+  }
 }
 
-function findDivUnderCursor(e, selector = null) {
+function propSwap(arr, fromIndex, toIndex, prop, fromPropIndex, toPropIndex) {
+  const item = propPop(arr, fromIndex, prop, fromPropIndex);
+  propInsert(arr, toIndex, prop, toPropIndex, item[0]);
+}
+
+function propDupe(arr, fromIndex, toIndex, prop, fromPropIndex, toPropIndex) {
+  const item = propPop(arr, fromIndex, prop, fromPropIndex, false);
+  propInsert(arr, toIndex, prop, toPropIndex, item[0]);
+}
+
+function moveInNestedArray(arr, fromOuter, fromInner, toOuter, toInner, prop = null) {
+  if (prop) {
+    // delete item from its current position
+    let item = arr[fromOuter][prop].splice(fromInner, 1);
+
+    // move to new position
+    arr[toOuter][prop].splice(toInner, 0, item[0]);
+  } else {
+    // delete item from its current position
+    let item = arr[fromOuter].splice(fromInner, 1);
+
+    // move to new position
+    arr[toOuter].splice(toInner, 0, item[0]);
+  }
+}
+
+function replaceInPlaceInNestedArray(arr, indexOuter, indexInner, replacementItem, prop = null) {
+  if (prop) {
+    // delete original item
+    arr[indexOuter][prop].splice(indexInner, 1);
+
+    //replace with new item
+    arr[indexOuter][prop].splice(indexInner, 0, replacementItem);
+  } else {
+    // delete original item
+    arr[indexOuter].splice(indexInner, 1);
+
+    //replace with new item
+    arr[indexOuter].splice(indexInner, 0, replacementItem);
+  }
+}
+
+function findDivUnderCursor(e, selector = null, autoPrevent = true) {
   const isTouch = e.type.startsWith("touch");
-  if (isTouch) {
+  if (isTouch && autoPrevent) {
     e.preventDefault();
   }
   let clientPointObj = isTouch ? e.changedTouches[0] : e;

@@ -291,7 +291,7 @@ class WorkoutBlock(models.Model):
     block = models.ForeignKey(
         Block, on_delete=models.CASCADE, related_name="workoutblocks", null=True
     )
-    block_quantity = models.IntegerField(default=1)
+    block_quantity = models.IntegerField(default=1, null=True)
     block_order = models.IntegerField()
 
     # do I need this?

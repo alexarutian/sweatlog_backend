@@ -25,14 +25,14 @@ let CreateWorkout = {
 </div>
 
 <div>
-  <div class="selected-block" v-if="selectedItemList.length > 0" v-for="(block, index) in selectedItemList" :data-index="index">[[index]]
-  <workoutexercisestat class="selected-exercise" v-for="(exercise, index) in block" 
-  :exercise="exercise" :index="index" :data-index="index"
+  <div class="selected-block" v-if="selectedItemList.length > 0" v-for="(block, blockIndex) in selectedItemList" :data-index="blockIndex">[[index]]
+  <workoutexercisestat class="selected-exercise" v-for="(exercise, exerciseIndex) in block.exercise_list" :key="exercise.key"
+  :exercise_key="exercise.key" :data-index="exerciseIndex" 
         draggable="true" 
         @dragstart="startMove" 
         @touchstart="startMove" 
         @dragover="moveOver" 
-        @touchmove="moveOver" 
+        @touchmove="moveOver"
         @drop="drop" 
         @touchend="drop">
   </workoutexercisestat>
@@ -54,6 +54,12 @@ let CreateWorkout = {
   },
   methods: {
     startMove(e) {
+      // don't do anything if in the gray input area, also do not prevent default
+      let statRow = findDivUnderCursor(e, ".exercise-stats-row", false);
+      if (statRow) {
+        // allow event to bubble up and input field to work
+        return true;
+      }
       let target = findDivUnderCursor(e, ".selected-exercise");
       if (target) {
         const index = parseInt(target.dataset.index);
@@ -109,15 +115,21 @@ let CreateWorkout = {
       document.getElementById("workout-exercise-select").value = "";
     },
     submitCreate() {
+      this.addBlockNameToWorkoutSelectedItemList({ workoutName: this.workoutName });
+
       const body = {
         name: this.workoutName,
         user_token: this.userToken,
-        exercise_list: this.selectedItemList,
+        item_list: this.selectedItemList,
       };
 
       this.createNewWorkout({ body });
     },
-    ...mapMutations(["reorderWorkoutSelectedItemList", "addToWorkoutSelectedItemList"]),
+    ...mapMutations([
+      "reorderWorkoutSelectedItemList",
+      "addToWorkoutSelectedItemList",
+      "addBlockNameToWorkoutSelectedItemList",
+    ]),
     ...mapActions(["createNewWorkout"]),
   },
   computed: mapState({
@@ -126,6 +138,7 @@ let CreateWorkout = {
     selectedItemList: (state) => state.workout.workoutSelectedItemList,
     message: (state) => state.statusMessage,
     statusLevel: (state) => state.statusLevel,
+    userToken: (state) => state.userToken,
   }),
   created() {},
 };

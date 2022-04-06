@@ -65,7 +65,6 @@ let BlockExerciseStat = {
         }
       }
 
-      console.log(exercise);
       this.$store.commit("swapBlockSelectedExerciseItem", {
         index: this.index,
         replacementItem: exercise,
@@ -84,6 +83,7 @@ let BlockExerciseStat = {
         return false;
       }
     },
+    exerciseStats() {},
   },
   created() {},
 };

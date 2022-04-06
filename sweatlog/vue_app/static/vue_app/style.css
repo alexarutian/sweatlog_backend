@@ -645,13 +645,13 @@ select {
 }
 
 .draggable-handle-icon {
-  height: 15px;
+  height: 20px;
   cursor: grab;
   padding: 2px;
   margin-left: 5px;
 }
 
-.draggable-delete-icon,
+.delete-icon,
 .draggable-extra-input-icon,
 .stat-delete-icon {
   cursor: pointer;
@@ -659,6 +659,14 @@ select {
   padding: 2px;
   font-weight: bold;
   margin-left: 5px;
+}
+
+.delete-icon,
+.draggable-extra-input-icon {
+  border: 1px solid black;
+  height: 90%;
+  width: 20%;
+  margin-left: 10px;
 }
 
 .stat-populated {

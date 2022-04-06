@@ -1,5 +1,7 @@
 let { createStore } = Vuex;
 
+let KEY_INCREMENT = 0;
+
 const exercise = {
   state() {
     return {
@@ -211,6 +213,9 @@ const block = {
     swapBlockSelectedExerciseItem(state, payload) {
       replaceInPlaceInArray(state.blockSelectedExerciseList, payload.index, payload.replacementItem);
     },
+    clearBlockSelectedExerciseList(state) {
+      state.blockSelectedExerciseList = [];
+    },
     selectBlock(state, payload) {
       state.selectedBlock = payload.block;
     },
@@ -221,7 +226,11 @@ const block = {
   actions: {
     async createNewBlock(context, payload) {
       const response = await postJSONFetch("/webapp/blocks/", payload.body, context.rootState.csrfToken);
-      store.dispatch("fetchBlocks");
+      if (response._status == 201) {
+        store.dispatch("fetchBlocks");
+        context.commit("clearBlockSelectedExerciseList");
+        context.commit("toggleAddingBlockWindow");
+      }
     },
     async fetchBlocks(context) {
       const response = await getJSONFetch("/webapp/blocks", {
@@ -296,7 +305,17 @@ const workout = {
   },
   getters: {
     getWorkoutSelectedExerciseByIndexes: (state) => (blockIndex, exerciseIndex) => {
-      return state.workoutSelectedItemList[blockIndex][exerciseIndex];
+      return state.workoutSelectedItemList[blockIndex]["exercise_list"][exerciseIndex];
+    },
+    getWorkoutSelectedExerciseByKey: (state) => (key) => {
+      for (const b of state.workoutSelectedItemList) {
+        for (const e of b.exercise_list) {
+          if (e.key == key) {
+            return e;
+          }
+        }
+      }
+      return null;
     },
   },
   mutations: {
@@ -309,41 +328,92 @@ const workout = {
     removeFromWorkoutSelectedItemList(state, payload) {
       state.workoutSelectedItemList = state.workoutSelectedItemList.filter((li) => li != payload.item);
     },
+    addBlockNameToWorkoutSelectedItemList(state, payload) {
+      state.workoutSelectedItemList[0].name = payload.workoutName;
+    },
     addToWorkoutSelectedItemList(state, payload) {
       let obj = {
         id: payload.id,
         name: payload.name,
+        statExpanded: false,
+        edits: {},
+        key: "fake-" + KEY_INCREMENT++,
       };
-      let lst = state.workoutSelectedItemList;
+      let blockList = state.workoutSelectedItemList;
       // if no objects in list yet, make this first item in first list
-      if (lst.length == 0) {
-        lst.push([obj]);
+      if (blockList.length == 0) {
+        let exercise_list = [];
+        exercise_list.push(obj);
+        let blockObj = { exercise_list };
+        blockList.push(blockObj);
         // make this the last item in the only list
-      } else if (lst.length == 1) {
-        lst[0].push(obj);
+      } else if (blockList.length == 1) {
+        blockList[0].exercise_list.push(obj);
         // make this the last item in the last list
       } else {
-        lst[lst.length - 1].push(obj);
+        blockList[blockList.length - 1].exercise_list.push(obj);
       }
-      console.log(lst);
+      console.log(blockList);
     },
     // WORK ON THESE TWO!! NEED TO MOVE ITEMS THROUGH A NESTED ARRAY STRUCTURE
     reorderWorkoutSelectedItemList(state, payload) {
-      moveInNestedArray(
+      propSwap(
         state.workoutSelectedItemList,
         payload.fromBlock,
-        payload.fromExercise,
         payload.toBlock,
+        "exercise_list",
+        payload.fromExercise,
         payload.toExercise
       );
     },
     swapWorkoutSelectedItem(state, payload) {
-      replaceInPlaceInNestedArray(
+      propInsert(
         state.workoutSelectedItemList,
         payload.blockIndex,
+        "exercise_list",
         payload.exerciseIndex,
-        payload.replacementItem
+        payload.replacementItem,
+        true
       );
+    },
+    toggleStatExpanded(state, payload) {
+      let exercise = store.getters.getWorkoutSelectedExerciseByKey(payload.key);
+      exercise.statExpanded = !exercise.statExpanded;
+    },
+    setStageData(state, payload) {
+      let exercise = store.getters.getWorkoutSelectedExerciseByKey(payload.key);
+      console.log(payload);
+      for (const k of ["reps", "sets", "weight_lb", "time_in_seconds"]) {
+        if (payload.hasOwnProperty(k)) {
+          exercise.edits[k] = payload[k];
+          console.log(exercise.edits);
+        }
+      }
+    },
+
+    commitStatEditsToMain(state, payload) {
+      let exercise = store.getters.getWorkoutSelectedExerciseByKey(payload.key);
+      let edits = exercise.edits;
+      console.log(edits);
+      for (const [key, value] of Object.entries(edits)) {
+        exercise[key] = value;
+      }
+      // clear out edits object
+      // exercise.edits = {};
+    },
+    // setting edits back to original state
+    cancelStatEdits(state, payload) {
+      let exercise = store.getters.getWorkoutSelectedExerciseByKey(payload.key);
+      for (const k of ["reps", "sets", "weight_lb", "time_in_seconds"]) {
+        if (exercise.hasOwnProperty(k)) {
+          exercise.edits[k] = exercise[k];
+        } else {
+          delete exercise.edits[k];
+        }
+      }
+    },
+    clearWorkoutSelectedItemList(state) {
+      state.workoutSelectedItemList = [];
     },
   },
   actions: {
@@ -356,7 +426,12 @@ const workout = {
     },
     async createNewWorkout(context, payload) {
       const response = await postJSONFetch("/webapp/workouts/", payload.body, context.rootState.csrfToken);
-      store.dispatch("fetchWorkouts");
+
+      if (response._status == 201) {
+        store.dispatch("fetchWorkouts");
+        context.commit("clearWorkoutSelectedItemList");
+        context.commit("toggleAddingWorkoutWindow");
+      }
     },
   },
 };
