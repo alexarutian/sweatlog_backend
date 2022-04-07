@@ -1,20 +1,23 @@
+import { Pencil } from "../child/pencil.js";
+import { Delete } from "../child/delete.js";
+
 let { mapState, mapMutations, mapActions } = Vuex;
 
 let ExerciseTypes = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-    <div>EXERCISE TYPES</div>
+    <p class="other-page-subtitle suboption-title">Exercise Types</p>
     <div id="exercise-type-list">
         <div v-for="et in exerciseTypes" class="exercise-type-list-line">
             <p>[[et.name]]</p>
             <div class="et-inline-modify-buttons">
-                <p @click="selectedExerciseType = et" @click="editingExerciseType = true">Edit</p>
-                <p @click="submitDelete(et.id)">Delete</p>
+                <pencil @click="selectedExerciseType = et" @click="editingExerciseType = true">Edit</pencil>
+                <delete @click="submitDelete(et.id)"></delete>
             </div>
         </div>
     </div>
-    <div  @click="addingExerciseType = true">ADD EXERCISE TYPE</div>
-    <div v-if="addingExerciseType">
+    <button  @click="addingExerciseType = true">ADD EXERCISE TYPE</button>
+    <div class="add-exercise-type" v-if="addingExerciseType">
         <input type="text" v-model="exerciseTypeName" placeholder="name" autocomplete="false">
         <button @click="submitCreate" @click="addingExerciseType = false">ADD</button>
     </div>
@@ -22,10 +25,12 @@ let ExerciseTypes = {
         <input type="text" v-model="selectedETName" :placeholder="this.selectedExerciseType.name">
         <button @click="submitEdit(this.selectedExerciseType.id)" @click="editingExerciseType = false">EDIT</button>
     </div>
-
     `,
 
-  components: {},
+  components: {
+    pencil: Pencil,
+    delete: Delete,
+  },
   data() {
     const selectedETName = this.selectedExerciseType ? this.selectedExerciseType.name : undefined;
     return {

@@ -19,7 +19,6 @@ let CreateSession = {
   </div>
   
 <button id="add-session-button" @click="submitCreate">SCHEDULE</button>
-<div v-if="statusLevel == 'error'">[[message]]</div>
 
   `,
 
@@ -53,8 +52,6 @@ let CreateSession = {
   },
   computed: mapState({
     workouts: (state) => state.workout.workouts,
-    statusLevel: (state) => state.statusLevel,
-    message: (state) => state.statusMessage,
   }),
   created() {
     this.fetchWorkouts();

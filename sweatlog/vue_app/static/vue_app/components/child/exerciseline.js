@@ -1,20 +1,24 @@
 let ExerciseLine = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
-    <table class="exercise-line">
+    <table v-if="exercise.stats" class="workout-exercise-line">
       <tr> 
-        <thead>
-          <td  class="exercise-name"><p>[[exercise.exercise.name]] </p></td>
-        </thead>
-        <tbody v-if="exercise.stats">
-          <td v-if="exercise.stats.reps" class="exercise-sets-reps"><p >[[exercise.stats.sets]] x [[exercise.stats.reps]] </p></td>
-          <td v-if="exercise.stats.weight_lb" class="exercise-weight"><p>[[exercise.stats.weight_lb]] lb</p></td>
-          <td v-if="exercise.stats.time_in_seconds" class="exercise-time"><p>[[timeAsString]]</p></td>
+        <tbody>
+          <tr>
+          <th class="exercise-name">[[exercise.exercise.name]]</th>
+            <td v-if="exercise.stats.reps" class="exercise-sets-reps"><p >[[exercise.stats.sets]] x [[exercise.stats.reps]] </p></td>
+            <td v-if="exercise.stats.weight_lb" class="exercise-weight"><p>[[exercise.stats.weight_lb]] lb</p></td>
+            <td v-if="exercise.stats.time_in_seconds" class="exercise-time"><p>[[timeAsString]]</p></td>
+          </tr>
         </tbody> 
        
       <tr>
-    </table>    
-  `,
+    </table>
+
+  <div v-else class="workout-exercise-line">
+      <p class="exercise-name-nostats">[[exercise.exercise.name]]</p>
+  </div>  
+`,
 
   components: {},
   data() {
@@ -28,9 +32,7 @@ let ExerciseLine = {
       return formatTime(seconds);
     },
   },
-  // available directly as if it were in data
-  // purpose is GIVEN data and props, we know exactly what the value will be
-  // calculate it when it's asked for
+
   computed: {
     timeAsString() {
       return formatTime(this.exercise.stats.time_in_seconds);

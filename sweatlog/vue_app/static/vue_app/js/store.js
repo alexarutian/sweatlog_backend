@@ -6,6 +6,7 @@ const exercise = {
   state() {
     return {
       exercises: null,
+      exerciseMap: null,
       filteredExercises: null,
       addingExerciseWindow: false,
       exerciseSearchWindow: false,
@@ -15,7 +16,11 @@ const exercise = {
       selectedExercise: "",
     };
   },
-  getters: {},
+  getters: {
+    getExerciseById: (state) => (id) => {
+      return state.exerciseMap[id];
+    },
+  },
   mutations: {
     toggleAddingExerciseWindow(state) {
       state.addingExerciseWindow = !state.addingExerciseWindow;
@@ -37,6 +42,11 @@ const exercise = {
     },
     updateExercises(state, payload) {
       state.exercises = payload.data;
+      let obj = {};
+      for (let e of state.exercises) {
+        obj[e.id] = e;
+      }
+      state.exerciseMap = obj;
     },
 
     updateFilteredExercises(state, payload) {
@@ -92,9 +102,11 @@ const exercise = {
         payload.body,
         context.rootState.csrfToken
       );
-      context.commit("toggleExerciseDetailWindow");
-      context.commit("toggleExerciseEditDisplay");
-      store.dispatch("fetchExercises");
+      if (response._status == 200) {
+        // context.commit("toggleExerciseDetailWindow");
+        context.commit("toggleExerciseEditDisplay");
+        store.dispatch("fetchExercises");
+      }
     },
   },
 };
@@ -262,7 +274,6 @@ const session = {
     toggleSessionWorkoutDetailWindow(state) {
       state.sessionWorkoutDetailWindow = !state.sessionWorkoutDetailWindow;
     },
-
     updateSessions(state, payload) {
       state.sessions = payload.data;
     },
@@ -290,7 +301,10 @@ const session = {
     },
     async createNewSession(context, payload) {
       const response = await postJSONFetch("/webapp/sessions/", payload.body, context.rootState.csrfToken);
-      store.dispatch("fetchSessions");
+      if (response._status == 201) {
+        store.dispatch("fetchSessions");
+        context.commit("toggleAddingSessionWindow");
+      }
     },
   },
 };
@@ -317,6 +331,16 @@ const workout = {
       }
       return null;
     },
+    getWorkoutSelectedExercisesBlockByKey: (state) => (key) => {
+      for (const b of state.workoutSelectedItemList) {
+        for (const e of b.exercise_list) {
+          if (e.key == key) {
+            return b;
+          }
+        }
+      }
+      return null;
+    },
   },
   mutations: {
     updateWorkouts(state, payload) {
@@ -326,15 +350,17 @@ const workout = {
       state.addingWorkoutWindow = !state.addingWorkoutWindow;
     },
     removeFromWorkoutSelectedItemList(state, payload) {
-      state.workoutSelectedItemList = state.workoutSelectedItemList.filter((li) => li != payload.item);
+      let block = store.getters.getWorkoutSelectedExercisesBlockByKey(payload.key);
+      let exercise = store.getters.getWorkoutSelectedExerciseByKey(payload.key);
+      block.exercise_list = block.exercise_list.filter((li) => li != exercise);
     },
     addBlockNameToWorkoutSelectedItemList(state, payload) {
-      state.workoutSelectedItemList[0].name = payload.workoutName;
+      state.workoutSelectedItemList[0].name = payload.workoutName + " block";
     },
     addToWorkoutSelectedItemList(state, payload) {
       let obj = {
         id: payload.id,
-        name: payload.name,
+        // name: payload.name,
         statExpanded: false,
         edits: {},
         key: "fake-" + KEY_INCREMENT++,

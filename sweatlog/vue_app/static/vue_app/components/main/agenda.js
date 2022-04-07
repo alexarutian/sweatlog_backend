@@ -25,7 +25,6 @@ let Agenda = {
         <p>Schedule workout</p>
       </div>
     </div>
-    <div>Schedule another workout</div>
   <div v-if="adding" id="create-session-modal" class="modal">
     <span class="close" @click="toggleAddingSessionWindow">&times;</span>  
     <createsession v-if="adding"></createsession>

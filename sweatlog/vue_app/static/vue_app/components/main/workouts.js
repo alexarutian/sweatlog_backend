@@ -1,4 +1,4 @@
-import { WorkoutList } from "../child/workoutlist.js";
+import { WorkoutInfo } from "../child/workoutinfo.js";
 import { CreateWorkout } from "../child/createworkout.js";
 
 let { mapState, mapMutations } = Vuex;
@@ -9,10 +9,10 @@ let Workouts = {
   <div id="workout-page">
   <div id="page-top-options">
     <div @click="toggleAddingWorkoutWindow" class="page-top-option">ADD WORKOUT</div>
-    <div @click="toggleDetailView()" class="page-top-option">Toggle to [[ viewName ]]</div>
+    <div class="page-top-option">Option 2</div>
     <div class="page-top-option">Option 3</div>
   </div>
-  <workoutlist :showDetail="detailToggle"></workoutlist>
+  <workoutinfo v-for="workout in workouts" :workout=workout></workoutinfo>
 
   <div v-if="adding" class="full-page-box">
   <span class="close-full-page-box" @click="toggleAddingWorkoutWindow">&times;</span>  
@@ -23,31 +23,25 @@ let Workouts = {
   `,
 
   components: {
-    workoutlist: WorkoutList,
+    workoutinfo: WorkoutInfo,
     createworkout: CreateWorkout,
   },
   data() {
-    return {
-      detailToggle: true,
-    };
+    return {};
   },
   methods: {
-    toggleDetailView() {
-      this.detailToggle = !this.detailToggle;
-    },
     ...mapMutations(["toggleAddingWorkoutWindow"]),
   },
   computed: {
     // names the toggle button
-    viewName() {
-      return this.detailToggle ? "Summary" : "Detail";
-    },
     ...mapState({
       adding: (state) => state.workout.addingWorkoutWindow,
+      workouts: (state) => state.workout.workouts,
     }),
   },
   created() {
     this.$store.dispatch("fetchBlocks");
+    this.$store.dispatch("fetchWorkouts");
   },
 };
 export { Workouts };

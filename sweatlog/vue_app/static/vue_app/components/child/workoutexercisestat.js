@@ -1,5 +1,7 @@
 import { DragHandle } from "./draghandle.js";
 import { CheckMark } from "./checkmark.js";
+import { Pencil } from "./pencil.js";
+import { Delete } from "./delete.js";
 
 let { mapState, mapMutations, mapActions } = Vuex;
 
@@ -9,8 +11,8 @@ let WorkoutExerciseStat = {
   <div>
     <div class="exercise-row">
       <div class="draggable-item">[[exercise.name]]</div>
-      <div :class="{'draggable-extra-input-icon': true, 'stat-populated': statPopulated}" @click="toggleStats" @touchstart="toggleStats">S</div>
-      <div class="delete-icon" @click="deleteItem(exercise)" @touchstart="deleteItem(exercise)">X</div>
+      <pencil :class="{'draggable-extra-input-icon': true, 'stat-populated': statPopulated}" @click="toggleStats" @touchstart="toggleStats"></pencil>
+      <delete class="delete-icon" @click="deleteItem" @touchstart="deleteItem"></delete>
     </div>
     <div v-if="expandStat==true" class="exercise-stats-row">
       <input type="text" class="input-sets" placeholder="sets" v-model="edits.sets" data-field="sets" @input="stageData">
@@ -21,7 +23,7 @@ let WorkoutExerciseStat = {
         <option v-for="time in timeOptions" :value="time.value" :selected="edits.time_in_seconds==time.value">[[time.display]]</option>
       </select>
       <checkmark class="checkmark-icon" @click="saveStats" @touchstart="saveStats"></checkmark>
-      <div class="stat-delete-icon" @click="flushStage">X</div>
+      <delete class="stat-delete-icon" @click="flushStage"></delete>
     </div>
   </div>
   `,
@@ -29,6 +31,8 @@ let WorkoutExerciseStat = {
   components: {
     draghandle: DragHandle,
     checkmark: CheckMark,
+    pencil: Pencil,
+    delete: Delete,
   },
   data() {
     return {
@@ -49,8 +53,8 @@ let WorkoutExerciseStat = {
       this.setStageData(payload);
     },
 
-    deleteItem(item) {
-      this.removeFromWorkoutSelectedItemList({ item });
+    deleteItem(e) {
+      this.removeFromWorkoutSelectedItemList(this.keyPayload);
     },
     flushStage(e) {
       this.cancelStatEdits(this.keyPayload);
@@ -80,13 +84,16 @@ let WorkoutExerciseStat = {
       }
     },
     expandStat() {
-      return this.exercise.statExpanded;
+      return this.exerciseInWorkout.statExpanded;
     },
-    exercise() {
+    exerciseInWorkout() {
       return this.$store.getters.getWorkoutSelectedExerciseByKey(this.exercise_key);
     },
+    exercise() {
+      return this.$store.getters.getExerciseById(this.exerciseInWorkout.id);
+    },
     edits() {
-      return this.exercise.edits;
+      return this.exerciseInWorkout.edits;
     },
     keyPayload() {
       return { key: this.exercise_key };

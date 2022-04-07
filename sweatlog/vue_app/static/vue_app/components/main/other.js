@@ -6,20 +6,28 @@ let Other = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="other-page">
-  <div id="other-page-options" v-if="!showOtherPageContent">
-    <div id="settings">Settings
-      <div @click="otherPageContent='exercisetypes'" @click="showOtherPageContent=true">Exercise Types</div>
-      <div>Equipment Types</div>
+    <div id="other-page-options" v-if="!showOtherPageContent">
+      <div id="settings" v-if="!showOtherPageContent">
+        <p class="other-page-subtitle">Settings:</p>
+          <div class="settings-line" @click="otherPageContent='exercisetypes'" @click="showOtherPageContent=true">Exercise Types</div>
+          <div class="settings-line">Equipment Types</div>
+      </div>
+      <div id="user-info">
+      <p class="other-page-subtitle">User Information:</p>
+        <div class="other-page-line">You are logged in as [[userEmail]]</div>
+        <button v-if="userToken" @click="logoutUser">LOGOUT OF SWEATLOG</button>
+      </div>
+      <div id="about-sweatlog">
+      <p class="other-page-subtitle">About Sweatlog:</p>
+        <p>Sweatlog was created by Sound Engineering</p>
+        <p>For inquiries, please contact us here</p>
+        <p></p>
+      </div>
     </div>
-    <div id="user-info">
-      <div>You are logged in as [[userEmail]]</div>
-      <div v-if="userToken" @click="logoutUser">LOGOUT OF SWEATLOG</div>
-    </div>
-  </div>
-  <div id="other-page-content" v-if="showOtherPageContent">
-    <div @click="showOtherPageContent = false">Back to Other Options</div>
-    <exercisetypes v-if="otherPageContent=='exercisetypes'"></exercisetypes>
-  </div>
+    <div id="other-page-content" v-if="showOtherPageContent">
+        <div class="back-button" @click="showOtherPageContent = false"> < Settings</div>
+        <exercisetypes v-if="otherPageContent=='exercisetypes'"></exercisetypes>
+      </div>
   </div>
 
   `,

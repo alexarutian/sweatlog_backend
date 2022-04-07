@@ -6,23 +6,7 @@ let CreateWorkout = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div class="modal-title">NEW WORKOUT</div>
-  <input v-model="workoutName" type="text" autocomplete="off" placeholder="name*" class="form-cluster"/>
-  
-  <div class="form-cluster">
-  <label for="workout-exercise-select">add an exercise</label>
-  <input id="workout-exercise-select" type="text" list="exercise_list" placeholder="search exercises" @change="selectExercise($event)" >
-  <datalist id="exercise_list">
-  <option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.name"></option>
-  </datalist>
-  </div>
-
-  <div class="form-cluster">
-  <label for="workout-select">bulk add from another workout</label>
-  <input id="workout-select" type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout($event)" >
-  <datalist id="workout_list">
-  <option v-for="workout in workouts" :data-id="workout.id" :value="workout.name"></option>
-  </datalist>
-</div>
+  <input v-model="workoutName" type="text" autocomplete="off" placeholder="workout name*" class="form-cluster"/>
 
 <div>
   <div class="selected-block" v-if="selectedItemList.length > 0" v-for="(block, blockIndex) in selectedItemList" :data-index="blockIndex">[[index]]
@@ -36,6 +20,13 @@ let CreateWorkout = {
         @drop="drop" 
         @touchend="drop">
   </workoutexercisestat>
+</div>
+
+<div class="form-cluster">
+<select id="workout-exercise-select" type="text" placeholder="search exercises" @change="selectExercise" >
+<option value="">add an exercise</option>
+<option v-for="exercise in exercises" :data-id="exercise.id" :value="exercise.id">[[exercise.name]]</option>
+</select>
 </div>
   
 <button id="add-workout-button" @click="submitCreate">ADD WORKOUT</button>
@@ -109,9 +100,9 @@ let CreateWorkout = {
       // document.getElementById("workout-select").value = "";
     },
     selectExercise(e) {
-      let name = e.target.value;
-      let id = document.querySelector(`#exercise_list option[value='${name}']`).dataset.id;
-      this.addToWorkoutSelectedItemList({ id, name });
+      // let name = e.target.value;
+      let id = document.querySelector(`#workout-exercise-select`).value;
+      this.addToWorkoutSelectedItemList({ id });
       document.getElementById("workout-exercise-select").value = "";
     },
     submitCreate() {
