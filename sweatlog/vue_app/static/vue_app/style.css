@@ -177,6 +177,10 @@ table {
 }
 
 .back-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   color: darkgray;
   font-size: 14pt;
   padding: 5px;
@@ -200,6 +204,13 @@ table {
   padding: 10px 5px;
   font-size: 14pt;
   border-top: 0.5px solid lightgray;
+}
+
+.settings-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .workout-row {
@@ -378,6 +389,30 @@ table {
 .water-drop-svg {
   fill: #ddd22f;
   font-size: 16pt;
+}
+
+.fa-angle-right,
+.fa-angle-left,
+.fa-pencil,
+.fa-trash-can,
+.fa-x,
+.fa-check {
+  height: 25px;
+  color: lightgray;
+  padding: 5px;
+}
+
+.fa-check {
+  color: green;
+}
+
+.fa-x {
+  color: white;
+  margin-left: 15px;
+}
+
+.fa-trash-can {
+  margin-left: 15px;
 }
 
 .agenda-workout {
@@ -683,6 +718,22 @@ select {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+}
+
+.exercise-stats-input {
+  width: 90%;
+}
+
+.exercise-stats-row1,
+.exercise-stats-row2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.exercise-stats-row1 {
+  justify-content: space-between;
 }
 
 .exercise-stats-row input {
@@ -690,16 +741,16 @@ select {
 }
 
 .input-sets {
-  width: 15%;
+  width: 50px;
 }
 
 .input-reps,
 .input-weight {
-  width: 23%;
+  width: 75px;
 }
 
 .input-time {
-  width: 30%;
+  width: 100px;
 }
 
 .draggable-item {
@@ -724,6 +775,7 @@ select {
 
 .stat-populated {
   stroke: green;
+  color: green;
 }
 
 .delete-svg {
@@ -732,18 +784,15 @@ select {
   stroke: gray;
 }
 
-.delete-icon,
-.draggable-extra-input-icon,
-.stat-delete-icon {
+/* .stat-delete-icon {
   cursor: pointer;
   color: #c7c6b7;
   padding: 2px;
   font-weight: bold;
   margin-left: 5px;
-}
+} */
 
-.delete-icon,
-.draggable-extra-input-icon {
+.delete-icon {
   border: 1px solid black;
   height: 90%;
   width: 20%;

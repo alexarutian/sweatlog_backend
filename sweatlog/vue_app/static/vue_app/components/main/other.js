@@ -9,8 +9,14 @@ let Other = {
     <div id="other-page-options" v-if="!showOtherPageContent">
       <div id="settings" v-if="!showOtherPageContent">
         <p class="other-page-subtitle">Settings:</p>
-          <div class="settings-line" @click="otherPageContent='exercisetypes'" @click="showOtherPageContent=true">Exercise Types</div>
-          <div class="settings-line">Equipment Types</div>
+          <div class="settings-line" @click="otherPageContent='exercisetypes'" @click="showOtherPageContent=true">
+          <p>Exercise Types</p>
+          <i class="fa-solid fa-angle-right"></i>
+          </div>
+          <div class="settings-line">
+          <p>Equipment Types</p>
+          <i class="fa-solid fa-angle-right"></i>
+          </div>
       </div>
       <div id="user-info">
       <p class="other-page-subtitle">User Information:</p>
@@ -25,7 +31,10 @@ let Other = {
       </div>
     </div>
     <div id="other-page-content" v-if="showOtherPageContent">
-        <div class="back-button" @click="showOtherPageContent = false"> < Settings</div>
+        <div class="back-button" @click="showOtherPageContent = false">
+          <i class="fa-solid fa-angle-left"></i>
+          <p>Settings</p>
+        </div>
         <exercisetypes v-if="otherPageContent=='exercisetypes'"></exercisetypes>
       </div>
   </div>

@@ -11,19 +11,25 @@ let WorkoutExerciseStat = {
   <div>
     <div class="exercise-row">
       <div class="draggable-item">[[exercise.name]]</div>
-      <pencil :class="{'draggable-extra-input-icon': true, 'stat-populated': statPopulated}" @click="toggleStats" @touchstart="toggleStats"></pencil>
-      <delete class="delete-icon" @click="deleteItem" @touchstart="deleteItem"></delete>
+      <div @click="toggleStats" @touchstart="toggleStats"><i :class="{'fa-solid fa-pencil': true,'stat-populated': statPopulated}" ></i></div>
+      <div @click="deleteItem" @touchstart="deleteItem"><i class="fa-regular fa-trash-can"></i></div>
     </div>
     <div v-if="expandStat==true" class="exercise-stats-row">
+    <div class="exercise-stats-input">
+    <div class="exercise-stats-row1">
       <input type="text" class="input-sets" placeholder="sets" v-model="edits.sets" data-field="sets" @input="stageData">
       <input type="text" class="input-reps" placeholder="reps" v-model="edits.reps" data-field="reps" @input="stageData">
       <input type="text" class="input-weight" placeholder="weight" v-model="edits.weight_lb" data-field="weight_lb" @input="stageData">
-      <select @change="stageData" data-field="time_in_seconds">
-        <option value="">MM:SS</option>
-        <option v-for="time in timeOptions" :value="time.value" :selected="edits.time_in_seconds==time.value">[[time.display]]</option>
-      </select>
-      <checkmark class="checkmark-icon" @click="saveStats" @touchstart="saveStats"></checkmark>
-      <delete class="stat-delete-icon" @click="flushStage"></delete>
+    </div>
+    <div class="exercise-stats-row2">
+    <select @change="stageData" data-field="time_in_seconds">
+    <option value="">MM:SS</option>
+    <option v-for="time in timeOptions" :value="time.value" :selected="edits.time_in_seconds==time.value">[[time.display]]</option>
+  </select>
+    </div>
+    </div>
+      <div @click="saveStats" @touchstart="saveStats"><i class="fa-solid fa-check"></i> </div>
+      <div @click="flushStage"><i class="fa-solid fa-x stat-delete-icon"></i></div>
     </div>
   </div>
   `,

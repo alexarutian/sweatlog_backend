@@ -11,8 +11,8 @@ let ExerciseTypes = {
         <div v-for="et in exerciseTypes" class="exercise-type-list-line">
             <p>[[et.name]]</p>
             <div class="et-inline-modify-buttons">
-                <pencil @click="selectedExerciseType = et" @click="editingExerciseType = true">Edit</pencil>
-                <delete @click="submitDelete(et.id)"></delete>
+                <div  @click="selectedExerciseType = et" @click="editingExerciseType = true"><i class="fa-solid fa-pencil"></i></div>
+                <div @click="submitDelete(et.id)"><i class="fa-regular fa-trash-can"></i></div>
             </div>
         </div>
     </div>
