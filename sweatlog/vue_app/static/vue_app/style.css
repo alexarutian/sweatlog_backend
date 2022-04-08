@@ -253,10 +253,17 @@ table {
 }
 
 .menu-item {
-  padding: 5px;
-  height: 50%;
+  height: 80%;
   color: white;
   font-size: 14pt;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-item svg {
+  height: 30px;
 }
 
 .menu-item:hover {
@@ -265,6 +272,10 @@ table {
 
 .selected-menu-item {
   color: rgb(221, 210, 47);
+}
+
+.footer-icon-label {
+  font-size: 8pt;
 }
 
 table {
@@ -516,6 +527,7 @@ table {
 #exercise-info-modal input,
 input {
   padding: 5px;
+  padding-left: 10px;
   background-color: rgb(233, 233, 233);
   border-radius: 4px;
   height: 30px;
@@ -700,7 +712,6 @@ select {
 
 .exercise-row {
   padding: 5px;
-  border: 1px solid lightgray;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -711,7 +722,7 @@ select {
 
 .exercise-stats-row {
   padding: 5px;
-  height: 60px;
+  height: 120px;
   border: 1px solid lightgray;
   background-color: lightgray;
   display: flex;
@@ -723,21 +734,31 @@ select {
 
 .exercise-stats-input {
   width: 90%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-.exercise-stats-row1,
+/* .exercise-stats-row1,
 .exercise-stats-row2 {
   display: flex;
   flex-direction: row;
   align-items: center;
-}
+} */
 
 .exercise-stats-row1 {
   justify-content: space-between;
 }
 
-.exercise-stats-row input {
+.exercise-stats-row input,
+.exercise-stats-row select {
   background-color: white;
+  height: 45px;
+  min-width: 90px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 10px;
 }
 
 .input-sets {
@@ -750,11 +771,12 @@ select {
 }
 
 .input-time {
-  width: 100px;
+  width: 125px;
 }
 
 .draggable-item {
   width: 90%;
+  padding-left: 10px;
 }
 
 .draghandle-svg {
@@ -824,11 +846,15 @@ select {
   background: red;
 }
 
-.selected-block {
+/* .selected-block {
   padding: 10px;
   border: 1px dashed gray;
-}
+} */
 
 .selected-exercise {
-  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  font-size: 18pt;
+  color: rgb(129, 129, 129);
 }

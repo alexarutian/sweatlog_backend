@@ -3,7 +3,7 @@
   <div id="vue-app">
     <div id="website-footer">
       <div id="footer-content">
-        <footertoolbar :menuitems="menuitems"></footertoolbar>
+        <footertoolbar2 :menuitems="menuitems2"></footertoolbar2>
       </div>
     </div>
     <div id="main-content">
@@ -30,6 +30,7 @@
   import { Exercises } from "{% static 'vue_app/components/main/exercises.js' %}";
   import { Other } from "{% static 'vue_app/components/main/other.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/main/footertoolbar.js' %}";
+  import { FooterToolbar2 } from "{% static 'vue_app/components/main/footertoolbar2.js' %}";
   import { LoginOrCreateUser } from "{% static 'vue_app/components/main/loginorcreateuser.js' %}";
   import { store } from "{% static 'vue_app/js/store.js' %}";
 
@@ -44,6 +45,7 @@
       exercises: Exercises,
       other: Other,
       footertoolbar: FooterToolbar,
+      footertoolbar2: FooterToolbar2,
       loginorcreateuser: LoginOrCreateUser,
     },
     data() {
@@ -54,6 +56,13 @@
           { id: 3, name: "Blocks", page: "blocks" },
           { id: 4, name: "Exercises", page: "exercises" },
           { id: 5, name: "Other", page: "other" },
+        ],
+        menuitems2: [
+          { id: 1, name: "Agenda", page: "agenda", icon: "fa-regular fa-calendar" },
+          { id: 2, name: "Workouts", page: "workouts", icon: "fa-solid fa-person-walking" },
+          { id: 3, name: "Blocks", page: "blocks", icon: "fa-solid fa-cubes-stacked" },
+          { id: 4, name: "Exercises", page: "exercises", icon: "fa-solid fa-dumbbell" },
+          { id: 5, name: "Other", page: "other", icon: "fa-solid fa-gears" },
         ],
       };
     },
