@@ -60,7 +60,7 @@ let ExerciseTypes = {
   },
   computed: {
     exerciseTypes() {
-      return this.$store.state.exerciseTypes;
+      return this.$store.state.exercisetype.exerciseTypes;
     },
   },
   created() {},
