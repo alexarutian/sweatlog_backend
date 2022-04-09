@@ -5,22 +5,20 @@
     <title>Sweatlog</title>
     {% endblock %}
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     {% load static %}
     <link rel="stylesheet" href="{% static 'vue_app/style.css' %}" />
     <script src="{% static 'vue_app/js/helper.js' %}"></script>
     <script src="https://unpkg.com/vue@3.1.1/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
+    <script src="https://kit.fontawesome.com/4d6d6962bb.js" crossorigin="anonymous"></script>
   </head>
 
   <body>
     <div id="page">
       <div id="website-header">
         <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
-        <div id="website-title">SWEATLOG</div>
+        <div id="website-title"><a id="website-title-text" href="{% url 'vue_app:site' %}">SWEATLOG</a></div>
         <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
       </div>
       <div id="page-content">{% block content %}{% endblock %}</div>
@@ -77,16 +75,19 @@
     }
 
     #website-title {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    #website-title-text {
+      text-decoration: none;
+      color: rgb(241, 230, 64);
+      text-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
+      font-weight: bold;
       font-family: Arial;
       font-size: 24pt;
       font-weight: bold;
       text-align: center;
-      color: rgb(241, 230, 64);
-      text-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
-      /* -webkit-text-stroke-width: 1px;
-      -webkit-text-stroke-color: darkgray; */
-      padding-top: 10px;
-      padding-bottom: 10px;
     }
 
     #page-content {

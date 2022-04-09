@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let CreateSession = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -5,7 +7,7 @@ let CreateSession = {
 
   <div class="form-cluster">
     <label for="workout-select2">workout</label>
-    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout2($event)" >
+    <input type="text" list="workout_list" placeholder="search workouts" @change="selectWorkout" >
     <datalist id="workout_list">
     <option v-for="workout in workouts" :data-id="workout.id" :value="workout.name"></option>
     </datalist>
@@ -13,11 +15,10 @@ let CreateSession = {
 
   <div class="form-cluster">
     <label for="date-select">date</label>
-    <input id="date-select" type="date" @change="selectDate($event)">
+    <input id="date-select" type="date" @change="selectDate">
   </div>
   
-<button id="add-session-button" @click="createNewSession">SCHEDULE</button>
-<div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
+<button id="add-session-button" @click="submitCreate">SCHEDULE</button>
 
   `,
 
@@ -30,41 +31,30 @@ let CreateSession = {
   },
   methods: {
     selectWorkout(e) {
-      this.workoutId = e.target.value;
-    },
-    selectWorkout2(e) {
       let workoutName = e.target.value;
-      let id = document.querySelector(
-        `#workout_list option[value='${workoutName}']`
-      ).dataset.id;
-      console.log(id);
-      // disable schedule button if workoutID not found
+      let id = document.querySelector(`#workout_list option[value='${workoutName}']`).dataset.id;
+      // ADD disable schedule button if workoutID not found
       this.workoutId = id;
     },
     selectDate(e) {
       this.date = e.target.value;
     },
-    createNewSession() {
+    submitCreate() {
       const body = {
         workout_id: this.workoutId,
         date: this.date,
         user_token: this.$store.state.userToken,
       };
 
-      this.$store.dispatch("createNewSession", { body });
+      this.createNewSession({ body });
     },
+    ...mapActions(["fetchWorkouts", "createNewSession"]),
   },
-  computed: {
-    workouts() {
-      return this.$store.state.workouts;
-    },
-    todaysDate() {
-      const today = new Date();
-      return formatDatetoYYYYMMDD(today);
-    },
-  },
+  computed: mapState({
+    workouts: (state) => state.workout.workouts,
+  }),
   created() {
-    this.$store.dispatch("fetchWorkouts");
+    this.fetchWorkouts();
   },
 };
 export { CreateSession };

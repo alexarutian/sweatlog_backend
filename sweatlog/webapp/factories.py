@@ -118,8 +118,8 @@ class SingleUserExerciseFactory(DjangoModelFactory):
 
     name = factory.Faker("word")
     description = factory.Faker("text")
-    exercise_type = factory.Iterator(ExerciseType.objects.all())
-    equipment_type = factory.Iterator(EquipmentType.objects.all())
+    exercise_type = factory.Iterator(ExerciseType.objects.filter(user__id=2))
+    equipment_type = factory.Iterator(EquipmentType.objects.filter(user__id=2))
     user = User.objects.get(id=2)
 
 
@@ -187,8 +187,8 @@ class SingleUserSessionFactory(DjangoModelFactory):
 
     date = factory.Faker(
         "date_between_dates",
-        date_start=datetime.date(2022, 3, 9),
-        date_end=datetime.date(2022, 3, 25),
+        date_start=datetime.date(2022, 3, 17),
+        date_end=datetime.date(2022, 4, 10),
     )
     workout = factory.SubFactory(SingleUserWorkoutFactory)
 

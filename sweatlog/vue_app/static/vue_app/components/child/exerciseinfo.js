@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let ExerciseInfo = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
@@ -16,8 +18,8 @@ let ExerciseInfo = {
     <p class="info-data">[[exercise.equipment_type.name]]</p>
   </div>
   <div id="modal-bottom-buttons">
-    <button id="open-edit-exercise-button" @click="this.$store.commit('toggleExerciseEditDisplay')">EDIT</button>
-    <button id="delete-exercise-button" @click="deleteExercise(exercise.id)">DELETE</button>
+    <button id="open-edit-exercise-button" @click="toggleExerciseEditDisplay" @click="toggleExerciseDetailWindow">EDIT</button>
+    <button id="delete-exercise-button" @click="submitDelete(exercise.id)">DELETE</button>
   </div>
   </div>
   `,
@@ -30,9 +32,11 @@ let ExerciseInfo = {
     exercise: Object,
   },
   methods: {
-    deleteExercise(id) {
-      this.$store.dispatch("deleteExercise", { id });
+    submitDelete(id) {
+      this.deleteExercise({ id });
     },
+    ...mapMutations(["toggleExerciseEditDisplay", "toggleExerciseDetailWindow"]),
+    ...mapActions(["deleteExercise"]),
   },
   computed: {},
   created() {},

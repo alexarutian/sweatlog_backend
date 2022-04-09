@@ -1,3 +1,5 @@
+let { mapState, mapMutations, mapActions } = Vuex;
+
 let CreateExercise = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -7,7 +9,7 @@ let CreateExercise = {
   
   <div class="form-cluster">
     <label for="exercise-type-select">exercise type</label>
-    <select id="exercise-type-select" @change="selectExerciseType($event)">
+    <select id="exercise-type-select" @change="selectExerciseType">
       <option>none (default)</option>
       <option v-for="et in exerciseTypes" :value="et.id">[[et.name]]</option>
     </select>
@@ -15,14 +17,14 @@ let CreateExercise = {
 
   <div class="form-cluster">
     <label for="equipment-type-select">equipment type</label>
-    <select id="equipment-type-select" @change="selectEquipmentType($event)">
+    <select id="equipment-type-select" @change="selectEquipmentType">
       <option>none (default)</option>
       <option v-for="et in equipmentTypes" :value="et.id">[[et.name]]</option>
     </select>
   </div>
   
-<button id="add-exercise-button" @click="createNewExercise">ADD EXERCISE</button>
-<div v-if="this.$store.state.statusLevel == 'error'">[[message]]</div>
+<button id="add-exercise-button" @click="submitCreate">ADD EXERCISE</button>
+<div v-if="statusLevel == 'error'">[[message]]</div>
 
   `,
 
@@ -42,7 +44,7 @@ let CreateExercise = {
     selectEquipmentType(e) {
       this.equipmentTypeId = e.target.value;
     },
-    createNewExercise() {
+    submitCreate() {
       const body = {
         name: this.exerciseName,
         description: this.exerciseDescription,
@@ -51,20 +53,16 @@ let CreateExercise = {
         user_token: this.$store.state.userToken,
       };
 
-      this.$store.dispatch("createNewExercise", { body });
+      this.createNewExercise({ body });
     },
+    ...mapActions(["createNewExercise"]),
   },
-  computed: {
-    exerciseTypes() {
-      return this.$store.state.exerciseTypes;
-    },
-    equipmentTypes() {
-      return this.$store.state.equipmentTypes;
-    },
-    message() {
-      return this.$store.state.statusMessage;
-    },
-  },
+  computed: mapState({
+    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
+    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
+    message: (state) => state.statusMessage,
+    statusLevel: (state) => state.statusLevel,
+  }),
   created() {},
 };
 export { CreateExercise };
