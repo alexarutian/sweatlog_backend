@@ -324,17 +324,17 @@ const workout = {
       return state.workoutSelectedItemList[blockIndex]["exercise_list"][exerciseIndex];
     },
     getWorkoutSelectedExerciseByKey: (state) => (key) => {
+      return state.workoutSelectedItemMap[key];
+    },
+    getWorkoutSelectedExercisesBlockByKey: (state) => (key) => {
       for (const b of state.workoutSelectedItemList) {
         for (const e of b.exercise_list) {
           if (e.key == key) {
-            return e;
+            return b;
           }
         }
       }
       return null;
-    },
-    getWorkoutSelectedExercisesBlockByKey: (state) => (key) => {
-      return state.workoutSelectedItemMap[key];
     },
     getWorkoutById: (state) => (id) => {
       for (const w of state.workouts) {
