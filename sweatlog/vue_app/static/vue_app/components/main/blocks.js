@@ -7,11 +7,10 @@ let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="blocks-page">
-    <div id="page-top-options">
-    <div @click="toggleAddingBlockWindow" class="page-top-option">ADD BLOCK</div>
-    <div class="page-top-option">Option 2</div>
-      <div class="page-top-option">Option 3</div>
-    </div>
+    <div id="page-title">Blocks</div>
+    <div id="add-button" @click="toggleAddingBlockWindow">
+    <i class="fa-solid fa-droplet"></i>
+    <i class="fa-solid fa-plus"></i></div>
     <div id="block-list">
       <div v-for="block in blocks" class="block-list-line">
         <p @click="selectBlock({block})" @click="toggleBlockDetailWindow">[[block.name]]</p>

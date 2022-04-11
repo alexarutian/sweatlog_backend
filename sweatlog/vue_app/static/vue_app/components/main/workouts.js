@@ -7,11 +7,11 @@ let Workouts = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="workout-page">
-  <div id="page-top-options">
-    <div @click="toggleAddingWorkoutWindow" class="page-top-option">ADD WORKOUT</div>
-    <div class="page-top-option">Option 2</div>
-    <div class="page-top-option">Option 3</div>
-  </div>
+  <div id="page-title">Workouts</div>
+  <div id="add-button" @click="toggleAddingWorkoutWindow">
+  <i class="fa-solid fa-droplet"></i>
+  <i class="fa-solid fa-plus"></i></div>
+
   <workoutinfo v-for="workout in workouts" :workout=workout></workoutinfo>
 
   <div v-if="adding" class="full-page-box">

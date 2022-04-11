@@ -1,8 +1,3 @@
-import { DragHandle } from "./draghandle.js";
-import { CheckMark } from "./checkmark.js";
-import { Pencil } from "./pencil.js";
-import { Delete } from "./delete.js";
-
 let { mapState, mapMutations, mapActions } = Vuex;
 
 let WorkoutExerciseStat = {
@@ -11,8 +6,8 @@ let WorkoutExerciseStat = {
   <div>
     <div class="exercise-row">
       <div class="draggable-item">[[exercise.name]]</div>
-      <div @click="toggleStats" @touchstart="toggleStats"><i :class="{'fa-solid fa-pencil': true,'stat-populated': statPopulated}" ></i></div>
-      <div @click="deleteItem" @touchstart="deleteItem"><i class="fa-regular fa-trash-can"></i></div>
+      <div :class="{'draggable-item-icon': true, 'stat-populated': statPopulated}" @click="toggleStats" @touchstart="toggleStats"><i class="fa-solid fa-pencil" ></i></div>
+      <div class="draggable-item-icon" @click="deleteItem" @touchstart="deleteItem"><i class="fa-regular fa-trash-can"></i></div>
     </div>
     <div v-if="expandStat==true" class="exercise-stats-row">
     <div class="exercise-stats-input">
@@ -30,12 +25,7 @@ let WorkoutExerciseStat = {
   </div>
   `,
 
-  components: {
-    draghandle: DragHandle,
-    checkmark: CheckMark,
-    pencil: Pencil,
-    delete: Delete,
-  },
+  components: {},
   data() {
     return {
       timeOptions: CONSTANTS.timeOptions,

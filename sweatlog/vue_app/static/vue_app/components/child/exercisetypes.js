@@ -1,6 +1,3 @@
-import { Pencil } from "../child/pencil.js";
-import { Delete } from "../child/delete.js";
-
 let { mapState, mapMutations, mapActions } = Vuex;
 
 let ExerciseTypes = {
@@ -9,9 +6,10 @@ let ExerciseTypes = {
     <p class="other-page-subtitle suboption-title">Exercise Types</p>
     <div id="exercise-type-list">
         <div v-for="et in exerciseTypes" class="exercise-type-list-line">
-            <p>[[et.name]]</p>
+            <input type="text" :value="et.name" :placeholder="et.name" :disabled="shouldBeEditable(et)" :ref="et.name"/>
             <div class="et-inline-modify-buttons">
-                <div  @click="selectedExerciseType = et" @click="editingExerciseType = true"><i class="fa-solid fa-pencil"></i></div>
+                <div v-if="shouldBeEditable(et)" @click="editClicked(et)"><i class="fa-solid fa-pencil"></i></div>
+                <div v-if="!shouldBeEditable(et)" @click="submitEdit(et.id)" @click="editingExerciseType = false"><i class="fa-solid fa-check"></i></div>
                 <div @click="submitDelete(et.id)"><i class="fa-regular fa-trash-can"></i></div>
             </div>
         </div>
@@ -21,28 +19,33 @@ let ExerciseTypes = {
         <input type="text" v-model="exerciseTypeName" placeholder="name" autocomplete="false">
         <button @click="submitCreate" @click="addingExerciseType = false">ADD</button>
     </div>
-    <div v-if="editingExerciseType">EDIT EXERCISE TYPE
-        <input type="text" v-model="selectedETName" :placeholder="this.selectedExerciseType.name">
-        <button @click="submitEdit(this.selectedExerciseType.id)" @click="editingExerciseType = false">EDIT</button>
-    </div>
+    
     `,
 
-  components: {
-    pencil: Pencil,
-    delete: Delete,
-  },
+  components: {},
   data() {
-    const selectedETName = this.selectedExerciseType ? this.selectedExerciseType.name : undefined;
     return {
       addingExerciseType: false,
       editingExerciseType: false,
       exerciseTypeName: "",
       selectedExerciseType: "",
-      selectedETName,
     };
   },
   methods: {
     // TURN INTO MODAL EVENTUALLY
+
+    shouldBeEditable(et) {
+      return !this.editingExerciseType || et != this.selectedExerciseType;
+    },
+
+    editClicked(et) {
+      this.selectedExerciseType = et;
+      this.editingExerciseType = true;
+      this.$nextTick(() => {
+        const elem = this.$refs[et.name];
+        elem.focus();
+      });
+    },
     submitCreate() {
       const body = {
         name: this.exerciseTypeName,
@@ -52,8 +55,9 @@ let ExerciseTypes = {
       this.exerciseTypeName = "";
     },
     submitEdit(id) {
+      const elem = this.$refs[this.selectedExerciseType.name];
       const body = {
-        name: this.selectedETName,
+        name: elem.value,
         user_token: this.userToken,
       };
 

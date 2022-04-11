@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Graduate&display=swap");
+
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -330,19 +332,33 @@ table {
   align-items: center;
 }
 
-#other-page,
-#workout-page,
-#exercises-page,
-#blocks-page {
-  background-color: rgb(245, 245, 245);
-}
-
 #page-top-options {
   width: 90%;
   margin: 5px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+}
+
+#page-title {
+  color: gray;
+  font-size: 20pt;
+  align-self: flex-start;
+  justify-self: flex-start;
+  padding: 10px;
+}
+
+#add-button {
+  position: fixed;
+  padding: 5px;
+  top: 8vh;
+  right: 2vh;
+  background-color: white;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  opacity: 80%;
+  box-shadow: 0px 0px 10px lightgray;
 }
 
 .page-top-option {
@@ -407,13 +423,48 @@ table {
 .fa-pencil,
 .fa-trash-can,
 .fa-x,
-.fa-check {
+.fa-check,
+.fa-circle,
+.fa-square {
   height: 25px;
   color: lightgray;
   padding: 5px;
 }
 
+.fa-stopwatch,
+.fa-weight-hanging,
+.fa-clipboard {
+  height: 20px;
+  color: lightgray;
+}
+
+.fa-droplet.agenda-droplet {
+  color: yellow;
+  padding-right: 10px;
+  font-size: 16pt;
+}
+
+#add-button .fa-droplet {
+  position: absolute;
+  color: lightblue;
+  height: 20%;
+  width: 20%;
+  left: 56%;
+  top: 14%;
+  transform: rotate(-39deg);
+  padding: 0px;
+}
+
+.fa-circle-plus {
+  color: gray;
+  height: 35px;
+}
+
 .fa-check {
+  color: green;
+}
+
+.stat-populated > .fa-pencil {
   color: green;
 }
 
@@ -424,6 +475,15 @@ table {
 
 .fa-trash-can {
   margin-left: 15px;
+}
+
+.fa-plus {
+  color: lightgray;
+  height: 84%;
+  width: 84%;
+  position: absolute;
+  top: 8%;
+  left: 8%;
 }
 
 .agenda-workout {
@@ -681,6 +741,15 @@ select {
   width: 95%;
 }
 
+.exercise-type-list-line input {
+  background-color: transparent;
+  font-size: inherit;
+}
+
+.exercise-type-list-line input:focus {
+  outline-color: yellow;
+}
+
 .et-inline-modify-buttons {
   display: flex;
   flex-direction: row;
@@ -839,10 +908,12 @@ select {
 }
 
 /* (B) DRAG-AND-DROP HINT */
-.block-exercise-item.hint {
+.block-exercise-item.hint,
+.selected-exercise.hint {
   background: yellow;
 }
-.block-exercise-item.active {
+.block-exercise-item.active,
+.selected-exercise.active {
   background: red;
 }
 
@@ -857,4 +928,48 @@ select {
   border-radius: 4px;
   font-size: 18pt;
   color: rgb(129, 129, 129);
+}
+
+.do-exercise-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  font-size: 18pt;
+  color: rgb(129, 129, 129);
+  padding: 5px;
+  height: 60px;
+}
+
+.do-exercise-words {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.do-exercise-stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 10pt;
+}
+
+.do-exercise-stats p {
+  padding: 2px;
+}
+
+.do-exercise-sets-reps,
+.do-exercise-weight,
+.do-exercise-time {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-right: 5px;
 }

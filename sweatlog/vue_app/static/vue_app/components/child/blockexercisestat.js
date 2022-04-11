@@ -1,6 +1,3 @@
-import { DragHandle } from "./draghandle.js";
-import { CheckMark } from "./checkmark.js";
-
 let BlockExerciseStat = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
@@ -25,10 +22,7 @@ let BlockExerciseStat = {
   </div>
   `,
 
-  components: {
-    draghandle: DragHandle,
-    checkmark: CheckMark,
-  },
+  components: {},
   data() {
     return {
       statExpanded: false,

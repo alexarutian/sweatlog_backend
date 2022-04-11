@@ -315,6 +315,8 @@ const workout = {
       workouts: null,
       addingWorkoutWindow: false,
       workoutSelectedItemList: [],
+      workoutSelectedItemMap: {},
+      doingWorkoutWindow: false,
     };
   },
   getters: {
@@ -322,14 +324,7 @@ const workout = {
       return state.workoutSelectedItemList[blockIndex]["exercise_list"][exerciseIndex];
     },
     getWorkoutSelectedExerciseByKey: (state) => (key) => {
-      for (const b of state.workoutSelectedItemList) {
-        for (const e of b.exercise_list) {
-          if (e.key == key) {
-            return e;
-          }
-        }
-      }
-      return null;
+      return state.workoutSelectedItemMap[key];
     },
     getWorkoutSelectedExercisesBlockByKey: (state) => (key) => {
       for (const b of state.workoutSelectedItemList) {
@@ -341,6 +336,13 @@ const workout = {
       }
       return null;
     },
+    getWorkoutById: (state) => (id) => {
+      for (const w of state.workouts) {
+        if (w.id == id) {
+          return w;
+        }
+      }
+    },
   },
   mutations: {
     updateWorkouts(state, payload) {
@@ -348,6 +350,9 @@ const workout = {
     },
     toggleAddingWorkoutWindow(state) {
       state.addingWorkoutWindow = !state.addingWorkoutWindow;
+    },
+    toggleDoingWorkoutWindow(state) {
+      state.doingWorkoutWindow = !state.doingWorkoutWindow;
     },
     removeFromWorkoutSelectedItemList(state, payload) {
       let block = store.getters.getWorkoutSelectedExercisesBlockByKey(payload.key);
@@ -358,13 +363,16 @@ const workout = {
       state.workoutSelectedItemList[0].name = payload.workoutName + " block";
     },
     addToWorkoutSelectedItemList(state, payload) {
+      let objKey = "fake-" + KEY_INCREMENT++;
       let obj = {
         id: payload.id,
         // name: payload.name,
         statExpanded: false,
         edits: {},
-        key: "fake-" + KEY_INCREMENT++,
+        key: objKey,
       };
+      state.workoutSelectedItemMap[objKey] = obj;
+
       let blockList = state.workoutSelectedItemList;
       // if no objects in list yet, make this first item in first list
       if (blockList.length == 0) {

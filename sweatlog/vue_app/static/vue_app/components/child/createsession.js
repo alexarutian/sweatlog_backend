@@ -50,9 +50,11 @@ let CreateSession = {
     },
     ...mapActions(["fetchWorkouts", "createNewSession"]),
   },
-  computed: mapState({
-    workouts: (state) => state.workout.workouts,
-  }),
+  computed: {
+    ...mapState({
+      workouts: (state) => state.workout.workouts,
+    }),
+  },
   created() {
     this.fetchWorkouts();
   },
