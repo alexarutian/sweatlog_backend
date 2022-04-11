@@ -9,9 +9,10 @@ let ExerciseTypes = {
     <p class="other-page-subtitle suboption-title">Exercise Types</p>
     <div id="exercise-type-list">
         <div v-for="et in exerciseTypes" class="exercise-type-list-line">
-            <p>[[et.name]]</p>
+            <input type="text" :value="et.name" :placeholder="et.name" :disabled="shouldBeEditable(et)" :ref="et.name" @input="updateInput"/>
             <div class="et-inline-modify-buttons">
-                <div  @click="selectedExerciseType = et" @click="editingExerciseType = true"><i class="fa-solid fa-pencil"></i></div>
+                <div v-if="shouldBeEditable(et)" @click="editClicked(et)"><i class="fa-solid fa-pencil"></i></div>
+                <div v-if="!shouldBeEditable(et)" @click="submitEdit(et.id)" @click="editingExerciseType = false"><i class="fa-solid fa-check"></i></div>
                 <div @click="submitDelete(et.id)"><i class="fa-regular fa-trash-can"></i></div>
             </div>
         </div>
@@ -21,10 +22,7 @@ let ExerciseTypes = {
         <input type="text" v-model="exerciseTypeName" placeholder="name" autocomplete="false">
         <button @click="submitCreate" @click="addingExerciseType = false">ADD</button>
     </div>
-    <div v-if="editingExerciseType">EDIT EXERCISE TYPE
-        <input type="text" v-model="selectedETName" :placeholder="this.selectedExerciseType.name">
-        <button @click="submitEdit(this.selectedExerciseType.id)" @click="editingExerciseType = false">EDIT</button>
-    </div>
+    
     `,
 
   components: {
@@ -43,6 +41,22 @@ let ExerciseTypes = {
   },
   methods: {
     // TURN INTO MODAL EVENTUALLY
+
+    shouldBeEditable(et) {
+      return !this.editingExerciseType || et != this.selectedExerciseType;
+    },
+    updateInput(e) {
+      console.log(e.target.value);
+      this.selectedETName = e.target.value;
+    },
+    editClicked(et) {
+      this.selectedExerciseType = et;
+      this.editingExerciseType = true;
+      this.$nextTick(() => {
+        const elem = this.$refs[et.name];
+        elem.focus();
+      });
+    },
     submitCreate() {
       const body = {
         name: this.exerciseTypeName,
