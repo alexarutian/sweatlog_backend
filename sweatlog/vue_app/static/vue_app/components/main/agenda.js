@@ -1,6 +1,6 @@
-import { WaterDrop } from "../child/waterdrop.js";
 import { CreateSession } from "../child/createsession.js";
 import { WorkoutInfo } from "../child/workoutinfo.js";
+import { DoWorkout } from "../child/doworkout.js";
 
 let { mapState, mapMutations } = Vuex;
 
@@ -8,16 +8,15 @@ let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="agenda-page">
-    <div id="page-top-options">
-      <div @click="toggleAddingSessionWindow" class="page-top-option">SCHEDULE WORKOUT</div>
-      <div class="page-top-option">Option 2</div>
-      <div class="page-top-option">Option 3</div>
-    </div>
+    <div id="page-title">Agenda</div>
+    <div id="add-button" @click="toggleAddingSessionWindow">
+    <i class="fa-solid fa-droplet"></i>
+    <i class="fa-solid fa-plus"></i></div>
     <div v-if="statusLevel == 'error'">[[message]]</div>
     <div v-for="date in dateSessionList" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
       <p class="agenda-date-header">[[date.dateString]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
-        <waterdrop class="agenda-item-icon agenda-waterdrop"></waterdrop>
+        <i class="fa-solid fa-droplet agenda-droplet"></i>
         <p @click="selectSessionWorkout({ workout: session.workout })" @click="toggleSessionWorkoutDetailWindow">[[session.workout.name]]</p>
       </div>
       <div v-if="date.sessions.length == 0" class="agenda-no-workout">
@@ -31,10 +30,16 @@ let Agenda = {
   </div>
   <div v-if="adding" class="modal-overlay" @click="toggleAddingSessionWindow"></div>
 
+  <div v-if="doing" class="full-page-box">
+  <span class="close-full-page-box" @click="toggleDoingWorkoutWindow">&times;</span>  
+  <doworkout v-if="doing"></doworkout>
+  </div>
+
   <div v-if="detail" class="modal">
   <span class="close"
   @click="toggleSessionWorkoutDetailWindow">&times;</span>  
   <workoutinfo :workout="selected"></workoutinfo>
+  <button @click="toggleDoingWorkoutWindow" @click="toggleSessionWorkoutDetailWindow">START WORKOUT</button>
 </div>
 <div v-if="detail" class="modal-overlay"
 @click="toggleSessionWorkoutDetailWindow"></div>
@@ -44,9 +49,9 @@ let Agenda = {
   `,
 
   components: {
-    waterdrop: WaterDrop,
     createsession: CreateSession,
     workoutinfo: WorkoutInfo,
+    doworkout: DoWorkout,
   },
   data() {
     return {};
@@ -55,7 +60,12 @@ let Agenda = {
   // add button shortcuts for add on each day, then another add at end of list auto-populated with next day out
   // collapsing date ranges if no workouts for more than x days
   methods: {
-    ...mapMutations(["toggleAddingSessionWindow", "toggleSessionWorkoutDetailWindow", "selectSessionWorkout"]),
+    ...mapMutations([
+      "toggleAddingSessionWindow",
+      "toggleSessionWorkoutDetailWindow",
+      "selectSessionWorkout",
+      "toggleDoingWorkoutWindow",
+    ]),
   },
   computed: {
     lastDay() {
@@ -94,6 +104,7 @@ let Agenda = {
       message: (state) => state.statusMessage,
       statusLevel: (state) => state.statusLevel,
       adding: (state) => state.session.addingSessionWindow,
+      doing: (state) => state.workout.doingWorkoutWindow,
       detail: (state) => state.session.sessionWorkoutDetailWindow,
       selected: (state) => state.session.selectedSessionWorkout,
     }),

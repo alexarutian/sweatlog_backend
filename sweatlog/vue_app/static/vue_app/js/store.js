@@ -315,6 +315,8 @@ const workout = {
       workouts: null,
       addingWorkoutWindow: false,
       workoutSelectedItemList: [],
+      workoutSelectedItemMap: null,
+      doingWorkoutWindow: false,
     };
   },
   getters: {
@@ -341,6 +343,13 @@ const workout = {
       }
       return null;
     },
+    getWorkoutById: (state) => (id) => {
+      for (const w of state.workouts) {
+        if (w.id == id) {
+          return w;
+        }
+      }
+    },
   },
   mutations: {
     updateWorkouts(state, payload) {
@@ -348,6 +357,9 @@ const workout = {
     },
     toggleAddingWorkoutWindow(state) {
       state.addingWorkoutWindow = !state.addingWorkoutWindow;
+    },
+    toggleDoingWorkoutWindow(state) {
+      state.doingWorkoutWindow = !state.doingWorkoutWindow;
     },
     removeFromWorkoutSelectedItemList(state, payload) {
       let block = store.getters.getWorkoutSelectedExercisesBlockByKey(payload.key);
@@ -365,6 +377,12 @@ const workout = {
         edits: {},
         key: "fake-" + KEY_INCREMENT++,
       };
+
+      let mapObj = {};
+      mapObj[obj.key] = obj;
+
+      state.exerciseMap = obj;
+
       let blockList = state.workoutSelectedItemList;
       // if no objects in list yet, make this first item in first list
       if (blockList.length == 0) {
@@ -379,7 +397,6 @@ const workout = {
       } else {
         blockList[blockList.length - 1].exercise_list.push(obj);
       }
-      console.log(blockList);
     },
     // WORK ON THESE TWO!! NEED TO MOVE ITEMS THROUGH A NESTED ARRAY STRUCTURE
     reorderWorkoutSelectedItemList(state, payload) {

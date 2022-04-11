@@ -52,7 +52,8 @@ let CreateWorkout = {
         return true;
       }
       let target = findDivUnderCursor(e, ".selected-exercise");
-      if (target) {
+      let itemIcon = findDivUnderCursor(e, ".draggable-item-icon", false);
+      if (target && !itemIcon) {
         const index = parseInt(target.dataset.index);
         this.draggingIndex = index;
         doStuffToClass("selected-exercise", (i) => {

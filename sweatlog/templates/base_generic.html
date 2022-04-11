@@ -17,9 +17,9 @@
   <body>
     <div id="page">
       <div id="website-header">
-        <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
-        <div id="website-title"><a id="website-title-text" href="{% url 'vue_app:site' %}">SWEATLOG</a></div>
-        <img class="dripdrop" src="{% static 'vue_app/img/water-drop.svg' %}" />
+        <div id="website-title">
+          <a id="website-title-text" href="{% url 'vue_app:site' %}">SWEATL<i class="fa-solid fa-droplet"></i>G</a>
+        </div>
       </div>
       <div id="page-content">{% block content %}{% endblock %}</div>
       {% if user.is_authenticated %}
@@ -68,10 +68,17 @@
       top: 0px;
     }
 
-    .dripdrop {
-      height: 3vh;
-      margin-left: 15px;
-      margin-right: 15px;
+    #website-header .fa-droplet {
+      margin-left: 0.05em;
+      margin-right: 0.05em;
+      color: rgb(241, 230, 64);
+      font-size: 0.9em;
+      padding: 0px;
+    }
+
+    #website-header .fa-droplet path {
+      stroke-width: 4%;
+      stroke: darkslategray;
     }
 
     #website-title {
@@ -82,10 +89,11 @@
     #website-title-text {
       text-decoration: none;
       color: rgb(241, 230, 64);
-      text-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
+      text-shadow: -1px -1px 0 darkslategray, 1px -1px 0 darkslategray, -1px 1px 0 darkslategray,
+        1px 1px 0 darkslategray;
       font-weight: bold;
-      font-family: Arial;
-      font-size: 24pt;
+      font-family: "Graduate", cursive;
+      font-size: 30pt;
       font-weight: bold;
       text-align: center;
     }
@@ -95,6 +103,7 @@
       flex-direction: column;
       flex-grow: 1;
       flex-shrink: 0;
+      background-color: rgb(245, 245, 245);
     }
   </style>
 </html>
