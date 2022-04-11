@@ -1,6 +1,3 @@
-import { Pencil } from "../child/pencil.js";
-import { Delete } from "../child/delete.js";
-
 let { mapState, mapMutations, mapActions } = Vuex;
 
 let ExerciseTypes = {
@@ -9,7 +6,7 @@ let ExerciseTypes = {
     <p class="other-page-subtitle suboption-title">Exercise Types</p>
     <div id="exercise-type-list">
         <div v-for="et in exerciseTypes" class="exercise-type-list-line">
-            <input type="text" :value="et.name" :placeholder="et.name" :disabled="shouldBeEditable(et)" :ref="et.name" @input="updateInput"/>
+            <input type="text" :value="et.name" :placeholder="et.name" :disabled="shouldBeEditable(et)" :ref="et.name"/>
             <div class="et-inline-modify-buttons">
                 <div v-if="shouldBeEditable(et)" @click="editClicked(et)"><i class="fa-solid fa-pencil"></i></div>
                 <div v-if="!shouldBeEditable(et)" @click="submitEdit(et.id)" @click="editingExerciseType = false"><i class="fa-solid fa-check"></i></div>
@@ -25,18 +22,13 @@ let ExerciseTypes = {
     
     `,
 
-  components: {
-    pencil: Pencil,
-    delete: Delete,
-  },
+  components: {},
   data() {
-    const selectedETName = this.selectedExerciseType ? this.selectedExerciseType.name : undefined;
     return {
       addingExerciseType: false,
       editingExerciseType: false,
       exerciseTypeName: "",
       selectedExerciseType: "",
-      selectedETName,
     };
   },
   methods: {
@@ -45,10 +37,7 @@ let ExerciseTypes = {
     shouldBeEditable(et) {
       return !this.editingExerciseType || et != this.selectedExerciseType;
     },
-    updateInput(e) {
-      console.log(e.target.value);
-      this.selectedETName = e.target.value;
-    },
+
     editClicked(et) {
       this.selectedExerciseType = et;
       this.editingExerciseType = true;
@@ -66,8 +55,9 @@ let ExerciseTypes = {
       this.exerciseTypeName = "";
     },
     submitEdit(id) {
+      const elem = this.$refs[this.selectedExerciseType.name];
       const body = {
-        name: this.selectedETName,
+        name: elem.value,
         user_token: this.userToken,
       };
 

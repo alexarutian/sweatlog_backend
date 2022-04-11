@@ -1,8 +1,3 @@
-import { DragHandle } from "./draghandle.js";
-import { CheckMark } from "./checkmark.js";
-import { Pencil } from "./pencil.js";
-import { Delete } from "./delete.js";
-
 let { mapState, mapMutations, mapActions } = Vuex;
 
 let WorkoutExerciseStat = {
@@ -30,12 +25,7 @@ let WorkoutExerciseStat = {
   </div>
   `,
 
-  components: {
-    draghandle: DragHandle,
-    checkmark: CheckMark,
-    pencil: Pencil,
-    delete: Delete,
-  },
+  components: {},
   data() {
     return {
       timeOptions: CONSTANTS.timeOptions,

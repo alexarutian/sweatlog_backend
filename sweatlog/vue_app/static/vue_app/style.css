@@ -741,6 +741,15 @@ select {
   width: 95%;
 }
 
+.exercise-type-list-line input {
+  background-color: transparent;
+  font-size: inherit;
+}
+
+.exercise-type-list-line input:focus {
+  outline-color: yellow;
+}
+
 .et-inline-modify-buttons {
   display: flex;
   flex-direction: row;
