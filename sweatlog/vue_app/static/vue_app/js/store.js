@@ -315,7 +315,7 @@ const workout = {
       workouts: null,
       addingWorkoutWindow: false,
       workoutSelectedItemList: [],
-      workoutSelectedItemMap: null,
+      workoutSelectedItemMap: {},
       doingWorkoutWindow: false,
     };
   },
@@ -334,14 +334,7 @@ const workout = {
       return null;
     },
     getWorkoutSelectedExercisesBlockByKey: (state) => (key) => {
-      for (const b of state.workoutSelectedItemList) {
-        for (const e of b.exercise_list) {
-          if (e.key == key) {
-            return b;
-          }
-        }
-      }
-      return null;
+      return state.workoutSelectedItemMap[key];
     },
     getWorkoutById: (state) => (id) => {
       for (const w of state.workouts) {
@@ -370,18 +363,15 @@ const workout = {
       state.workoutSelectedItemList[0].name = payload.workoutName + " block";
     },
     addToWorkoutSelectedItemList(state, payload) {
+      let objKey = "fake-" + KEY_INCREMENT++;
       let obj = {
         id: payload.id,
         // name: payload.name,
         statExpanded: false,
         edits: {},
-        key: "fake-" + KEY_INCREMENT++,
+        key: objKey,
       };
-
-      let mapObj = {};
-      mapObj[obj.key] = obj;
-
-      state.exerciseMap = obj;
+      state.workoutSelectedItemMap[objKey] = obj;
 
       let blockList = state.workoutSelectedItemList;
       // if no objects in list yet, make this first item in first list
@@ -397,6 +387,7 @@ const workout = {
       } else {
         blockList[blockList.length - 1].exercise_list.push(obj);
       }
+      console.log(blockList);
     },
     // WORK ON THESE TWO!! NEED TO MOVE ITEMS THROUGH A NESTED ARRAY STRUCTURE
     reorderWorkoutSelectedItemList(state, payload) {
