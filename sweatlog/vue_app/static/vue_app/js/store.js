@@ -174,6 +174,26 @@ const equipmenttype = {
       let payload = { data: response.all_equipment_types };
       context.commit("updateEquipmentTypes", payload);
     },
+    async createNewEquipmentType(context, payload) {
+      const response = await postJSONFetch("/webapp/equipmenttypes/", payload.body, context.rootState.csrfToken);
+      store.dispatch("fetchEquipmentTypes");
+    },
+    async editEquipmentType(context, payload) {
+      const response = await putJSONFetch(
+        "/webapp/equipmenttypes/" + payload.id + "/",
+        payload.body,
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchEquipmentTypes");
+    },
+    async deleteEquipmentType(context, payload) {
+      const response = await deleteJSONFetch(
+        "/webapp/equipmenttypes/" + payload.id + "/",
+        { user_token: context.rootState.userToken },
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchEquipmentTypes");
+    },
   },
 };
 

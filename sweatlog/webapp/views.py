@@ -206,7 +206,38 @@ def equipment_types(request):
 
 
 def equipment_types_with_id(request, equipment_type_id):
-    pass
+    data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
+    try:
+        equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+    except EquipmentType.DoesNotExist:
+        return JsonResponse({"message": "equipment type does not exist"}, status=404)
+
+    # get a single equipmenttype
+    if request.method == "GET":
+        detail = equipment_type.serialize(detail_level=Detail.DETAIL)
+        return JsonResponse({"equipment_type": detail}, status=200)
+
+    # edit an equipmenttype
+    if request.method == "PUT":
+        equipment_type.name = data.get("name", "").lower()
+        equipment_type.user = user
+        equipment_type.save()
+        return JsonResponse({"equipment_type_id": equipment_type.id}, status=200)
+
+    # delete an equipmenttype
+    if request.method == "DELETE":
+        if equipment_type.user == user:
+            equipment_type.delete()
+            return JsonResponse(
+                {"message": f"equipment type {equipment_type_id} has been deleted"},
+                status=202,
+            )
+        else:
+            return JsonResponse({"message": "cannot delete this equipment"}, status=403)
 
 
 def exercises(request):

@@ -1,11 +1,11 @@
 let { mapState, mapMutations, mapActions } = Vuex;
 
-let ExerciseTypes = {
+let EquipmentTypes = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-    <p class="other-page-subtitle suboption-title">Exercise Types</p>
+    <p class="other-page-subtitle suboption-title">Equipment Types</p>
     <div id="exercise-type-list">
-        <div v-for="et in exerciseTypes" class="exercise-type-list-line">
+        <div v-for="et in equipmentTypes" class="exercise-type-list-line">
             <input type="text" :value="et.name" :placeholder="et.name" :disabled="notEditable(et)" :ref="et.name"/>
             <div class="et-inline-modify-buttons">
                 <div v-if="notEditable(et)" @click="editClicked(et)"><i class="fa-solid fa-pencil"></i></div>
@@ -21,7 +21,7 @@ let ExerciseTypes = {
           </div>
         </div>
     </div>
-    <button @click="addClicked">ADD EXERCISE TYPE</button>
+    <button @click="addClicked">ADD EQUIPMENT TYPE</button>
 
     
     `,
@@ -32,7 +32,7 @@ let ExerciseTypes = {
       adding: false,
       editing: false,
       selectedItem: "",
-      newPlaceholder: "my new exercise type",
+      newPlaceholder: "my new equipment type",
     };
   },
   methods: {
@@ -60,7 +60,7 @@ let ExerciseTypes = {
         name: elem.value,
         user_token: this.userToken,
       };
-      this.createNewExerciseType({ body });
+      this.createNewEquipmentType({ body });
       this.adding = false;
     },
     submitEdit(id) {
@@ -70,18 +70,18 @@ let ExerciseTypes = {
         user_token: this.userToken,
       };
 
-      this.editExerciseType({ id, body });
+      this.editEquipmentType({ id, body });
       this.editing = false;
     },
     submitDelete(id) {
-      this.deleteExerciseType({ id });
+      this.deleteEquipmentType({ id });
     },
-    ...mapActions(["deleteExerciseType", "editExerciseType", "createNewExerciseType"]),
+    ...mapActions(["deleteEquipmentType", "editEquipmentType", "createNewEquipmentType"]),
   },
   computed: mapState({
-    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
+    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
     userToken: (state) => state.userToken,
   }),
   created() {},
 };
-export { ExerciseTypes };
+export { EquipmentTypes };
