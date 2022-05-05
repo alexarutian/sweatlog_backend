@@ -1,4 +1,5 @@
 import { ExerciseTypes } from "../child/exercisetypes.js";
+import { EquipmentTypes } from "../child/equipmenttypes.js";
 
 let { mapState, mapActions } = Vuex;
 
@@ -13,7 +14,7 @@ let Other = {
           <p>Exercise Types</p>
           <i class="fa-solid fa-angle-right"></i>
           </div>
-          <div class="settings-line">
+          <div class="settings-line" @click="otherPageContent='equipmenttypes'" @click="showOtherPageContent=true">
           <p>Equipment Types</p>
           <i class="fa-solid fa-angle-right"></i>
           </div>
@@ -25,7 +26,7 @@ let Other = {
       </div>
       <div id="about-sweatlog">
       <p class="other-page-subtitle">About Sweatlog:</p>
-        <p>Sweatlog was created with ❤ 💪 by Sound Engineering</p>
+        <p>Sweatlog was created with ❤ 💪 by AA</p>
         <p>For inquiries, please contact us here</p>
         <p></p>
       </div>
@@ -36,12 +37,13 @@ let Other = {
           <p>Settings</p>
         </div>
         <exercisetypes v-if="otherPageContent=='exercisetypes'"></exercisetypes>
+        <equipmenttypes v-if="otherPageContent=='equipmenttypes'"></equipmenttypes>
       </div>
   </div>
 
   `,
 
-  components: { exercisetypes: ExerciseTypes },
+  components: { exercisetypes: ExerciseTypes, equipmenttypes: EquipmentTypes },
   data() {
     return {
       showOtherPageContent: false,
