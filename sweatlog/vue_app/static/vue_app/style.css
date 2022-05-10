@@ -142,17 +142,22 @@ table {
 .workout-detailed {
   border: 2px solid rgb(238, 238, 238);
   background-color: white;
-  padding: 5px;
   width: 95%;
   margin: 3px;
   border-radius: 4px;
+  overflow: hidden;
   /* box-shadow: 1px 1px 2px lightgray; */
 }
 
 .workout-name {
-  color: gray;
+  background-color: #ddd;
+  color: #666666;
   font-weight: bold;
   text-transform: uppercase;
+  line-height: 2em;
+  font-size: 14pt;
+  padding-left: 10px;
+  font-family: "Graduate", cursive;
 }
 
 .other-page-subtitle {
@@ -238,7 +243,13 @@ table {
 .workout-exercise-line {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
+  font-size: 14pt;
+  color: gray;
+  line-height: 1.5em;
+  border-top: 0.5px solid #ddd;
+  padding: 5px;
+  padding-left: 10px;
 }
 
 .workout-detailed-exercise > p {
@@ -291,7 +302,6 @@ table {
 }
 
 .exercise-name-nostats {
-  width: 90vw;
   text-align: left;
 }
 
@@ -437,6 +447,7 @@ table {
 .fa-clipboard {
   height: 20px;
   color: lightgray;
+  margin-right: 3px;
 }
 
 .fa-droplet.agenda-droplet {
@@ -980,6 +991,7 @@ select {
   align-items: center;
   justify-content: flex-start;
   margin-right: 5px;
+  width: 75px;
 }
 
 .do-exercise-timer {

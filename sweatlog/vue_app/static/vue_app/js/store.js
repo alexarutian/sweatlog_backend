@@ -86,7 +86,7 @@ const exercise = {
       const response = await deleteJSONFetch(
         "/webapp/exercises/" + payload.id + "/",
         { user_token: context.rootState.userToken },
-        context.state.rootState.csrfToken
+        context.rootState.csrfToken
       );
       context.commit("toggleExerciseDetailWindow");
       store.dispatch("fetchExercises");
