@@ -53,9 +53,7 @@ if not DEPLOYED:
 
 elif DEBUG:
     ALLOWED_HOSTS.extend(
-        [
-            "sweatlog-staging.herokuapp.com",
-        ]
+        ["sweatlog-staging.herokuapp.com", "alexarutian.pythonanywhere.com"]
     )
     MAIN_HOST = "https://sweatlog-staging.herokuapp.com"
 

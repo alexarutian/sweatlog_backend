@@ -129,13 +129,13 @@ class Exercise(models.Model, NameableMixin):
     description = models.CharField(max_length=200, blank=True)
     exercise_type = models.ForeignKey(
         ExerciseType,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="exercises",
         null=True,
     )
     equipment_type = models.ForeignKey(
         EquipmentType,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="exercises",
         null=True,
     )

@@ -425,7 +425,8 @@ table {
 .fa-x,
 .fa-check,
 .fa-circle,
-.fa-square {
+.fa-square,
+.fa-arrow-rotate-right {
   height: 25px;
   color: lightgray;
   padding: 5px;
@@ -934,7 +935,7 @@ select {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   margin-bottom: 10px;
   border: 1px solid lightgray;
   border-radius: 4px;
@@ -942,6 +943,13 @@ select {
   color: rgb(129, 129, 129);
   padding: 5px;
   height: 60px;
+}
+
+.do-exercise-line-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .do-exercise-words {
@@ -972,4 +980,20 @@ select {
   align-items: center;
   justify-content: flex-start;
   margin-right: 5px;
+}
+
+.do-exercise-timer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.exercise-timer {
+  background-color: rgb(231, 231, 231);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.active-timer {
+  background-color: yellow;
 }
