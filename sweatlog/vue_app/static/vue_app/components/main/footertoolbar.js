@@ -4,10 +4,12 @@ let FooterToolbar = {
   delimiters: ["[[", "]]"],
   template: /*html*/ `
       <div class="footer-toolbar" >
-      <p v-for="item in menuitems" v-bind:key="item.id"
+      <div v-for="item in menuitems" v-bind:key="item.id"
          @click="navigate({page: item.page})"
          :class="{'menu-item': true, 'selected-menu-item': item.page == currentPage }">
-         [[item.name]]</p>    
+         <i :class="item.icon"></i>
+         <p class="footer-icon-label">[[item.name]]</p>
+         </div>    
       </div>    
     `,
 

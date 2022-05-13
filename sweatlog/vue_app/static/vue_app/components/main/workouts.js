@@ -7,7 +7,6 @@ let Workouts = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="workout-page">
-  <div id="page-title">Workouts</div>
   <div id="add-button" @click="toggleAddingWorkoutWindow">
   <i class="fa-solid fa-droplet"></i>
   <i class="fa-solid fa-plus"></i></div>

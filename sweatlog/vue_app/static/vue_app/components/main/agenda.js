@@ -8,7 +8,6 @@ let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="agenda-page">
-    <div id="page-title">Agenda</div>
     <div id="add-button" @click="toggleAddingSessionWindow">
     <i class="fa-solid fa-droplet"></i>
     <i class="fa-solid fa-plus"></i></div>

@@ -9,12 +9,12 @@ let Exercises = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
   <div id="exercises-page">
-    <div id="page-top-options">
-      <div @click="toggleAddingExerciseWindow" class="page-top-option">ADD EXERCISE</div>
-      <div @click="toggleExerciseSearchWindow" class="page-top-option">SEARCH EXERCISES</div>
-      <div class="page-top-option">Option 3</div>
+
+    <div id="add-button" @click="toggleAddingExerciseWindow">
+      <i class="fa-solid fa-droplet"></i>
+      <i class="fa-solid fa-plus"></i>
     </div>
-  
+
     <div id="exercise-list">
       <div v-for="exercise in exercises" class="exercise-list-line">
         <p @click="selectExercise({exercise})" @click="toggleExerciseDetailWindow">[[exercise.name]]</p>

@@ -3,7 +3,7 @@
   <div id="vue-app">
     <div id="website-footer">
       <div id="footer-content">
-        <footertoolbar2 :menuitems="menuitems2"></footertoolbar2>
+        <footertoolbar :menuitems="menuitems2"></footertoolbar>
       </div>
     </div>
     <div id="main-content">
@@ -12,7 +12,7 @@
         <loginorcreateuser v-if="page == 'login'"></loginorcreateuser>
         <agenda v-if="page == 'agenda'"></agenda>
         <workouts v-else-if="page == 'workouts'"></workouts>
-        <blocks v-else-if="page == 'blocks'"></blocks>
+        <home v-else-if="page == 'home'"></home>
         <exercises v-else-if="page == 'exercises'"></exercises>
         <other v-else-if="page == 'other'"></other>
       </div>
@@ -26,11 +26,10 @@
 
   import { Agenda } from "{% static 'vue_app/components/main/agenda.js' %}";
   import { Workouts } from "{% static 'vue_app/components/main/workouts.js' %}";
-  import { Blocks } from "{% static 'vue_app/components/main/blocks.js' %}";
+  import { Home } from "{% static 'vue_app/components/main/home.js' %}";
   import { Exercises } from "{% static 'vue_app/components/main/exercises.js' %}";
   import { Other } from "{% static 'vue_app/components/main/other.js' %}";
   import { FooterToolbar } from "{% static 'vue_app/components/main/footertoolbar.js' %}";
-  import { FooterToolbar2 } from "{% static 'vue_app/components/main/footertoolbar2.js' %}";
   import { LoginOrCreateUser } from "{% static 'vue_app/components/main/loginorcreateuser.js' %}";
   import { store } from "{% static 'vue_app/js/store.js' %}";
 
@@ -41,11 +40,10 @@
     components: {
       agenda: Agenda,
       workouts: Workouts,
-      blocks: Blocks,
+      home: Home,
       exercises: Exercises,
       other: Other,
       footertoolbar: FooterToolbar,
-      footertoolbar2: FooterToolbar2,
       loginorcreateuser: LoginOrCreateUser,
     },
     data() {
@@ -53,14 +51,14 @@
         menuitems: [
           { id: 1, name: "Agenda", page: "agenda" },
           { id: 2, name: "Workouts", page: "workouts" },
-          { id: 3, name: "Blocks", page: "blocks" },
+          { id: 3, name: "Home", page: "home" },
           { id: 4, name: "Exercises", page: "exercises" },
           { id: 5, name: "Other", page: "other" },
         ],
         menuitems2: [
           { id: 1, name: "Agenda", page: "agenda", icon: "fa-regular fa-calendar" },
           { id: 2, name: "Workouts", page: "workouts", icon: "fa-solid fa-person-walking" },
-          { id: 3, name: "Blocks", page: "blocks", icon: "fa-solid fa-cubes-stacked" },
+          { id: 3, name: "Home", page: "home", icon: "fa-solid fa-star" },
           { id: 4, name: "Exercises", page: "exercises", icon: "fa-solid fa-dumbbell" },
           { id: 5, name: "Other", page: "other", icon: "fa-solid fa-gears" },
         ],

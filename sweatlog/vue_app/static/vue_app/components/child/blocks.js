@@ -1,13 +1,12 @@
-import { CreateBlock } from "../child/createblock.js";
-import { BlockInfo } from "../child/blockinfo.js";
+import { CreateBlock } from "./createblock.js";
+import { BlockInfo } from "./blockinfo.js";
 
 let { mapState, mapMutations } = Vuex;
 
 let Blocks = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div id="blocks-page">
-    <div id="page-title">Blocks</div>
+  <p class="other-page-subtitle suboption-title">Blocks</p>
     <div id="add-button" @click="toggleAddingBlockWindow">
     <i class="fa-solid fa-droplet"></i>
     <i class="fa-solid fa-plus"></i></div>
@@ -19,7 +18,6 @@ let Blocks = {
     <div v-if="adding" id="create-block-modal" class="full-page-box">
     <span class="close-full-page-box" @click="toggleAddingBlockWindow">&times;</span>  
     <createblock v-if="adding"></createblock>
-  </div>
   </div>
 
   <div v-if="detail" id="block-info-modal" class="modal">
