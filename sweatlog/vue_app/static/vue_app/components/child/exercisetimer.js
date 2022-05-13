@@ -5,7 +5,7 @@ let ExerciseTimer = {
   template: /*html*/ `
   <div class="do-exercise-timer">
     <div @click="stopTimer($event, true)"><i class="fa-solid fa-arrow-rotate-right"></i></div>
-    <div class="exercise-timer" @click="clickTime($event, timerLeft || timeInSeconds)">[[timerLeft || timeInSeconds]]</div>
+    <div class="exercise-timer" @click="clickTime($event, timerLeft || exercise.stats.time_in_seconds)">[[timerLeft || exercise.stats.time_in_seconds]]</div>
   </div>
   `,
 
@@ -16,7 +16,7 @@ let ExerciseTimer = {
     };
   },
   activeTimer: null, //nonexistent timer that isn't bound to anything
-  props: { timeInSeconds: Number },
+  props: { exercise: Object, blockIndex: Number, exerciseIndex: Number },
   methods: {
     startTimer(seconds) {
       const startClock = Date.now();
@@ -31,6 +31,13 @@ let ExerciseTimer = {
           this.timerLeft = seconds - elapsedSeconds;
           if (this.timerLeft == 0) {
             this.stopTimer(true);
+            this.toggleCheckedOnLiveSessionWorkoutData({
+              blockIndex: this.blockIndex,
+              exerciseIndex: this.exerciseIndex,
+            });
+            doStuffToClass("active-timer", (i) => {
+              i.classList.remove("active-timer");
+            });
           }
         }, 100);
       }
@@ -54,6 +61,7 @@ let ExerciseTimer = {
         target.classList.add("active-timer");
       }
     },
+    ...mapMutations(["toggleCheckedOnLiveSessionWorkoutData"]),
   },
   computed: {},
   created() {},

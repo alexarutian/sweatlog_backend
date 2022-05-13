@@ -19,7 +19,7 @@ let DoWorkout = {
       </div>
       <div class="do-exercise-words"><p>[[exercise.exercise.name]]</p></div>
       </div>
-    <exercisetimer v-if="exercise.stats.time_in_seconds" :timeInSeconds="exercise.stats.time_in_seconds">
+    <exercisetimer v-if="exercise.stats.time_in_seconds" :exercise="exercise" :blockIndex="blockIndex" :exerciseIndex="exerciseIndex">
     </exercisetimer>
     <div v-if="exercise.stats.sets > 1 && !exercise.expanded" @click="toggleExpanded(blockIndex, exerciseIndex)">
       <i class="fa-solid fa-angles-down"></i>
