@@ -9,7 +9,7 @@ let Other = {
   <div id="other-page">
     <div id="other-page-options" v-if="!showOtherPageContent">
       <div id="settings" v-if="!showOtherPageContent">
-        <p class="other-page-subtitle">Settings:</p>
+        <p class="other-page-subtitle">Settings</p>
           <div class="settings-line" @click="otherPageContent='exercisetypes'" @click="showOtherPageContent=true">
           <p>Exercise Types</p>
           <i class="fa-solid fa-angle-right"></i>
@@ -20,12 +20,12 @@ let Other = {
           </div>
       </div>
       <div id="user-info">
-      <p class="other-page-subtitle">User Information:</p>
+      <p class="other-page-subtitle">User Information</p>
         <div class="other-page-line">You are logged in as [[userEmail]]</div>
         <button v-if="userToken" @click="logoutUser">LOGOUT OF SWEATLOG</button>
       </div>
       <div id="about-sweatlog">
-      <p class="other-page-subtitle">About Sweatlog:</p>
+      <p class="other-page-subtitle">About Sweatlog</p>
         <p>Sweatlog was created with ❤ 💪 by AA</p>
         <p>For inquiries, please contact us here</p>
         <p></p>

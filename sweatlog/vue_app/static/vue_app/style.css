@@ -142,17 +142,22 @@ table {
 .workout-detailed {
   border: 2px solid rgb(238, 238, 238);
   background-color: white;
-  padding: 5px;
   width: 95%;
   margin: 3px;
   border-radius: 4px;
+  overflow: hidden;
   /* box-shadow: 1px 1px 2px lightgray; */
 }
 
 .workout-name {
-  color: gray;
+  background-color: #ddd;
+  color: #666666;
   font-weight: bold;
   text-transform: uppercase;
+  line-height: 2em;
+  font-size: 14pt;
+  padding-left: 10px;
+  font-family: "Graduate", cursive;
 }
 
 .other-page-subtitle {
@@ -165,6 +170,7 @@ table {
   text-transform: uppercase;
   font-size: 14pt;
   text-align: left;
+  font-family: "Graduate", cursive;
 }
 
 .suboption-title {
@@ -238,7 +244,13 @@ table {
 .workout-exercise-line {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
+  font-size: 14pt;
+  color: gray;
+  line-height: 1.5em;
+  border-top: 0.5px solid #ddd;
+  padding: 5px;
+  padding-left: 10px;
 }
 
 .workout-detailed-exercise > p {
@@ -291,14 +303,7 @@ table {
 }
 
 .exercise-name-nostats {
-  width: 90vw;
   text-align: left;
-}
-
-.exercise-sets-reps,
-.exercise-weight,
-.exercise-time {
-  width: 15vw;
 }
 
 .exercise-sets-reps p,
@@ -377,21 +382,30 @@ table {
 }
 
 .agenda-item {
-  margin: 5px;
-  padding: 5px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  width: 95%;
   border-radius: 4px;
   color: darkgray;
+  border: 2px solid rgb(238, 238, 238);
+  background-color: white;
+  width: 95%;
+  margin: 3px;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .agenda-date-header {
   padding: 5px;
-  width: 90%;
   text-align: left;
-  border-bottom: solid 1px darkgray;
+  /* background-color: #ddd; */
+  color: #666666;
+  font-weight: bold;
+  text-transform: uppercase;
+  line-height: 2em;
+  font-size: 14pt;
+  padding-left: 10px;
+  font-family: "Graduate", cursive;
 }
 
 .agenda-workout,
@@ -400,17 +414,18 @@ table {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+
+  font-size: 14pt;
+  color: gray;
+  line-height: 1.5em;
+  border-top: 0.5px solid #ddd;
+  padding: 5px;
+  padding-left: 10px;
 }
 
 .agenda-item-icon {
   padding-right: 10px;
   width: 20px;
-}
-
-.agenda-plus {
-  color: green;
-  font-weight: bold;
-  font-size: 16pt;
 }
 
 .water-drop-svg {
@@ -425,17 +440,37 @@ table {
 .fa-x,
 .fa-check,
 .fa-circle,
-.fa-square {
+.fa-arrow-rotate-right,
+.fa-angles-down,
+.fa-angles-up {
   height: 25px;
   color: lightgray;
   padding: 5px;
+}
+
+.fa-square,
+.fa-square-check {
+  height: 30px;
+  color: lightgray;
+  padding: 5px;
+}
+
+.circle-small,
+.check-small {
+  height: 15px;
+  color: gray;
+}
+
+.small-check {
+  width: 25px;
 }
 
 .fa-stopwatch,
 .fa-weight-hanging,
 .fa-clipboard {
   height: 20px;
-  color: lightgray;
+  color: gray;
+  margin-right: 3px;
 }
 
 .fa-droplet.agenda-droplet {
@@ -543,7 +578,7 @@ table {
   position: absolute;
   width: 100%;
   height: 86vh;
-  background-color: white;
+  background-color: rgb(245, 245, 245);
   padding: 10px;
 }
 
@@ -561,14 +596,16 @@ table {
   position: fixed;
   display: flex;
   flex-direction: column;
+  align-items: center;
   z-index: 10;
   left: 50%;
   top: 20vh;
   transform: translate(-50%);
   max-width: 800px;
   overflow: hidden;
-  padding: 5vw;
-  width: 90vw;
+  padding: 3vw;
+  padding-top: 7vw;
+  width: 95vw;
   border: 2px solid lightgray;
   border-radius: 8px;
   background-color: white;
@@ -581,6 +618,8 @@ table {
   margin-top: 5px;
   margin-bottom: 20px;
   text-transform: uppercase;
+  font-family: "Graduate", cursive;
+  font-size: 14pt;
 }
 
 #create-exercise-box input,
@@ -630,12 +669,11 @@ input {
 
 .close {
   margin-left: auto;
-  color: darkgray;
+  color: #ddd;
   float: right;
-  font-size: 28px;
-  font-weight: bold;
+  font-size: 30px;
   position: absolute;
-  top: 5px;
+  top: 1px;
   right: 5px;
 }
 
@@ -931,17 +969,29 @@ select {
 }
 
 .do-exercise-line {
+  margin-bottom: 10px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  color: rgb(129, 129, 129);
+  background-color: white;
+}
+
+.do-exercise-line-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18pt;
+  color: rgb(129, 129, 129);
+  padding: 5px;
+  height: 50px;
+}
+
+.do-exercise-line-left {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 10px;
-  border: 1px solid lightgray;
-  border-radius: 4px;
-  font-size: 18pt;
-  color: rgb(129, 129, 129);
-  padding: 5px;
-  height: 60px;
 }
 
 .do-exercise-words {
@@ -950,14 +1000,20 @@ select {
   align-items: flex-start;
   justify-content: space-around;
   height: 100%;
+  margin-left: 10px;
 }
 
-.do-exercise-stats {
+.exercise-stats {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
   font-size: 10pt;
+}
+
+.do-exercise-stats {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .do-exercise-stats p {
@@ -972,4 +1028,49 @@ select {
   align-items: center;
   justify-content: flex-start;
   margin-right: 5px;
+  width: 60px;
+}
+
+.do-exercise-timer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.exercise-timer {
+  background-color: rgb(231, 231, 231);
+  border-radius: 4px;
+  padding: 8px;
+  margin-left: 10px;
+}
+
+.active-timer {
+  background-color: yellow;
+}
+
+.do-exercise-subline {
+  width: 100%;
+  background-color: #ddd;
+  padding-left: 50px;
+  color: #666;
+  border-top: 1px solid #ccc;
+}
+
+.do-exercise-sets-rows {
+  width: 100%;
+}
+
+.do-exercise-sets-row {
+  padding: 4px;
+  background-color: #ddd;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  border-top: 1px solid #bbb;
+}
+
+.do-exercise-sets-row:nth-child(1) {
+  border-top: none;
 }
