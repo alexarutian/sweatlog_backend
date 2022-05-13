@@ -132,6 +132,12 @@ table {
 
 /* END CSS RESET */
 
+/* GLOBAL CSS VARIABLES */
+:root {
+  --main-yellow: rgb(241, 230, 64);
+  --light-border-bevel: 4px;
+}
+
 /* .workouts-list {
   display: flex;
   flex-direction: column;
@@ -144,7 +150,7 @@ table {
   background-color: white;
   width: 95%;
   margin: 3px;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   overflow: hidden;
   /* box-shadow: 1px 1px 2px lightgray; */
 }
@@ -202,7 +208,7 @@ table {
   width: 95%;
   padding: 5px;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   margin-bottom: 10px;
   background-color: white;
 }
@@ -225,7 +231,7 @@ table {
   margin: 5px;
   padding: 5px;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
 }
 
 .block-title-info {
@@ -285,7 +291,7 @@ table {
 }
 
 .selected-menu-item {
-  color: rgb(221, 210, 47);
+  color: var(--main-yellow);
 }
 
 .footer-icon-label {
@@ -304,6 +310,7 @@ table {
 
 .exercise-name-nostats {
   text-align: left;
+  text-transform: capitalize;
 }
 
 .exercise-sets-reps p,
@@ -373,7 +380,7 @@ table {
   background-color: lightgray;
   text-align: center;
   padding: 5px;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   display: inline-block;
 }
 
@@ -385,7 +392,7 @@ table {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   color: darkgray;
   border: 2px solid rgb(238, 238, 238);
   background-color: white;
@@ -414,7 +421,7 @@ table {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-
+  text-transform: capitalize;
   font-size: 14pt;
   color: gray;
   line-height: 1.5em;
@@ -429,7 +436,7 @@ table {
 }
 
 .water-drop-svg {
-  fill: #ddd22f;
+  fill: var(--main-yellow);
   font-size: 16pt;
 }
 
@@ -555,6 +562,7 @@ table {
   padding: 5px;
   font-size: 14pt;
   width: 95%;
+  text-transform: capitalize;
 }
 
 #create-exercise-exercise-types,
@@ -628,7 +636,7 @@ input {
   padding: 5px;
   padding-left: 10px;
   background-color: rgb(233, 233, 233);
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   height: 30px;
   border: none;
   color: rgb(133, 133, 133);
@@ -689,10 +697,10 @@ input {
 #delete-exercise-button,
 #edit-exercise-button,
 button {
-  background-color: rgb(221, 210, 47);
+  background-color: var(--main-yellow);
   box-shadow: 1px 1px 2px rgba(221, 210, 47, 0.5);
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   text-align: center;
   align-self: center;
   font-weight: bold;
@@ -704,7 +712,7 @@ button {
   background-color: gray;
   box-shadow: 1px 1px 2px rgba(128, 128, 128, 0.5);
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   text-align: center;
   align-self: center;
   font-weight: bold;
@@ -750,7 +758,7 @@ button {
 select {
   border: none;
   color: rgb(133, 133, 133);
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   background-color: rgb(233, 233, 233);
   padding: 5px;
   height: 30px;
@@ -773,7 +781,7 @@ select {
   padding: 5px;
   margin: 5px;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   height: 60px;
   background-color: white;
   width: 95%;
@@ -963,7 +971,7 @@ select {
 .selected-exercise {
   margin-bottom: 10px;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   font-size: 18pt;
   color: rgb(129, 129, 129);
 }
@@ -971,7 +979,7 @@ select {
 .do-exercise-line {
   margin-bottom: 10px;
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   color: rgb(129, 129, 129);
   background-color: white;
 }
@@ -1001,6 +1009,7 @@ select {
   justify-content: space-around;
   height: 100%;
   margin-left: 10px;
+  text-transform: capitalize;
 }
 
 .exercise-stats {
@@ -1039,7 +1048,7 @@ select {
 
 .exercise-timer {
   background-color: rgb(231, 231, 231);
-  border-radius: 4px;
+  border-radius: var(--light-border-bevel);
   padding: 8px;
   margin-left: 10px;
 }
@@ -1069,6 +1078,7 @@ select {
   align-items: center;
   width: 100%;
   border-top: 1px solid #bbb;
+  text-transform: capitalize;
 }
 
 .do-exercise-sets-row:nth-child(1) {

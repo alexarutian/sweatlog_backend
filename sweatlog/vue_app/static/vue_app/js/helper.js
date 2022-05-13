@@ -286,3 +286,7 @@ const CONSTANTS = {
     { display: "60:00", value: 3600 },
   ],
 };
+
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
