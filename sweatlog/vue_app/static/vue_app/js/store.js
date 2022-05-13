@@ -280,22 +280,44 @@ const session = {
       sessions: null,
       addingSessionWindow: false,
       selectedSessionWorkout: "",
+      liveSessionWorkoutData: "",
       sessionWorkoutDetailWindow: false,
     };
   },
-  getters: {},
+  getters: {
+    getLiveSessionWorkoutExerciseByIndexes: (state) => (blockIndex, exerciseIndex) => {
+      return state.liveSessionWorkoutData.blocks[blockIndex].block.exercises[exerciseIndex];
+    },
+  },
   mutations: {
     toggleAddingSessionWindow(state) {
       state.addingSessionWindow = !state.addingSessionWindow;
     },
     selectSessionWorkout(state, payload) {
       state.selectedSessionWorkout = payload.workout;
+      state.liveSessionWorkoutData = payload.workout;
     },
     toggleSessionWorkoutDetailWindow(state) {
       state.sessionWorkoutDetailWindow = !state.sessionWorkoutDetailWindow;
     },
     updateSessions(state, payload) {
       state.sessions = payload.data;
+    },
+    toggleCheckedOnLiveSessionWorkoutData(state, payload) {
+      let exercise = store.getters.getLiveSessionWorkoutExerciseByIndexes(payload.blockIndex, payload.exerciseIndex);
+      if (exercise.completed == true) {
+        exercise.completed = false;
+      } else {
+        exercise["completed"] = true;
+      }
+    },
+    toggleExpandedOnLiveSessionWorkoutData(state, payload) {
+      let exercise = store.getters.getLiveSessionWorkoutExerciseByIndexes(payload.blockIndex, payload.exerciseIndex);
+      if (exercise.expanded == true) {
+        exercise.expanded = false;
+      } else {
+        exercise["expanded"] = true;
+      }
     },
   },
   actions: {

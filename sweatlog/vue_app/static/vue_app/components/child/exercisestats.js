@@ -3,11 +3,12 @@ let { mapState, mapMutations, mapActions } = Vuex;
 let ExerciseStats = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div class="do-exercise-stats">
+  <div class="exercise-stats">
     <div v-if="stats.sets  > 1" class="do-exercise-sets-reps">
       <i class="fa-solid fa-clipboard"></i>
       <p>[[stats.sets]]</p>
       <p v-if="stats.reps">x [[stats.reps]]</p>
+      <p v-if="!stats.reps"> sets</p>
     </div>
     <div v-else class="do-exercise-sets-reps" v-if="stats.reps">
       <i class="fa-solid fa-clipboard"></i>

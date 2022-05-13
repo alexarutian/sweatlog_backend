@@ -13,15 +13,11 @@ let Agenda = {
     <i class="fa-solid fa-droplet"></i>
     <i class="fa-solid fa-plus"></i></div>
     <div v-if="statusLevel == 'error'">[[message]]</div>
-    <div v-for="date in dateSessionList" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
+    <div v-for="date in dateSessionListFiltered" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
       <p class="agenda-date-header">[[date.dateString]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
         <i class="fa-solid fa-droplet agenda-droplet"></i>
         <p @click="selectSessionWorkout({ workout: session.workout })" @click="toggleSessionWorkoutDetailWindow">[[session.workout.name]]</p>
-      </div>
-      <div v-if="date.sessions.length == 0" class="agenda-no-workout">
-        <div class="agenda-item-icon agenda-plus">+</div>
-        <p>Schedule workout</p>
       </div>
     </div>
   <div v-if="adding" id="create-session-modal" class="modal">
@@ -98,6 +94,9 @@ let Agenda = {
     todaysDate() {
       const today = new Date();
       return formatDatetoYYYYMMDD(today);
+    },
+    dateSessionListFiltered() {
+      return this.dateSessionList.filter((i) => i.sessions.length > 0);
     },
     ...mapState({
       sessions: (state) => state.session.sessions,
