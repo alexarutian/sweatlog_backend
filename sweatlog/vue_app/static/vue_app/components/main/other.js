@@ -26,7 +26,7 @@ let Other = {
       </div>
       <div id="about-sweatlog">
       <p class="other-page-subtitle">About Sweatlog</p>
-        <p>Sweatlog was created with ❤ 💪 by AA</p>
+        <p>Sweatlog was created with 💪 by AA</p>
         <p>For inquiries, please contact us here</p>
         <p></p>
       </div>
