@@ -22,7 +22,6 @@ let ExerciseTypes = {
         </div>
     </div>
     <button @click="addClicked">ADD EXERCISE TYPE</button>
-
     
     `,
 

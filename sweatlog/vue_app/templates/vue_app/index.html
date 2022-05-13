@@ -3,7 +3,7 @@
   <div id="vue-app">
     <div id="website-footer">
       <div id="footer-content">
-        <footertoolbar :menuitems="menuitems2"></footertoolbar>
+        <footertoolbar :menuitems="menuitems"></footertoolbar>
       </div>
     </div>
     <div id="main-content">
@@ -49,13 +49,6 @@
     data() {
       return {
         menuitems: [
-          { id: 1, name: "Agenda", page: "agenda" },
-          { id: 2, name: "Workouts", page: "workouts" },
-          { id: 3, name: "Home", page: "home" },
-          { id: 4, name: "Exercises", page: "exercises" },
-          { id: 5, name: "Other", page: "other" },
-        ],
-        menuitems2: [
           { id: 1, name: "Agenda", page: "agenda", icon: "fa-regular fa-calendar" },
           { id: 2, name: "Workouts", page: "workouts", icon: "fa-solid fa-person-walking" },
           { id: 3, name: "Home", page: "home", icon: "fa-solid fa-star" },

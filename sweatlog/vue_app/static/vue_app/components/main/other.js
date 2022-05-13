@@ -24,6 +24,17 @@ let Other = {
           <i class="fa-solid fa-angle-right"></i>
           </div>
       </div>
+      <div id="help">
+        <p class="other-page-subtitle">Help & FAQs</p>
+        <div class="settings-line" @click="otherPageContent='help-other'" @click="showOtherPageContent=true">
+          <p>Quickstart Guide [tbu]</p>
+          <i class="fa-solid fa-angle-right"></i>
+        </div>
+        <div class="settings-line" @click="otherPageContent='faqs'" @click="showOtherPageContent=true">
+          <p>FAQs [tbu]</p>
+          <i class="fa-solid fa-angle-right"></i>
+        </div>
+    </div>
       <div id="user-info">
       <p class="other-page-subtitle">User Information</p>
         <div class="other-page-line">You are logged in as [[userEmail]]</div>
@@ -31,8 +42,9 @@ let Other = {
       </div>
       <div id="about-sweatlog">
       <p class="other-page-subtitle">About Sweatlog</p>
-        <p>Sweatlog was created with 💪 by AA</p>
-        <p>For inquiries, please contact us here</p>
+        <p class="other-page-plain-text">Sweatlog was created with 💪 by AA</p>
+        <p class="other-page-plain-text">For inquiries, please contact us here</p>
+        <p class="other-page-plain-text">Update 22.05.13</p>
         <p></p>
       </div>
     </div>
