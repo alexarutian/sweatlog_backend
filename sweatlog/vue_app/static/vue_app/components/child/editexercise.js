@@ -81,8 +81,8 @@ let EditExercise = {
     ...mapActions(["editExercise"]),
   },
   computed: mapState({
-    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
-    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
+    exerciseTypes: (state) => state.exercisetype.items,
+    equipmentTypes: (state) => state.equipmenttype.items,
     // these don't work with the above!
     selectedExerciseExType: (state) => state.exercise.selectedExercise.exercise_type,
     selectedExerciseEqType: (state) => state.exercise.selectedExercise.equipment_type,

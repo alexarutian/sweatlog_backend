@@ -261,7 +261,8 @@ table {
   font-size: 80%;
 }
 
-.workout-exercise-line {
+.workout-exercise-line,
+.exercise-list-line {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -271,6 +272,14 @@ table {
   border-top: 0.5px solid #ddd;
   padding: 5px;
   padding-left: 10px;
+}
+
+.exercise-list-line {
+  background-color: white;
+  width: 100%;
+  text-align: left;
+  line-height: 2;
+  padding-left: 1.5em;
 }
 
 .workout-detailed-exercise > p {
@@ -569,7 +578,6 @@ table {
   overflow: auto;
 }
 
-.exercise-list-line,
 .block-list-line {
   display: flex;
   flex-direction: row;
@@ -642,7 +650,7 @@ table {
   margin-bottom: 20px;
   text-transform: uppercase;
   font-family: "Graduate", cursive;
-  font-size: 14pt;
+  font-size: 16pt;
 }
 
 #create-exercise-box input,
@@ -721,6 +729,7 @@ button {
   font-weight: bold;
   border: none;
   margin: 10px;
+  color: var(--dark-gray-text);
 }
 
 #login-page-buttons button {
@@ -1059,7 +1068,7 @@ select {
   align-items: center;
   justify-content: flex-start;
   margin-right: 5px;
-  width: 60px;
+  width: 65px;
 }
 
 .do-exercise-timer {
@@ -1105,4 +1114,11 @@ select {
 
 .do-exercise-sets-row:nth-child(1) {
   border-top: none;
+}
+
+.do-exercise-sets-row-weight {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }

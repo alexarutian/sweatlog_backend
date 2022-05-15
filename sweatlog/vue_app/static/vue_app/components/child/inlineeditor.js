@@ -3,8 +3,6 @@ let { mapState, mapMutations, mapActions } = Vuex;
 let InlineEditor = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-    <p class="other-page-subtitle suboption-title">Exercise Types</p>
-    <div id="exercise-type-list">
         <div v-for="et in exerciseTypes" class="exercise-type-list-line">
             <input type="text" :value="et.name" :placeholder="et.name" :disabled="shouldBeEditable(et)" :ref="et.name"/>
             <div class="et-inline-modify-buttons">
@@ -13,7 +11,6 @@ let InlineEditor = {
                 <div @click="submitDelete(et.id)"><i class="fa-regular fa-trash-can"></i></div>
             </div>
         </div>
-    </div>
     <button  @click="addingExerciseType = true">ADD EXERCISE TYPE</button>
     <div class="add-exercise-type" v-if="addingExerciseType">
         <input type="text" v-model="exerciseTypeName" placeholder="name" autocomplete="false">
@@ -69,7 +66,7 @@ let InlineEditor = {
     ...mapActions(["deleteExerciseType", "editExerciseType", "createNewExerciseType"]),
   },
   computed: mapState({
-    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
+    exerciseTypes: (state) => state.exercisetype.items,
     userToken: (state) => state.userToken,
   }),
   created() {},

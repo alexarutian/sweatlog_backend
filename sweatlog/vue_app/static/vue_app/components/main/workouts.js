@@ -35,7 +35,7 @@ let Workouts = {
     // names the toggle button
     ...mapState({
       adding: (state) => state.workout.addingWorkoutWindow,
-      workouts: (state) => state.workout.workouts,
+      workouts: (state) => state.workout.items,
     }),
   },
   created() {

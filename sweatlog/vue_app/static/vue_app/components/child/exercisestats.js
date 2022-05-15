@@ -6,9 +6,9 @@ let ExerciseStats = {
   <div class="exercise-stats">
     <div v-if="stats.sets  > 1" class="do-exercise-sets-reps">
       <i class="fa-solid fa-clipboard"></i>
-      <p>[[stats.sets]]</p>
+      <p>[[stats.sets]]&nbsp;</p>
       <p v-if="stats.reps">x [[stats.reps]]</p>
-      <p v-if="!stats.reps"> sets</p>
+      <p v-if="!stats.reps">&nbsp;sets</p>
     </div>
     <div v-else class="do-exercise-sets-reps" v-if="stats.reps">
       <i class="fa-solid fa-clipboard"></i>
@@ -20,7 +20,7 @@ let ExerciseStats = {
     </div>
     <div v-if="stats.time_in_seconds" class="do-exercise-time">
       <i class="fa-solid fa-stopwatch"></i>
-      <p>[[stats.time_in_seconds]] s</p>
+      <p>[[stats.time_in_seconds]]s</p>
     </div>
   </div>
 

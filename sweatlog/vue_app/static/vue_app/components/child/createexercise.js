@@ -58,8 +58,8 @@ let CreateExercise = {
     ...mapActions(["createNewExercise"]),
   },
   computed: mapState({
-    exerciseTypes: (state) => state.exercisetype.exerciseTypes,
-    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
+    exerciseTypes: (state) => state.exercisetype.items,
+    equipmentTypes: (state) => state.equipmenttype.items,
     message: (state) => state.statusMessage,
     statusLevel: (state) => state.statusLevel,
   }),

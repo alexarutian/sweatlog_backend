@@ -31,7 +31,7 @@ let ExerciseTimer = {
           this.timerLeft = seconds - elapsedSeconds;
           if (this.timerLeft == 0) {
             this.stopTimer(true);
-            this.toggleCheckedOnLiveSessionWorkoutData({
+            this.toggleCheckedOnLiveSessionData({
               blockIndex: this.blockIndex,
               exerciseIndex: this.exerciseIndex,
             });
@@ -61,7 +61,7 @@ let ExerciseTimer = {
         target.classList.add("active-timer");
       }
     },
-    ...mapMutations(["toggleCheckedOnLiveSessionWorkoutData"]),
+    ...mapMutations(["toggleCheckedOnLiveSessionData"]),
   },
   computed: {},
   created() {},

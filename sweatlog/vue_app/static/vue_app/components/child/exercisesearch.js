@@ -75,9 +75,9 @@ let ExerciseSearch = {
     ...mapActions(["filterExercises"]),
   },
   computed: mapState({
-    exerciseTypes: (state) => state.exercisetype.exercisetypes,
-    equipmentTypes: (state) => state.equipmenttype.equipmenttypes,
-    exercises: (state) => state.exercise.exercises,
+    exerciseTypes: (state) => state.exercisetype.items,
+    equipmentTypes: (state) => state.equipmenttype.items,
+    exercises: (state) => state.exercise.items,
     filteredExercises: (state) => state.exercise.filteredExercises,
     userToken: (state) => state.userToken,
   }),

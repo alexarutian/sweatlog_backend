@@ -7,8 +7,8 @@ let { mapState, mapMutations, mapActions } = Vuex;
 let DoWorkout = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
   template: /*html*/ `
-  <div class="modal-title">[[liveData.name]]</div>
-  <div v-for="(block, blockIndex) in liveData.blocks">
+  <div class="modal-title">[[liveData.workout.name]]</div>
+  <div v-for="(block, blockIndex) in liveData.workout.blocks">
     <p>[[block.block.name]]</p>
     <div v-for="(exercise, exerciseIndex) in block.block.exercises" class="do-exercise-line">
     <div class="do-exercise-line-header">
@@ -32,9 +32,13 @@ let DoWorkout = {
     <exercisestats v-if="exercise.stats && !exercise.expanded" :stats="exercise.stats" class="do-exercise-stats"></exercisestats>
     <div class="do-exercise-sets-rows" v-if="exercise.expanded == true">  
     <div class="do-exercise-sets-row" v-for="index in exercise.stats.sets">
-          <smallcheck class="do-exercise-sets-row-check" :allChecked="exercise.completed == true"></smallcheck>
-          <p>[[exercise.stats.reps]]</p>
-          <p>[[exercise.exercise.name]]</p>
+      <smallcheck class="do-exercise-sets-row-check" :allChecked="exercise.completed == true"></smallcheck>
+      <p>[[exercise.stats.reps]]&nbsp;</p>
+      <p>[[exercise.exercise.name]]</p>
+      <div v-if="exercise.stats.weight_lb" class="do-exercise-sets-row-weight">
+      <i class="fa-solid fa-weight-hanging"></i>
+        <p>[[exercise.stats.weight_lb]]lb</p>
+      </div>
       </div>
     </div>
     </div>
@@ -51,20 +55,20 @@ let DoWorkout = {
   props: {},
   methods: {
     toggleCompleted(blockIndex, exerciseIndex) {
-      this.toggleCheckedOnLiveSessionWorkoutData({ blockIndex, exerciseIndex });
+      this.toggleCheckedOnLiveSessionData({ blockIndex, exerciseIndex });
     },
     toggleExpanded(blockIndex, exerciseIndex) {
-      this.toggleExpandedOnLiveSessionWorkoutData({ blockIndex, exerciseIndex });
+      this.toggleExpandedOnLiveSessionData({ blockIndex, exerciseIndex });
     },
-    ...mapMutations(["toggleCheckedOnLiveSessionWorkoutData", "toggleExpandedOnLiveSessionWorkoutData"]),
+    ...mapMutations(["toggleCheckedOnLiveSessionData", "toggleExpandedOnLiveSessionData"]),
   },
   computed: {
     workout() {
       // how you get the workout
     },
     ...mapState({
-      selectedWorkout: (state) => state.session.selectedSessionWorkout,
-      liveData: (state) => state.session.liveSessionWorkoutData,
+      selectedWorkout: (state) => state.session.selectedSession,
+      liveData: (state) => state.session.liveSessionData,
     }),
   },
   created() {},

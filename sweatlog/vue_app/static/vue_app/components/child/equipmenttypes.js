@@ -79,7 +79,7 @@ let EquipmentTypes = {
     ...mapActions(["deleteEquipmentType", "editEquipmentType", "createNewEquipmentType"]),
   },
   computed: mapState({
-    equipmentTypes: (state) => state.equipmenttype.equipmentTypes,
+    equipmentTypes: (state) => state.equipmenttype.items,
     userToken: (state) => state.userToken,
   }),
   created() {},

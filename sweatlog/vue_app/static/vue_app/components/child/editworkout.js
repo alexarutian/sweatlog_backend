@@ -128,8 +128,8 @@ let EditWorkout = {
     ...mapActions(["createNewWorkout"]),
   },
   computed: mapState({
-    blocks: (state) => state.block.blocks,
-    exercises: (state) => state.exercise.exercises,
+    blocks: (state) => state.block.items,
+    exercises: (state) => state.exercise.items,
     selectedItemList: (state) => state.workout.workoutSelectedItemList,
     message: (state) => state.statusMessage,
     statusLevel: (state) => state.statusLevel,

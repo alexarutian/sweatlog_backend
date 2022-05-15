@@ -72,7 +72,7 @@ let Exercises = {
   // now computed is the result of calling mapState
   computed: mapState({
     adding: (state) => state.exercise.addingExerciseWindow,
-    exercises: (state) => state.exercise.exercises,
+    exercises: (state) => state.exercise.items,
     searching: (state) => state.exercise.exerciseSearchWindow,
     detail: (state) => state.exercise.exerciseDetailWindow,
     editing: (state) => state.exercise.exerciseEditDisplay,

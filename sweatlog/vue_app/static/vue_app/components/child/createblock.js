@@ -113,7 +113,7 @@ let CreateBlock = {
     ...mapActions(["createNewBlock"]),
   },
   computed: mapState({
-    exercises: (state) => state.exercise.exercises,
+    exercises: (state) => state.exercise.items,
     message: (state) => state.statusMessage,
     selectedExerciseList: (state) => state.block.blockSelectedExerciseList,
     statusLevel: (state) => state.statusLevel,

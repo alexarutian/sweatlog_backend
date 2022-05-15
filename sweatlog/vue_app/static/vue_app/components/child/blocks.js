@@ -42,7 +42,7 @@ let Blocks = {
     ...mapMutations(["toggleAddingBlockWindow", "toggleBlockDetailWindow", "selectBlock", "turnoffBlockEditDisplay"]),
   },
   computed: mapState({
-    blocks: (state) => state.block.blocks,
+    blocks: (state) => state.block.items,
     adding: (state) => state.block.addingBlockWindow,
     detail: (state) => state.block.blockDetailWindow,
     editing: (state) => state.block.blockEditDisplay,

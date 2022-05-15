@@ -5,7 +5,7 @@ let KEY_INCREMENT = 0;
 const exercise = {
   state() {
     return {
-      exercises: null,
+      items: null,
       exerciseMap: null,
       filteredExercises: null,
       addingExerciseWindow: false,
@@ -41,9 +41,9 @@ const exercise = {
       state.selectedExercise = payload.exercise;
     },
     updateExercises(state, payload) {
-      state.exercises = payload.data;
+      state.items = payload.data;
       let obj = {};
-      for (let e of state.exercises) {
+      for (let e of state.items) {
         obj[e.id] = e;
       }
       state.exerciseMap = obj;
@@ -114,13 +114,13 @@ const exercise = {
 const exercisetype = {
   state() {
     return {
-      exerciseTypes: null,
+      items: null,
     };
   },
   getters: {},
   mutations: {
     updateExerciseTypes(state, payload) {
-      state.exerciseTypes = payload.data;
+      state.items = payload.data;
     },
   },
   actions: {
@@ -157,13 +157,13 @@ const exercisetype = {
 const equipmenttype = {
   state() {
     return {
-      equipmentTypes: null,
+      items: null,
     };
   },
   getters: {},
   mutations: {
     updateEquipmentTypes(state, payload) {
-      state.equipmentTypes = payload.data;
+      state.items = payload.data;
     },
   },
   actions: {
@@ -200,7 +200,7 @@ const equipmenttype = {
 const block = {
   state() {
     return {
-      blocks: null,
+      items: null,
       addingBlockWindow: false,
       blockDetailWindow: false,
       blockInfoDisplay: true,
@@ -252,7 +252,7 @@ const block = {
       state.selectedBlock = payload.block;
     },
     updateBlocks(state, payload) {
-      state.blocks = payload.data;
+      state.items = payload.data;
     },
   },
   actions: {
@@ -277,42 +277,43 @@ const block = {
 const session = {
   state() {
     return {
-      sessions: null,
+      items: null,
       addingSessionWindow: false,
-      selectedSessionWorkout: "",
-      liveSessionWorkoutData: "",
+      selectedSession: "",
+      liveSessionData: "",
       sessionWorkoutDetailWindow: false,
     };
   },
   getters: {
-    getLiveSessionWorkoutExerciseByIndexes: (state) => (blockIndex, exerciseIndex) => {
-      return state.liveSessionWorkoutData.blocks[blockIndex].block.exercises[exerciseIndex];
+    getLiveSessionExerciseByIndexes: (state) => (blockIndex, exerciseIndex) => {
+      return state.liveSessionData.workout.blocks[blockIndex].block.exercises[exerciseIndex];
     },
   },
   mutations: {
     toggleAddingSessionWindow(state) {
       state.addingSessionWindow = !state.addingSessionWindow;
     },
-    selectSessionWorkout(state, payload) {
-      state.selectedSessionWorkout = payload.workout;
-      state.liveSessionWorkoutData = payload.workout;
+    selectSession(state, payload) {
+      state.selectedSession = payload.session;
+      state.liveSessionData = payload.session;
     },
+
     toggleSessionWorkoutDetailWindow(state) {
       state.sessionWorkoutDetailWindow = !state.sessionWorkoutDetailWindow;
     },
     updateSessions(state, payload) {
-      state.sessions = payload.data;
+      state.items = payload.data;
     },
-    toggleCheckedOnLiveSessionWorkoutData(state, payload) {
-      let exercise = store.getters.getLiveSessionWorkoutExerciseByIndexes(payload.blockIndex, payload.exerciseIndex);
+    toggleCheckedOnLiveSessionData(state, payload) {
+      let exercise = store.getters.getLiveSessionExerciseByIndexes(payload.blockIndex, payload.exerciseIndex);
       if (exercise.completed == true) {
         exercise.completed = false;
       } else {
         exercise["completed"] = true;
       }
     },
-    toggleExpandedOnLiveSessionWorkoutData(state, payload) {
-      let exercise = store.getters.getLiveSessionWorkoutExerciseByIndexes(payload.blockIndex, payload.exerciseIndex);
+    toggleExpandedOnLiveSessionData(state, payload) {
+      let exercise = store.getters.getLiveSessionExerciseByIndexes(payload.blockIndex, payload.exerciseIndex);
       if (exercise.expanded == true) {
         exercise.expanded = false;
       } else {
@@ -354,7 +355,7 @@ const session = {
 const workout = {
   state() {
     return {
-      workouts: null,
+      items: null,
       addingWorkoutWindow: false,
       workoutSelectedItemList: [],
       workoutSelectedItemMap: {},
@@ -379,7 +380,7 @@ const workout = {
       return null;
     },
     getWorkoutById: (state) => (id) => {
-      for (const w of state.workouts) {
+      for (const w of state.items) {
         if (w.id == id) {
           return w;
         }
@@ -388,7 +389,7 @@ const workout = {
   },
   mutations: {
     updateWorkouts(state, payload) {
-      state.workouts = payload.data;
+      state.items = payload.data;
     },
     toggleAddingWorkoutWindow(state) {
       state.addingWorkoutWindow = !state.addingWorkoutWindow;
@@ -531,6 +532,7 @@ let store = createStore({
       showLoginScreen: false,
       statusMessage: "",
       statusLevel: "", // eg. success, info, error
+      choppingBlock: null,
     };
   },
   getters: {},
@@ -565,10 +567,50 @@ let store = createStore({
       state.statusMessage = "";
       state.statusLevel = "";
     },
+    loadChoppingBlock(state, payload) {
+      let head = {
+        resourceTypeStr: payload.resourceTypeStr,
+        id: payload.id,
+        name: payload.name,
+      };
+      state.choppingBlock = head;
+    },
+    clearChoppingBlock(state) {
+      state.choppingBlock = null;
+    },
+    deleteItemById(state, payload) {
+      /// WORK MORE ON THIS ONE!!
+      let typ = payload.resourceType;
+      let id = payload.id;
+
+      let set = state[typ];
+    },
   },
   // actions gets context that includes state and a commit object
   // could also pass a payload
   actions: {
+    async deleteItem(context) {
+      let resourceStr = context.rootState.choppingBlock.resourceTypeStr;
+      let url = "/webapp/" + resourceStr + "/";
+      const response = await deleteJSONFetch(
+        url + context.rootState.choppingBlock.id + "/",
+        { user_token: context.rootState.userToken },
+        context.rootState.csrfToken
+      );
+
+      context.commit("clearChoppingBlock");
+
+      if (resourceStr == "exercises") {
+        context.commit("toggleExerciseDetailWindow");
+        store.dispatch("fetchExercises");
+      } else if (resourceStr == "exercisetypes") {
+        console.log(context.state.exercisetype.exerciseTypes);
+        store.dispatch("fetchExerciseTypes");
+      } else if (resourceStr == "equipmenttypes") {
+        store.dispatch("fetchEquipmentTypes");
+      }
+    },
+
     // create diff responses to handle success or failure!
     async createNewUser(context, payload) {
       context.commit("clearMessageData");

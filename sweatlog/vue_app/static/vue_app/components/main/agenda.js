@@ -16,7 +16,7 @@ let Agenda = {
       <p class="agenda-date-header">[[date.dateString]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
         <i class="fa-solid fa-droplet agenda-droplet"></i>
-        <p @click="selectSessionWorkout({ workout: session.workout })" @click="toggleSessionWorkoutDetailWindow">[[session.workout.name]]</p>
+        <p @click="selectSession({ session})" @click="toggleSessionWorkoutDetailWindow">[[session.workout.name]]</p>
       </div>
     </div>
   <div v-if="adding" id="create-session-modal" class="modal">
@@ -33,7 +33,7 @@ let Agenda = {
   <div v-if="detail" class="modal">
   <span class="close"
   @click="toggleSessionWorkoutDetailWindow">&times;</span>  
-  <workoutinfo :workout="selected"></workoutinfo>
+  <workoutinfo :workout="selected.workout"></workoutinfo>
   <button @click="toggleDoingWorkoutWindow" @click="toggleSessionWorkoutDetailWindow">START WORKOUT</button>
 </div>
 <div v-if="detail" class="modal-overlay"
@@ -58,7 +58,7 @@ let Agenda = {
     ...mapMutations([
       "toggleAddingSessionWindow",
       "toggleSessionWorkoutDetailWindow",
-      "selectSessionWorkout",
+      "selectSession",
       "toggleDoingWorkoutWindow",
     ]),
   },
@@ -98,13 +98,13 @@ let Agenda = {
       return this.dateSessionList.filter((i) => i.sessions.length > 0);
     },
     ...mapState({
-      sessions: (state) => state.session.sessions,
+      sessions: (state) => state.session.items,
       message: (state) => state.statusMessage,
       statusLevel: (state) => state.statusLevel,
       adding: (state) => state.session.addingSessionWindow,
       doing: (state) => state.workout.doingWorkoutWindow,
       detail: (state) => state.session.sessionWorkoutDetailWindow,
-      selected: (state) => state.session.selectedSessionWorkout,
+      selected: (state) => state.session.selectedSession,
     }),
   },
   created() {

@@ -52,7 +52,7 @@ let CreateSession = {
   },
   computed: {
     ...mapState({
-      workouts: (state) => state.workout.workouts,
+      workouts: (state) => state.workout.items,
     }),
   },
   created() {
