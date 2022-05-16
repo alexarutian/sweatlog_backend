@@ -19,9 +19,16 @@ let ExerciseInfo = {
   </div>
   <div id="modal-bottom-buttons">
     <button id="open-edit-exercise-button" @click="toggleExerciseEditDisplay" @click="toggleExerciseDetailWindow">EDIT</button>
-    <button id="delete-exercise-button" @click="submitDelete(exercise.id)">DELETE</button>
+    <button id="delete-exercise-button" @click="submitDelete(exercise)">DELETE</button>
   </div>
   </div>
+  <div v-if="choppingBlock" class="delete-confirmation" class="modal">
+  <span class="close" @click="clearChoppingBlock">&times;</span> 
+  <div>Are you sure you want to delete [[choppingBlock.name]]?</div> 
+  <button @click="deleteItem">DELETE</button>
+</div>
+<div v-if="choppingBlock" @click="clearChoppingBlock" class="modal-overlay"></div>
+
   `,
 
   components: {},
@@ -32,13 +39,25 @@ let ExerciseInfo = {
     exercise: Object,
   },
   methods: {
-    submitDelete(id) {
-      this.deleteExercise({ id });
+    submitDelete(e) {
+      const obj = {
+        resourceTypeStr: "exercises",
+        id: e.id,
+        name: e.name,
+      };
+      this.loadChoppingBlock(obj);
     },
-    ...mapMutations(["toggleExerciseEditDisplay", "toggleExerciseDetailWindow"]),
-    ...mapActions(["deleteExercise"]),
+    ...mapMutations([
+      "toggleExerciseEditDisplay",
+      "toggleExerciseDetailWindow",
+      "loadChoppingBlock",
+      "clearChoppingBlock",
+    ]),
+    ...mapActions(["deleteItem"]),
   },
-  computed: {},
+  computed: mapState({
+    choppingBlock: (state) => state.choppingBlock,
+  }),
   created() {},
 };
 export { ExerciseInfo };

@@ -2,7 +2,7 @@ import { CreateSession } from "../child/createsession.js";
 import { WorkoutInfo } from "../child/workoutinfo.js";
 import { DoWorkout } from "../child/doworkout.js";
 
-let { mapState, mapMutations } = Vuex;
+let { mapState, mapMutations, mapActions } = Vuex;
 
 let Agenda = {
   delimiters: ["[[", "]]"], //default of brackets collides with Django syntax
@@ -12,11 +12,14 @@ let Agenda = {
     <i class="fa-solid fa-droplet"></i>
     <i class="fa-solid fa-plus"></i></div>
     <div v-if="statusLevel == 'error'">[[message]]</div>
-    <div v-for="date in dateSessionListFiltered" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
-      <p class="agenda-date-header">[[date.dateString]]</p>
+    <div v-for="date in dateSessionList2" :class="{'agenda-item': true, 'today-date-agenda-item': todaysDate == date.dateValidator}">
+      <p class="agenda-date-header">[[date.datestring]]</p>
       <div v-if="date.sessions.length > 0" v-for="session in date.sessions" class="agenda-workout">
-        <i class="fa-solid fa-droplet agenda-droplet"></i>
-        <p @click="selectSession({ session})" @click="toggleSessionWorkoutDetailWindow">[[session.workout.name]]</p>
+        <div class="agenda-workout-left">
+          <i class="fa-solid fa-droplet agenda-droplet"></i>
+          <p @click="selectSession({ session})" @click="toggleSessionWorkoutDetailWindow">[[session.workout.name]]</p>
+        </div>
+        <div @click="submitDelete(session, date.dateString)"><i class="fa-regular fa-trash-can"></i></div>
       </div>
     </div>
   <div v-if="adding" id="create-session-modal" class="modal">
@@ -38,6 +41,15 @@ let Agenda = {
 </div>
 <div v-if="detail" class="modal-overlay"
 @click="toggleSessionWorkoutDetailWindow"></div>
+
+  <div v-if="choppingBlock" class="delete-confirmation" class="modal">
+      <span class="close" @click="clearChoppingBlock">&times;</span> 
+      <div>Are you sure you want to delete [[choppingBlock.name]]?</div> 
+      <button @click="deleteItem">DELETE</button>
+  </div>
+  <div v-if="choppingBlock" @click="clearChoppingBlock" class="modal-overlay"></div>
+
+
 </div>
 
   </div>
@@ -60,42 +72,40 @@ let Agenda = {
       "toggleSessionWorkoutDetailWindow",
       "selectSession",
       "toggleDoingWorkoutWindow",
+      "loadChoppingBlock",
+      "clearChoppingBlock",
     ]),
+    ...mapActions(["deleteItem"]),
+    submitDelete(s, datestring) {
+      const obj = {
+        resourceTypeStr: "sessions",
+        id: s.id,
+        name: s.workout.name + " on " + datestring,
+      };
+      this.loadChoppingBlock(obj);
+    },
   },
   computed: {
-    lastDay() {
-      const s = this.sessions;
-      if (s) {
-        const lastSession = s[s.length - 1];
-        return convertDateFromYYYYMMDDtoJSDate(lastSession.date);
-      }
-      return undefined;
-    },
-
-    dateSessionList() {
-      // create object - array of objects - each has a date and 0 or more sessions
-      // e.g. date and session and anything without a session renders as an empty date
-
-      const today = new Date();
-      const daysUntilLastSession = Math.floor((this.lastDay - today) / (1000 * 60 * 60 * 24));
-      let lst = getFutureDates(today, daysUntilLastSession);
-      for (const d of lst) {
-        let sessionList = [];
-        for (const s of this.sessions) {
-          if (d.dateValidator == s.date) {
-            sessionList.push(s);
-          }
+    dateSessionList2() {
+      console.log(this.sessions);
+      let lst = [];
+      for (const s of this.sessions) {
+        let date = convertDateFromYYYYMMDDtoJSDate(s.date);
+        let datestring = convertToDatestring(date);
+        // does the list include this date already?
+        if (lst.filter((e) => e.date === date).length > 0) {
+          let index = lst.indexOf(date);
+          lst[index].sessions.push(s);
+        } else {
+          let obj = { date, datestring, sessions: [s] };
+          lst.push(obj);
         }
-        d.sessions = sessionList;
       }
       return lst;
     },
     todaysDate() {
       const today = new Date();
       return formatDatetoYYYYMMDD(today);
-    },
-    dateSessionListFiltered() {
-      return this.dateSessionList.filter((i) => i.sessions.length > 0);
     },
     ...mapState({
       sessions: (state) => state.session.items,
@@ -105,6 +115,7 @@ let Agenda = {
       doing: (state) => state.workout.doingWorkoutWindow,
       detail: (state) => state.session.sessionWorkoutDetailWindow,
       selected: (state) => state.session.selectedSession,
+      choppingBlock: (state) => state.choppingBlock,
     }),
   },
   created() {

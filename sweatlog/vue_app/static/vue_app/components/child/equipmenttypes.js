@@ -10,7 +10,7 @@ let EquipmentTypes = {
             <div class="et-inline-modify-buttons">
                 <div v-if="notEditable(et)" @click="editClicked(et)"><i class="fa-solid fa-pencil"></i></div>
                 <div v-if="!notEditable(et)" @click="submitEdit(et.id)"><i class="fa-solid fa-check"></i></div>
-                <div @click="submitDelete(et.id)"><i class="fa-regular fa-trash-can"></i></div>
+                <div @click="submitDelete(et)"><i class="fa-regular fa-trash-can"></i></div>
             </div>
         </div>
         <div v-if="adding" class="exercise-type-list-line">
@@ -22,6 +22,12 @@ let EquipmentTypes = {
         </div>
     </div>
     <button @click="addClicked">ADD EQUIPMENT TYPE</button>
+    <div v-if="choppingBlock" class="delete-confirmation" class="modal">
+      <span class="close" @click="clearChoppingBlock">&times;</span> 
+      <div>Are you sure you want to delete [[choppingBlock.name]]?</div> 
+      <button @click="deleteItem">DELETE</button>
+    </div>
+    <div v-if="choppingBlock" @click="clearChoppingBlock" class="modal-overlay" @click=""></div>
 
     
     `,
@@ -73,14 +79,21 @@ let EquipmentTypes = {
       this.editEquipmentType({ id, body });
       this.editing = false;
     },
-    submitDelete(id) {
-      this.deleteEquipmentType({ id });
+    submitDelete(et) {
+      const obj = {
+        resourceTypeStr: "equipmenttypes",
+        id: et.id,
+        name: et.name,
+      };
+      this.loadChoppingBlock(obj);
     },
-    ...mapActions(["deleteEquipmentType", "editEquipmentType", "createNewEquipmentType"]),
+    ...mapMutations(["loadChoppingBlock", "clearChoppingBlock"]),
+    ...mapActions(["editEquipmentType", "createNewEquipmentType", "deleteItem"]),
   },
   computed: mapState({
     equipmentTypes: (state) => state.equipmenttype.items,
     userToken: (state) => state.userToken,
+    choppingBlock: (state) => state.choppingBlock,
   }),
   created() {},
 };

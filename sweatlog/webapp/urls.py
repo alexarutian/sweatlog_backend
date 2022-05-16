@@ -12,6 +12,7 @@ urlpatterns = [
     path("exercisetypes/", views.exercise_types),
     path("exercisetypes/<int:exercise_type_id>/", views.exercise_types_with_id),
     path("sessions/", views.sessions),
+    path("sessions/<int:session_id>/", views.sessions_with_id),
     path("workouts/", views.workouts),
     path("blocks/", views.blocks),
     # user based paths

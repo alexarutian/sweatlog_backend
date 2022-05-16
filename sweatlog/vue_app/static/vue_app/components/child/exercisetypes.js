@@ -88,7 +88,7 @@ let ExerciseTypes = {
       this.loadChoppingBlock(obj);
     },
     ...mapMutations(["loadChoppingBlock", "clearChoppingBlock"]),
-    ...mapActions(["deleteExerciseType", "editExerciseType", "createNewExerciseType", "deleteItem"]),
+    ...mapActions(["editExerciseType", "createNewExerciseType", "deleteItem"]),
   },
   computed: mapState({
     exerciseTypes: (state) => state.exercisetype.items,

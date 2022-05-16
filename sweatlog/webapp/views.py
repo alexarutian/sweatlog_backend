@@ -528,3 +528,36 @@ def sessions(request):
         session = Session.objects.create(workout=workout, date=date)
 
         return JsonResponse({"session_id": session.id}, status=201)
+
+
+def sessions_with_id(request, session_id):
+    data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
+    session = get_object_or_404(Session, id=session_id)
+
+    # get a single session
+    if request.method == "GET":
+        detail = session.serialize(detail_level=Detail.DETAIL)
+        return JsonResponse({"session": detail}, status=200)
+
+    # modify a preexisting session
+    # WORK MORE ON THIS
+    if request.method == "PUT":
+
+        pass
+
+    # delete a single exercise
+    if request.method == "DELETE":
+
+        # if user has permission to delete this entry
+        if session.workout.user == user:
+
+            session.delete()
+            return JsonResponse(
+                {"message": f"session {session_id} has been deleted"}, status=202
+            )
+        else:
+            return JsonResponse({"message": "cannot modify this session"}, status=403)

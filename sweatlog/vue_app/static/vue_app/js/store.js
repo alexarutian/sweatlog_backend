@@ -5,7 +5,7 @@ let KEY_INCREMENT = 0;
 const exercise = {
   state() {
     return {
-      items: null,
+      items: [],
       exerciseMap: null,
       filteredExercises: null,
       addingExerciseWindow: false,
@@ -114,7 +114,7 @@ const exercise = {
 const exercisetype = {
   state() {
     return {
-      items: null,
+      items: [],
     };
   },
   getters: {},
@@ -157,7 +157,7 @@ const exercisetype = {
 const equipmenttype = {
   state() {
     return {
-      items: null,
+      items: [],
     };
   },
   getters: {},
@@ -200,7 +200,7 @@ const equipmenttype = {
 const block = {
   state() {
     return {
-      items: null,
+      items: [],
       addingBlockWindow: false,
       blockDetailWindow: false,
       blockInfoDisplay: true,
@@ -277,7 +277,7 @@ const block = {
 const session = {
   state() {
     return {
-      items: null,
+      items: [],
       addingSessionWindow: false,
       selectedSession: "",
       liveSessionData: "",
@@ -349,13 +349,21 @@ const session = {
         context.commit("toggleAddingSessionWindow");
       }
     },
+    async deleteSession(context, payload) {
+      const response = await deleteJSONFetch(
+        "/webapp/sessions/" + payload.id + "/",
+        { user_token: context.rootState.userToken },
+        context.rootState.csrfToken
+      );
+      store.dispatch("fetchSessions");
+    },
   },
 };
 
 const workout = {
   state() {
     return {
-      items: null,
+      items: [],
       addingWorkoutWindow: false,
       workoutSelectedItemList: [],
       workoutSelectedItemMap: {},
@@ -608,6 +616,8 @@ let store = createStore({
         store.dispatch("fetchExerciseTypes");
       } else if (resourceStr == "equipmenttypes") {
         store.dispatch("fetchEquipmentTypes");
+      } else if (resourceStr == "sessions") {
+        store.dispatch("fetchSessions");
       }
     },
 

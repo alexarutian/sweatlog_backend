@@ -145,6 +145,17 @@ function getFutureDates(startDate, noOfDays) {
   return dateList;
 }
 
+function convertToDatestring(date) {
+  var formatter = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+
+  return date.toLocaleDateString("en-US", formatter);
+}
+
 function moveInArray(arr, from, to) {
   //delete item from its current position
   let item = arr.splice(from, 1);
