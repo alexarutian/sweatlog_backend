@@ -1,0 +1,288 @@
+[
+  {
+    "model": "webapp.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$320000$CnFo4xkh0xwEDKLSFs3nDc$3RzZ7ikJ0rZgYKGRok+IINHnxkMN59dKCml6IS025NQ=",
+      "last_login": "2022-03-16T22:15:28.773Z",
+      "is_superuser": true,
+      "username": "alexarutian@gmail.com",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2022-03-16T22:02:13.019Z",
+      "email": "alexarutian@gmail.com",
+      "is_normal_member": true,
+      "token": "93c3fe20-76b3-48db-8931-b034dde9f191",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "webapp.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$320000$aOZMuV01MLoIfvRZ5XzdxI$XQ2Avl2skVvp2snGDpr4MWZvNMossU8qqDcccMozyfY=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "toon@toon.com",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-03-16T22:03:22.885Z",
+      "email": "toon@toon.com",
+      "is_normal_member": true,
+      "token": "acbd19aa-8987-4d31-b9ee-9d29c650d9ce",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "webapp.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$320000$SubYJBgxQGc7MwelCZTNp2$YrWZlzSjXE3K/adZz3DU6hd8NCvFvtaHR378McXmlxw=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sam.fischmann@icloud.com",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-03-16T22:09:42.596Z",
+      "email": "sam.fischmann@icloud.com",
+      "is_normal_member": true,
+      "token": "eb208734-6ff0-46ed-b8a5-32323a750cf3",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "webapp.user",
+    "pk": 37,
+    "fields": {
+      "password": "pbkdf2_sha256$320000$WonyI4oMRCeidHP03uAQqB$H8kx+pHDiQGYNPKamYDlam/CFj33SdvVKYlfLr/FaGw=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "06rampage-freesia@icloud.com",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2022-04-11T20:59:58.844Z",
+      "email": "06rampage-freesia@icloud.com",
+      "is_normal_member": true,
+      "token": "7df9b481-681e-4bed-8efe-dd9bac05c288",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  { "model": "webapp.exercisetype", "pk": 1, "fields": { "name": "cardio", "user": null } },
+  { "model": "webapp.exercisetype", "pk": 2, "fields": { "name": "strength", "user": null } },
+  { "model": "webapp.exercisetype", "pk": 3, "fields": { "name": "stretching/mobility", "user": null } },
+  { "model": "webapp.exercisetype", "pk": 4, "fields": { "name": "other", "user": null } },
+  { "model": "webapp.exercisetype", "pk": 5, "fields": { "name": "cardio", "user": 37 } },
+  { "model": "webapp.exercisetype", "pk": 6, "fields": { "name": "strength", "user": 37 } },
+  { "model": "webapp.exercisetype", "pk": 7, "fields": { "name": "stretching/mobility", "user": 37 } },
+  { "model": "webapp.exercisetype", "pk": 8, "fields": { "name": "other", "user": 37 } },
+  { "model": "webapp.equipmenttype", "pk": 1, "fields": { "name": "dumbbell", "user": null } },
+  { "model": "webapp.equipmenttype", "pk": 2, "fields": { "name": "barbell", "user": null } },
+  { "model": "webapp.equipmenttype", "pk": 3, "fields": { "name": "machine", "user": null } },
+  { "model": "webapp.equipmenttype", "pk": 4, "fields": { "name": "other", "user": null } },
+  { "model": "webapp.equipmenttype", "pk": 5, "fields": { "name": "none", "user": null } },
+  { "model": "webapp.equipmenttype", "pk": 6, "fields": { "name": "dumbbell", "user": 37 } },
+  { "model": "webapp.equipmenttype", "pk": 7, "fields": { "name": "barbell", "user": 37 } },
+  { "model": "webapp.equipmenttype", "pk": 8, "fields": { "name": "machine", "user": 37 } },
+  { "model": "webapp.equipmenttype", "pk": 9, "fields": { "name": "other", "user": 37 } },
+  { "model": "webapp.equipmenttype", "pk": 10, "fields": { "name": "none", "user": 37 } },
+  {
+    "model": "webapp.exercise",
+    "pk": 1,
+    "fields": { "name": "barbell curl", "description": "", "exercise_type": 2, "equipment_type": 2, "user": null }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 2,
+    "fields": { "name": "dumbbell curl", "description": "", "exercise_type": 2, "equipment_type": 1, "user": null }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 3,
+    "fields": { "name": "dumbbell squat", "description": "", "exercise_type": 2, "equipment_type": 1, "user": null }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 4,
+    "fields": { "name": "jogging", "description": "", "exercise_type": 1, "equipment_type": 5, "user": null }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 5,
+    "fields": { "name": "rest", "description": "", "exercise_type": 4, "equipment_type": 5, "user": null }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 7,
+    "fields": { "name": "barbell curl", "description": "", "exercise_type": 6, "equipment_type": 7, "user": 37 }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 8,
+    "fields": { "name": "dumbbell curl", "description": "", "exercise_type": 6, "equipment_type": 6, "user": 37 }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 9,
+    "fields": { "name": "jogging", "description": "", "exercise_type": 5, "equipment_type": 10, "user": 37 }
+  },
+  {
+    "model": "webapp.exercise",
+    "pk": 10,
+    "fields": { "name": "rest", "description": "", "exercise_type": 8, "equipment_type": 10, "user": 37 }
+  },
+  { "model": "webapp.stat", "pk": 1, "fields": { "sets": 3, "reps": 12, "weight_lb": 45.0, "time_in_seconds": null } },
+  { "model": "webapp.stat", "pk": 2, "fields": { "sets": 3, "reps": 10, "weight_lb": 15.0, "time_in_seconds": null } },
+  {
+    "model": "webapp.stat",
+    "pk": 3,
+    "fields": { "sets": null, "reps": null, "weight_lb": null, "time_in_seconds": 60 }
+  },
+  {
+    "model": "webapp.stat",
+    "pk": 4,
+    "fields": { "sets": null, "reps": null, "weight_lb": null, "time_in_seconds": 30 }
+  },
+  { "model": "webapp.stat", "pk": 5, "fields": { "sets": 3, "reps": 12, "weight_lb": 45.0, "time_in_seconds": null } },
+  { "model": "webapp.stat", "pk": 6, "fields": { "sets": 3, "reps": 10, "weight_lb": 15.0, "time_in_seconds": null } },
+  {
+    "model": "webapp.stat",
+    "pk": 7,
+    "fields": { "sets": null, "reps": null, "weight_lb": null, "time_in_seconds": 60 }
+  },
+  {
+    "model": "webapp.stat",
+    "pk": 8,
+    "fields": { "sets": null, "reps": null, "weight_lb": null, "time_in_seconds": 30 }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 1,
+    "fields": {
+      "name": "curls",
+      "date_created": "2022-02-21T07:12:53.923Z",
+      "date_modified": "2022-02-21T07:12:53.923Z",
+      "user": null
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 2,
+    "fields": {
+      "name": "jogging intervals",
+      "date_created": "2022-02-21T07:12:53.923Z",
+      "date_modified": "2022-02-21T07:12:53.923Z",
+      "user": null
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 3,
+    "fields": {
+      "name": "curls",
+      "date_created": "2022-04-11T20:59:59.198Z",
+      "date_modified": "2022-04-11T20:59:59.198Z",
+      "user": 37
+    }
+  },
+  {
+    "model": "webapp.block",
+    "pk": 4,
+    "fields": {
+      "name": "jogging intervals",
+      "date_created": "2022-04-11T20:59:59.205Z",
+      "date_modified": "2022-04-11T20:59:59.205Z",
+      "user": 37
+    }
+  },
+  { "model": "webapp.blockexercise", "pk": 1, "fields": { "block": 2, "exercise": 4, "exercise_order": 1, "stat": 3 } },
+  { "model": "webapp.blockexercise", "pk": 2, "fields": { "block": 2, "exercise": 5, "exercise_order": 2, "stat": 4 } },
+  { "model": "webapp.blockexercise", "pk": 3, "fields": { "block": 1, "exercise": 1, "exercise_order": 1, "stat": 1 } },
+  { "model": "webapp.blockexercise", "pk": 4, "fields": { "block": 1, "exercise": 2, "exercise_order": 2, "stat": 2 } },
+  { "model": "webapp.blockexercise", "pk": 5, "fields": { "block": 4, "exercise": 9, "exercise_order": 1, "stat": 7 } },
+  {
+    "model": "webapp.blockexercise",
+    "pk": 6,
+    "fields": { "block": 4, "exercise": 10, "exercise_order": 2, "stat": 8 }
+  },
+  { "model": "webapp.blockexercise", "pk": 7, "fields": { "block": 3, "exercise": 7, "exercise_order": 1, "stat": 5 } },
+  { "model": "webapp.blockexercise", "pk": 8, "fields": { "block": 3, "exercise": 8, "exercise_order": 2, "stat": 6 } },
+  {
+    "model": "webapp.workout",
+    "pk": 1,
+    "fields": {
+      "name": "My curls only workout",
+      "date_created": "2022-02-21T07:17:48.398Z",
+      "date_modified": "2022-02-21T07:17:48.398Z",
+      "user": null
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 2,
+    "fields": {
+      "name": "Tuesday's workout",
+      "date_created": "2022-02-21T07:17:48.398Z",
+      "date_modified": "2022-02-21T07:17:48.398Z",
+      "user": null
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 3,
+    "fields": {
+      "name": "my curls workout",
+      "date_created": "2022-04-11T20:59:59.236Z",
+      "date_modified": "2022-04-11T20:59:59.236Z",
+      "user": 37
+    }
+  },
+  {
+    "model": "webapp.workout",
+    "pk": 4,
+    "fields": {
+      "name": "tuesday workout",
+      "date_created": "2022-04-11T20:59:59.242Z",
+      "date_modified": "2022-04-11T20:59:59.242Z",
+      "user": 37
+    }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 1,
+    "fields": { "workout": 1, "block": 1, "block_quantity": 3, "block_order": 1 }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 2,
+    "fields": { "workout": 2, "block": 1, "block_quantity": 2, "block_order": 1 }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 3,
+    "fields": { "workout": 2, "block": 2, "block_quantity": 10, "block_order": 2 }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 4,
+    "fields": { "workout": 4, "block": 3, "block_quantity": 1, "block_order": 1 }
+  },
+  {
+    "model": "webapp.workoutblock",
+    "pk": 5,
+    "fields": { "workout": 4, "block": 4, "block_quantity": 10, "block_order": 2 }
+  },
+  { "model": "webapp.session", "pk": 1, "fields": { "date": "2022-02-28", "workout": 1 } },
+  { "model": "webapp.session", "pk": 2, "fields": { "date": "2022-04-11", "workout": 4 } }
+]

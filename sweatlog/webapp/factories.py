@@ -5,6 +5,7 @@ import datetime
 from factory.django import DjangoModelFactory
 from factory.django import DjangoOptions
 from django.db.models import Q
+from faker import Faker
 
 from .models import (
     User,
@@ -76,6 +77,9 @@ class BlockExerciseFactory(DjangoModelFactory):
     block = factory.SubFactory(BlockFactory)  # addressses foreign keys!
 
     exercise = factory.SubFactory(ExerciseFactory)  # addresses foreign keys!
+    # exercise = factory.Iterator(
+    #     Exercise.objects.get(user=factory.SelfAttribute("block.user"))
+    # )
     exercise_order = random.randint(1, 5)
     stat = factory.Iterator(Stat.objects.all())
 
@@ -85,6 +89,7 @@ class WorkoutFactory(DjangoModelFactory):
         model = Workout
 
     name = factory.Faker("sentence", nb_words=random.randint(1, 5))
+    user = factory.Iterator(User.objects.all())
 
 
 class WorkoutBlockFactory(DjangoModelFactory):
@@ -104,7 +109,7 @@ class SessionFactory(DjangoModelFactory):
     date = factory.Faker(
         "date_between_dates",
         date_start=datetime.date(2022, 3, 9),
-        date_end=datetime.date(2022, 3, 25),
+        date_end=datetime.date(2022, 10, 25),
     )
     workout = factory.SubFactory(WorkoutFactory)
 
@@ -118,8 +123,8 @@ class SingleUserExerciseFactory(DjangoModelFactory):
 
     name = factory.Faker("word")
     description = factory.Faker("text")
-    exercise_type = factory.Iterator(ExerciseType.objects.all())
-    equipment_type = factory.Iterator(EquipmentType.objects.all())
+    exercise_type = factory.Iterator(ExerciseType.objects.filter(user__id=2))
+    equipment_type = factory.Iterator(EquipmentType.objects.filter(user__id=2))
     user = User.objects.get(id=2)
 
 
@@ -187,8 +192,8 @@ class SingleUserSessionFactory(DjangoModelFactory):
 
     date = factory.Faker(
         "date_between_dates",
-        date_start=datetime.date(2022, 3, 9),
-        date_end=datetime.date(2022, 3, 25),
+        date_start=datetime.date(2022, 3, 17),
+        date_end=datetime.date(2022, 4, 10),
     )
     workout = factory.SubFactory(SingleUserWorkoutFactory)
 
@@ -199,3 +204,15 @@ class SingleUserSessionFactory(DjangoModelFactory):
 # for x in range(1000):
 #    factories.UserFactory()
 #    factories.ExerciseFactory()
+
+# make random things for each user
+# loop through users
+
+fake = Faker()
+
+
+def create_users(no_of_users):
+    for x in range(no_of_users):
+        email = fake.email()
+        User.objects.create(email=email, username=email)
+        print(email)

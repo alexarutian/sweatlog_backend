@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import formats
 
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 from enum import Enum
@@ -83,6 +83,7 @@ class ExerciseType(models.Model, NameableMixin):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing Exercise Type")
         d = {}
         if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
             d = self.search_dict
@@ -113,6 +114,7 @@ class EquipmentType(models.Model, NameableMixin):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing Equipment Type")
         d = {}
         if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
             d = self.search_dict
@@ -129,13 +131,13 @@ class Exercise(models.Model, NameableMixin):
     description = models.CharField(max_length=200, blank=True)
     exercise_type = models.ForeignKey(
         ExerciseType,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="exercises",
         null=True,
     )
     equipment_type = models.ForeignKey(
         EquipmentType,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="exercises",
         null=True,
     )
@@ -155,6 +157,7 @@ class Exercise(models.Model, NameableMixin):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing Exercise Type")
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
@@ -186,6 +189,7 @@ class Stat(models.Model, NameableMixin):
         return d
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing stats")
         d = {}
         if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
             d = self.search_dict
@@ -203,13 +207,14 @@ class Block(models.Model, NameableMixin):
         null=True,
     )
 
-    class Meta:
-        unique_together = ["name", "user"]
+    # class Meta:
+    #     unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing blocks")
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
@@ -221,8 +226,9 @@ class Block(models.Model, NameableMixin):
             for be in self.blockexercises.all():
                 bed = {}
                 bed["exercise"] = be.exercise.serialize(detail_level)
-                bed["stats"] = be.stat.serialize()
                 bed["exercise_order"] = be.exercise_order
+                if be.stat:
+                    bed["stats"] = be.stat.serialize()
                 exercises.append(bed)
         return d
 
@@ -238,8 +244,12 @@ class BlockExercise(models.Model):
         models.IntegerField()
     )  # order of individual exercises within the block
     stat = models.ForeignKey(
-        Stat, on_delete=models.CASCADE, related_name="blockexercises"
+        Stat, on_delete=models.CASCADE, related_name="blockexercises", null=True
     )
+
+    # do I need this?
+    # class Meta:
+    #     unique_together = ["block", "exercise", "exercise_order"]
 
     def __str__(self):
         return self.block.name + " - " + self.exercise.name
@@ -255,19 +265,25 @@ class Workout(models.Model, NameableMixin):
         related_name="workouts",
         null=True,
     )
+    updated_by = models.ForeignKey(
+        "self", null=True, on_delete=models.SET_NULL, related_name="updates"
+    )
 
-    class Meta:
-        unique_together = ["name", "user"]
+    # class Meta:
+    #     unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing workouts")
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
         elif detail_level == Detail.DETAIL:
             d["name"] = self.name
+            if self.updated_by:
+                d["updated_by"] = self.updated_by.serialize()
             d["id"] = self.id
             blocks = []
             d["blocks"] = blocks
@@ -286,8 +302,12 @@ class WorkoutBlock(models.Model):
     block = models.ForeignKey(
         Block, on_delete=models.CASCADE, related_name="workoutblocks", null=True
     )
-    block_quantity = models.IntegerField(default=1)
+    block_quantity = models.IntegerField(default=1, null=True)
     block_order = models.IntegerField()
+
+    # do I need this?
+    # class Meta:
+    #     unique_together = ["workout", "block", "block_order"]
 
     def __str__(self):
         return self.workout.name + " - " + self.block.name
@@ -304,6 +324,7 @@ class Session(models.Model, NameableMixin):
         return self.workout.name + " - " + prettyDate
 
     def get_search_dict(self):
+        # print("serializing sessions")
         d = {}
         d["id"] = self.id
         d["date"] = self.date
@@ -319,3 +340,72 @@ class Session(models.Model, NameableMixin):
             d["date"] = self.date
             d["workout"] = self.workout.serialize(detail_level)
         return d
+
+
+# every time a new user is created, create a set of fixtures unique to them!
+@receiver(post_save, sender=User)
+# can't do arguments out of order (order matters)
+def user_created_fixtures(sender, instance, created, **kwargs):
+    if created == True:
+        user = instance
+        cardio = ExerciseType.objects.create(name="cardio", user=user)
+        strength = ExerciseType.objects.create(name="strength", user=user)
+        stretching = ExerciseType.objects.create(name="stretching/mobility", user=user)
+        other_et = ExerciseType.objects.create(name="other", user=user)
+        dumbbell = EquipmentType.objects.create(name="dumbbell", user=user)
+        barbell = EquipmentType.objects.create(name="barbell", user=user)
+        machine = EquipmentType.objects.create(name="machine", user=user)
+        other_eq = EquipmentType.objects.create(name="other", user=user)
+        no_eq = EquipmentType.objects.create(name="none", user=user)
+        barbell_curl = Exercise.objects.create(
+            name="barbell curl",
+            exercise_type=strength,
+            equipment_type=barbell,
+            user=user,
+        )
+        dumbbell_curl = Exercise.objects.create(
+            name="dumbbell curl",
+            exercise_type=strength,
+            equipment_type=dumbbell,
+            user=user,
+        )
+        jogging = Exercise.objects.create(
+            name="jogging", exercise_type=cardio, equipment_type=no_eq, user=user
+        )
+        rest = Exercise.objects.create(
+            name="rest", exercise_type=other_et, equipment_type=no_eq, user=user
+        )
+        stat1 = Stat.objects.create(sets=3, reps=12, weight_lb=45)
+        stat2 = Stat.objects.create(sets=3, reps=10, weight_lb=15)
+        stat3 = Stat.objects.create(time_in_seconds=60)
+        stat4 = Stat.objects.create(time_in_seconds=30)
+        curls_block = Block.objects.create(name="curls", user=user)
+        jogging_intervals_block = Block.objects.create(
+            name="jogging intervals", user=user
+        )
+        jogging_be_1 = BlockExercise.objects.create(
+            exercise=jogging,
+            exercise_order=1,
+            block=jogging_intervals_block,
+            stat=stat3,
+        )
+        jogging_be_2 = BlockExercise.objects.create(
+            exercise=rest, exercise_order=2, block=jogging_intervals_block, stat=stat4
+        )
+        curl_be_1 = BlockExercise.objects.create(
+            exercise=barbell_curl, exercise_order=1, block=curls_block, stat=stat1
+        )
+        curl_be_2 = BlockExercise.objects.create(
+            exercise=dumbbell_curl, exercise_order=2, block=curls_block, stat=stat2
+        )
+        curls_workout = Workout.objects.create(name="my curls workout", user=user)
+        tuesdays_workout = Workout.objects.create(name="tuesday workout", user=user)
+        tw_wb_curls = WorkoutBlock.objects.create(
+            workout=tuesdays_workout, block=curls_block, block_quantity=1, block_order=1
+        )
+        tw_wb_jogging = WorkoutBlock.objects.create(
+            workout=tuesdays_workout,
+            block=jogging_intervals_block,
+            block_quantity=10,
+            block_order=2,
+        )

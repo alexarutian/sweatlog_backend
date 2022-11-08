@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http.response import HttpResponseBadRequest
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django.db import IntegrityError
 from django.utils import timezone
@@ -9,6 +8,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import (
@@ -20,6 +20,9 @@ from .models import (
     EquipmentType,
     ExerciseType,
     Block,
+    Stat,
+    BlockExercise,
+    WorkoutBlock,
 )
 
 from datetime import datetime
@@ -90,14 +93,42 @@ def login_user(request):
     # try:
     #     user = User.objects.get(email=email, password=password)
     #     request.session["user_token"] = str(user.token)
-    try:
-        user = authenticate(username=email, password=password)
+    user = authenticate(username=email, password=password)
+    if user is not None:
         request.session["user_token"] = str(user.token)
         return JsonResponse({"email": email, "token": user.token}, status=200)
-    except User.DoesNotExist:
-        return JsonResponse({}, status=404)
-    except PermissionError:
-        return JsonResponse({"email": email}, status=403)
+    else:
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({}, status=404)
+        return JsonResponse({}, status=403)
+
+
+@csrf_exempt
+def login_user_2(request):
+    data = _find_data(request)
+    if request.method == "POST":
+        email = data.get("email", False).lower()
+        password = data.get("password", False)
+        if not email:
+            return HttpResponseBadRequest("email is required")
+        if not password:
+            return HttpResponseBadRequest("password is required")
+
+    # try:
+    #     user = User.objects.get(email=email, password=password)
+    #     request.session["user_token"] = str(user.token)
+    user = authenticate(username=email, password=password)
+    if user is not None:
+        # request.session["user_token"] = str(user.token)
+        return JsonResponse({"email": email, "token": user.token}, status=200)
+    else:
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({}, status=404)
+        return JsonResponse({}, status=403)
 
 
 def logout_user(request):
@@ -130,9 +161,7 @@ def exercise_types(request):
 
     if request.method == "GET":
 
-        all_exercise_types = ExerciseType.objects.filter(
-            Q(user=None) | Q(user=user)
-        ).order_by("id")
+        all_exercise_types = ExerciseType.objects.filter(user=user).order_by("id")
 
         detail = []
         for exercise_type in all_exercise_types:
@@ -188,9 +217,7 @@ def equipment_types(request):
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_equipment_types = EquipmentType.objects.filter(
-            Q(user=None) | Q(user=user)
-        ).order_by("id")
+        all_equipment_types = EquipmentType.objects.filter(user=user).order_by("id")
 
         detail = []
         for equipment_type in all_equipment_types:
@@ -205,7 +232,38 @@ def equipment_types(request):
 
 
 def equipment_types_with_id(request, equipment_type_id):
-    pass
+    data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
+    try:
+        equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+    except EquipmentType.DoesNotExist:
+        return JsonResponse({"message": "equipment type does not exist"}, status=404)
+
+    # get a single equipmenttype
+    if request.method == "GET":
+        detail = equipment_type.serialize(detail_level=Detail.DETAIL)
+        return JsonResponse({"equipment_type": detail}, status=200)
+
+    # edit an equipmenttype
+    if request.method == "PUT":
+        equipment_type.name = data.get("name", "").lower()
+        equipment_type.user = user
+        equipment_type.save()
+        return JsonResponse({"equipment_type_id": equipment_type.id}, status=200)
+
+    # delete an equipmenttype
+    if request.method == "DELETE":
+        if equipment_type.user == user:
+            equipment_type.delete()
+            return JsonResponse(
+                {"message": f"equipment type {equipment_type_id} has been deleted"},
+                status=202,
+            )
+        else:
+            return JsonResponse({"message": "cannot delete this equipment"}, status=403)
 
 
 def exercises(request):
@@ -217,41 +275,22 @@ def exercises(request):
     # get all exercises
     if request.method == "GET":
 
-        # if there are search params
-        # if data:
-
-        #     name_description_search = data.get("name_description_search", "").lower()
-        #     equipment_type_id = data.get("equipment_type_id", False)
-        #     exercise_type_id = data.get("exercise_type_id", False)
-
-        #     all_exercises = Exercise.objects.filter(
-        #         Q(user=None) | Q(user=user)
-        #     ).order_by("name")
-
-        #     if name_description_search:
-        #         search_list = Exercise.objects.filter(
-        #             Q(name__icontains=name_description_search)
-        #             | Q(description__icontains=name_description_search)
-        #         )
-
-        #     if equipment_type_id is not None:
-        #         equipment_type = EquipmentType.objects.get(id=equipment_type_id)
-        #         search_list.filter(equipment_type=equipment_type)
-
-        #     if exercise_type_id is not None:
-        #         exercise_type = ExerciseType.objects.get(id=exercise_type_id)
-        #         search_list.filter(exercise_type=exercise_type)
-
-        #     detail = []
-        #     for exercise in search_list:
-        #         detail.append(exercise.serialize(detail_level=Detail.DETAIL))
-
-        #     return JsonResponse({"all_exercises": detail}, status=200)
-
         # if there are no params passed into data, get all exercises
-        all_exercises = Exercise.objects.filter(Q(user=None) | Q(user=user)).order_by(
-            "name"
-        )
+        all_exercises = Exercise.objects.filter(user=user).order_by("name")
+        # all_exercises = Exercise.objects.order_by("name")
+
+        equipment_type_id = data.get("equipment_type_id", None)
+        exercise_type_id = data.get("exercise_type_id", None)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+            all_exercises = all_exercises.filter(equipment_type=equipment_type)
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+            all_exercises = all_exercises.filter(exercise_type=exercise_type)
 
         detail = []
         for exercise in all_exercises:
@@ -358,14 +397,13 @@ def exercises_with_id(request, exercise_id):
 
 def blocks(request):
     data = _find_data(request)
+    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_blocks = Block.objects.filter(Q(user=None) | Q(user=user)).order_by(
-            "-date_modified"
-        )
+        all_blocks = Block.objects.filter(user=user).order_by("-date_modified")
 
         if len(all_blocks) < 1:
             return JsonResponse({"message": "no blocks yet!"}, status=404)
@@ -376,17 +414,52 @@ def blocks(request):
 
         return JsonResponse({"all_blocks": detail}, status=200)
 
+    if request.method == "POST":
+
+        # create block
+        name = data.get("name", "").lower()
+        block = Block.objects.create(name=name, user=user)
+
+        # post to blockexercise
+        exercise_list = data.get("exercise_list", [])
+        e_order = 0
+        for e in exercise_list:
+            e_order += 1
+            e_id = e["id"]
+            e_sets = e.get("sets")
+            e_reps = e.get("reps")
+            e_weight_lb = e.get("weight_lb")
+            e_time_in_seconds = e.get("time_in_seconds")
+
+            exercise = get_object_or_404(Exercise, id=e_id)
+
+            # create a stat
+            if e_sets or e_reps or e_weight_lb or e_time_in_seconds:
+                stat = Stat.objects.create(
+                    sets=e_sets,
+                    reps=e_reps,
+                    weight_lb=e_weight_lb,
+                    time_in_seconds=e_time_in_seconds,
+                )
+            else:
+                stat = None
+
+            BlockExercise.objects.create(
+                block=block, exercise=exercise, stat=stat, exercise_order=e_order
+            )
+
+        return JsonResponse({"block_id": block.id}, status=201)
+
 
 def workouts(request):
     data = _find_data(request)
+    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
 
     if request.method == "GET":
-        all_workouts = Workout.objects.filter(Q(user=None) | Q(user=user)).order_by(
-            "-date_modified"
-        )
+        all_workouts = Workout.objects.filter(user=user).order_by("-date_modified")
 
         if len(all_workouts) < 1:
             return JsonResponse({"message": "no workouts yet!"}, status=404)
@@ -397,27 +470,172 @@ def workouts(request):
 
         return JsonResponse({"all_workouts": detail}, status=200)
 
+    if request.method == "POST":
+
+        # create workout
+        name = data.get("name", "").lower()
+        workout = Workout.objects.create(name=name, user=user)
+
+        # process each block in item_list
+        item_list = data.get("item_list", [])
+        b_order = 0
+        for b in item_list:
+            b_order += 1
+            b_name = b.get("name", "").lower()
+            b_quantity = b.get("quantity")
+
+            block = Block.objects.create(name=b_name, user=user)
+            WorkoutBlock.objects.create(
+                workout=workout,
+                block=block,
+                block_quantity=b_quantity,
+                block_order=b_order,
+            )
+
+            # process exercise list within the block
+            exercise_list = b.get("exercise_list", [])
+            e_order = 0
+            for e in exercise_list:
+                e_order += 1
+                e_id = e["id"]
+                e_sets = e.get("sets")
+                e_reps = e.get("reps")
+                e_weight_lb = e.get("weight_lb")
+                e_time_in_seconds = e.get("time_in_seconds")
+
+                exercise = get_object_or_404(Exercise, id=e_id)
+
+                # create a stat
+                if e_sets or e_reps or e_weight_lb or e_time_in_seconds:
+                    stat = Stat.objects.create(
+                        sets=e_sets,
+                        reps=e_reps,
+                        weight_lb=e_weight_lb,
+                        time_in_seconds=e_time_in_seconds,
+                    )
+                else:
+                    stat = None
+
+                BlockExercise.objects.create(
+                    block=block, exercise=exercise, stat=stat, exercise_order=e_order
+                )
+
+        return JsonResponse({"workout_id": workout.id}, status=201)
+
+
+def workouts_with_id(request, workout_id):
+    data = _find_data(request)
+    print(data)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
+    workout = get_object_or_404(Workout, id=workout_id)
+
+    # get a single session
+    if request.method == "GET":
+        detail = workout.serialize(detail_level=Detail.DETAIL)
+        return JsonResponse({"workout": detail}, status=200)
+
+    # modify a preexisting workout
+    # WORK MORE ON THIS
+    if request.method == "PUT":
+
+        # if user has permission to modify this entry
+        if workout.user == user:
+
+            # create workout
+            name = data.get("name", "").lower()
+            workout_new = Workout.objects.create(name=name, user=user)
+
+            # set old workout to reference new workout
+            workout.updated_by = workout_new
+            workout.save()
+
+            # process each block in item_list
+            item_list = data.get("item_list", [])
+            b_order = 0
+            for b in item_list:
+                b_order += 1
+                b_name = b.get("name", "").lower()
+                b_quantity = b.get("quantity")
+
+                block_new = Block.objects.create(name=b_name, user=user)
+                WorkoutBlock.objects.create(
+                    workout=workout_new,
+                    block=block_new,
+                    block_quantity=b_quantity,
+                    block_order=b_order,
+                )
+
+                # process exercise list within the block
+                exercise_list = b.get("exercise_list", [])
+                e_order = 0
+                for e in exercise_list:
+                    e_order += 1
+                    e_id = e["id"]
+                    e_sets = e.get("sets")
+                    e_reps = e.get("reps")
+                    e_weight_lb = e.get("weight_lb")
+                    e_time_in_seconds = e.get("time_in_seconds")
+
+                    exercise = get_object_or_404(Exercise, id=e_id)
+
+                    # create a stat
+                    if e_sets or e_reps or e_weight_lb or e_time_in_seconds:
+                        stat = Stat.objects.create(
+                            sets=e_sets,
+                            reps=e_reps,
+                            weight_lb=e_weight_lb,
+                            time_in_seconds=e_time_in_seconds,
+                        )
+                    else:
+                        stat = None
+
+                    BlockExercise.objects.create(
+                        block=block,
+                        exercise=exercise,
+                        stat=stat,
+                        exercise_order=e_order,
+                    )
+
+            return JsonResponse({"workout_id": workout_new.id}, status=201)
+
+    # delete a single workout
+    if request.method == "DELETE":
+
+        # if user has permission to delete this entry
+        if workout.user == user:
+
+            workout.delete()
+            return JsonResponse(
+                {"message": f"workout {workout_id} has been deleted"}, status=202
+            )
+        else:
+            return JsonResponse({"message": "cannot modify this workout"}, status=403)
+
 
 def sessions(request):
     data = _find_data(request)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
-
     if request.method == "GET":
+
         today = timezone.now()
-        scheduled_sessions = (
-            Session.objects.filter(date__gte=today)
-            .filter(workout__user=user)  # MAKE SURE THIS WORKS!
-            .order_by("date")
-        )
+        scheduled_sessions = Session.objects.filter(workout__user=user)
+        # breakpoint()
+        print(scheduled_sessions)
+        # Session.objects.filter(date__gte=today)
+        # cannot schedule and use in sessions an example workout!
 
         if len(scheduled_sessions) < 1:
             return JsonResponse({"message": "no scheduled sessions"}, status=404)
 
         detail = []
         for session in scheduled_sessions:
-            detail.append(session.serialize(detail_level=Detail.DETAIL))
+            serialized = session.serialize(detail_level=Detail.DETAIL)
+            detail.append(serialized)
 
         return JsonResponse({"scheduled_sessions": detail}, status=200)
 
@@ -429,3 +647,36 @@ def sessions(request):
         session = Session.objects.create(workout=workout, date=date)
 
         return JsonResponse({"session_id": session.id}, status=201)
+
+
+def sessions_with_id(request, session_id):
+    data = _find_data(request)
+
+    user_token = data.get("user_token", False)
+    user = get_object_or_404(User, token=user_token)
+
+    session = get_object_or_404(Session, id=session_id)
+
+    # get a single session
+    if request.method == "GET":
+        detail = session.serialize(detail_level=Detail.DETAIL)
+        return JsonResponse({"session": detail}, status=200)
+
+    # modify a preexisting session
+    # WORK MORE ON THIS
+    if request.method == "PUT":
+
+        pass
+
+    # delete a single exercise
+    if request.method == "DELETE":
+
+        # if user has permission to delete this entry
+        if session.workout.user == user:
+
+            session.delete()
+            return JsonResponse(
+                {"message": f"session {session_id} has been deleted"}, status=202
+            )
+        else:
+            return JsonResponse({"message": "cannot modify this session"}, status=403)
