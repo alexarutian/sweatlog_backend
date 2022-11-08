@@ -14,10 +14,12 @@ urlpatterns = [
     path("sessions/", views.sessions),
     path("sessions/<int:session_id>/", views.sessions_with_id),
     path("workouts/", views.workouts),
+    path("workouts/<int:workout_id>/", views.workouts_with_id),
     path("blocks/", views.blocks),
     # user based paths
     path("users/", views.users),
     path("users/login/", views.login_user),
+    path("users/login2/", views.login_user_2),
     path("users/logout/", views.logout_user),
     path("users/get_user_email/", views.get_user_email),
 ]

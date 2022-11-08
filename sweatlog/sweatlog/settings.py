@@ -31,8 +31,9 @@ SECRET_KEY = "django-insecure-z&22n3qmx(1^^xhfxp6zk4$gn2!1ay!ie#-0w072vv-4ssvw#o
 DEBUG = "DJANGO_PRODUCTION" not in os.environ  # if in production, debug = False
 DEPLOYED = "DJANGO_DEPLOYED" in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.0.186", "localhost", "127.0.0.1"]
 MAIN_HOST = ""
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 if not DEPLOYED:
@@ -60,6 +61,7 @@ elif DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",  # django-cors-headers
     "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -68,10 +70,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "webapp.apps.WebappConfig",  # webapp App connection
-    "vue_app.apps.VueAppConfig",  # vue App connection
+    # "vue_app.apps.VueAppConfig",  # vue App connection
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -153,7 +157,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
@@ -167,7 +171,7 @@ AUTH_USER_MODEL = "webapp.User"
 LOGIN_URL = "/accounts/login/"
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = "/vue_app/site/"
+# LOGIN_REDIRECT_URL = "/vue_app/site/"
 
 # console-logs emails sent FOR NOW (set up google email account)
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

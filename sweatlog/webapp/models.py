@@ -83,6 +83,7 @@ class ExerciseType(models.Model, NameableMixin):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing Exercise Type")
         d = {}
         if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
             d = self.search_dict
@@ -113,6 +114,7 @@ class EquipmentType(models.Model, NameableMixin):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing Equipment Type")
         d = {}
         if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
             d = self.search_dict
@@ -155,6 +157,7 @@ class Exercise(models.Model, NameableMixin):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing Exercise Type")
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
@@ -186,6 +189,7 @@ class Stat(models.Model, NameableMixin):
         return d
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing stats")
         d = {}
         if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
             d = self.search_dict
@@ -203,13 +207,14 @@ class Block(models.Model, NameableMixin):
         null=True,
     )
 
-    class Meta:
-        unique_together = ["name", "user"]
+    # class Meta:
+    #     unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing blocks")
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
@@ -243,8 +248,8 @@ class BlockExercise(models.Model):
     )
 
     # do I need this?
-    class Meta:
-        unique_together = ["block", "exercise", "exercise_order"]
+    # class Meta:
+    #     unique_together = ["block", "exercise", "exercise_order"]
 
     def __str__(self):
         return self.block.name + " - " + self.exercise.name
@@ -260,19 +265,25 @@ class Workout(models.Model, NameableMixin):
         related_name="workouts",
         null=True,
     )
+    updated_by = models.ForeignKey(
+        "self", null=True, on_delete=models.SET_NULL, related_name="updates"
+    )
 
-    class Meta:
-        unique_together = ["name", "user"]
+    # class Meta:
+    #     unique_together = ["name", "user"]
 
     def __str__(self):
         return self.name
 
     def serialize(self, detail_level=Detail.SUMMARY):
+        # print("serializing workouts")
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
         elif detail_level == Detail.DETAIL:
             d["name"] = self.name
+            if self.updated_by:
+                d["updated_by"] = self.updated_by.serialize()
             d["id"] = self.id
             blocks = []
             d["blocks"] = blocks
@@ -295,8 +306,8 @@ class WorkoutBlock(models.Model):
     block_order = models.IntegerField()
 
     # do I need this?
-    class Meta:
-        unique_together = ["workout", "block", "block_order"]
+    # class Meta:
+    #     unique_together = ["workout", "block", "block_order"]
 
     def __str__(self):
         return self.workout.name + " - " + self.block.name
@@ -313,6 +324,7 @@ class Session(models.Model, NameableMixin):
         return self.workout.name + " - " + prettyDate
 
     def get_search_dict(self):
+        # print("serializing sessions")
         d = {}
         d["id"] = self.id
         d["date"] = self.date
