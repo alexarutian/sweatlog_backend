@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http.response import HttpResponseBadRequest
 from django.http import JsonResponse
-from django.db import IntegrityError
+from django.db import IntegrityError, connection, reset_queries
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.db.models import Q
@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.gzip import gzip_page
 
 
 from .models import (
@@ -266,6 +267,28 @@ def equipment_types_with_id(request, equipment_type_id):
             return JsonResponse({"message": "cannot delete this equipment"}, status=403)
 
 
+def exercises_new(request, user_id):
+    data = _find_data(request)
+
+    # user_token = data.get("user_token", False)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "GET":
+        reset_queries()
+
+        all_exercises = Exercise.objects.filter(user=user).select_related(
+            "equipment_type", "exercise_type"
+        )
+
+        detail = []
+        for exercise in all_exercises:
+            detail.append(exercise.serialize(detail_level=Detail.MID))
+
+        return JsonResponse(
+            {"all_exercises": detail, "queries": list(connection.queries)}, status=200
+        )
+
+
 def exercises(request):
     data = _find_data(request)
 
@@ -395,6 +418,31 @@ def exercises_with_id(request, exercise_id):
             return JsonResponse({"message": "cannot modify this exercise"}, status=403)
 
 
+def blocks_new(request, user_id):
+    data = _find_data(request)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "GET":
+        reset_queries()
+        all_blocks = Block.objects.filter(user=user).prefetch_related(
+            "blockexercises__exercise__equipment_type",
+            "blockexercises__exercise__exercise_type",
+            "blockexercises__stat",
+        )
+
+        detail = []
+        for block in all_blocks:
+            block_detail = block.serialize(detail_level=Detail.MID)
+            if block_detail not in detail:
+                detail.append(block_detail)
+
+        for q in connection.queries:
+            print(q)
+        return JsonResponse(
+            {"all_blocks": detail, "queries": list(connection.queries)}, status=200
+        )
+
+
 def blocks(request):
     data = _find_data(request)
     print(data)
@@ -449,6 +497,40 @@ def blocks(request):
             )
 
         return JsonResponse({"block_id": block.id}, status=201)
+
+
+@gzip_page
+def workouts_new(request, user_id):
+    data = _find_data(request)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "GET":
+        reset_queries()
+        all_workouts_info = (
+            Workout.objects.filter(user=user)
+            .prefetch_related(
+                "workoutblocks__block__blockexercises__exercise__equipment_type",
+                "workoutblocks__block__blockexercises__exercise__exercise_type",
+                "workoutblocks__block__blockexercises__stat",
+            )
+            .distinct()
+        )
+
+        detail = []
+        for workout in all_workouts_info:
+            # not a real detailed level
+            workout_detail = workout.serialize(detail_level=Detail.MID)
+            detail.append(workout_detail)
+
+        for q in connection.queries:
+            print(q)
+        return JsonResponse(
+            {"all_workouts": detail, "queries": list(connection.queries)}, status=200
+        )
+
+
+def render_template(request):
+    return render(request, "webapp/test.html")
 
 
 def workouts(request):
@@ -613,6 +695,30 @@ def workouts_with_id(request, workout_id):
             )
         else:
             return JsonResponse({"message": "cannot modify this workout"}, status=403)
+
+
+def sessions_new(request, user_id):
+    data = _find_data(request)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "GET":
+        reset_queries()
+        all_sessions_info = Session.objects.filter(workout__user=user).prefetch_related(
+            "workout__workoutblocks__block",
+        )
+
+        detail = []
+        for session in all_sessions_info:
+            # not a real detailed level
+            session_detail = session.serialize(detail_level=Detail.MID)
+            if session_detail not in detail:
+                detail.append(session_detail)
+
+        for q in connection.queries:
+            print(q)
+        return JsonResponse(
+            {"all_sessions": detail, "queries": list(connection.queries)}, status=200
+        )
 
 
 def sessions(request):
