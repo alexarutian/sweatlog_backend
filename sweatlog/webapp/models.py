@@ -35,6 +35,7 @@ class Detail(Enum):
     SEARCH = 1
     SUMMARY = 2
     DETAIL = 3
+    MID = 4
 
 
 # CASCADE TO ALL EVENTUALLY
@@ -85,7 +86,7 @@ class ExerciseType(models.Model, NameableMixin):
     def serialize(self, detail_level=Detail.SUMMARY):
         # print("serializing Exercise Type")
         d = {}
-        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL, Detail.MID):
             d = self.search_dict
         return d
 
@@ -116,7 +117,7 @@ class EquipmentType(models.Model, NameableMixin):
     def serialize(self, detail_level=Detail.SUMMARY):
         # print("serializing Equipment Type")
         d = {}
-        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL, Detail.MID):
             d = self.search_dict
         return d
 
@@ -161,15 +162,21 @@ class Exercise(models.Model, NameableMixin):
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
+        d["name"] = self.name
+        d["id"] = self.id
+        if self.description:
+            d["description"] = self.description
+        elif detail_level == Detail.MID:
+            if self.exercise_type:
+                d["exercise_type_id"] = self.exercise_type.id
+            if self.equipment_type:
+                d["equipment_type_id"] = self.equipment_type.id
         elif detail_level == Detail.DETAIL:
-            d["name"] = self.name
-            d["id"] = self.id
-            if self.description:
-                d["description"] = self.description
             if self.exercise_type:
                 d["exercise_type"] = self.exercise_type.serialize()
             if self.equipment_type:
                 d["equipment_type"] = self.equipment_type.serialize()
+
         return d
 
 
@@ -191,7 +198,7 @@ class Stat(models.Model, NameableMixin):
     def serialize(self, detail_level=Detail.SUMMARY):
         # print("serializing stats")
         d = {}
-        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL):
+        if detail_level in (Detail.SUMMARY, Detail.SEARCH, Detail.DETAIL, Detail.MID):
             d = self.search_dict
         return d
 
@@ -218,14 +225,18 @@ class Block(models.Model, NameableMixin):
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
-        elif detail_level == Detail.DETAIL:
+
+        elif detail_level in (Detail.DETAIL, Detail.MID):
             d["name"] = self.name
             d["id"] = self.id
             exercises = []
             d["exercises"] = exercises
             for be in self.blockexercises.all():
                 bed = {}
-                bed["exercise"] = be.exercise.serialize(detail_level)
+                if detail_level == Detail.DETAIL:
+                    bed["exercise"] = be.exercise.serialize(detail_level)
+                else:
+                    bed["exercise_id"] = be.exercise.id
                 bed["exercise_order"] = be.exercise_order
                 if be.stat:
                     bed["stats"] = be.stat.serialize()
@@ -280,17 +291,21 @@ class Workout(models.Model, NameableMixin):
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
-        elif detail_level == Detail.DETAIL:
+        elif detail_level in (Detail.DETAIL, Detail.MID):
             d["name"] = self.name
             if self.updated_by:
-                d["updated_by"] = self.updated_by.serialize()
+                d["updated_by_id"] = self.updated_by.id
             d["id"] = self.id
             blocks = []
             d["blocks"] = blocks
             for wb in self.workoutblocks.all():
                 bd = {}
-                bd["block"] = wb.block.serialize(detail_level)
-                bd["block"]["block_quantity"] = wb.block_quantity
+                if detail_level == Detail.DETAIL:
+                    bd["block"] = wb.block.serialize(detail_level)
+                    bd["block"]["block_quantity"] = wb.block_quantity
+                else:
+                    bd["block_id"] = wb.block.id
+                    bd["block_quantity"] = wb.block_quantity
                 blocks.append(bd)
         return d
 
@@ -335,7 +350,7 @@ class Session(models.Model, NameableMixin):
         d = {}
         if detail_level in (Detail.SEARCH, Detail.SUMMARY):
             d = self.search_dict
-        elif detail_level == Detail.DETAIL:
+        elif detail_level in (Detail.DETAIL, Detail.MID):
             d["id"] = self.id
             d["date"] = self.date
             d["workout"] = self.workout.serialize(detail_level)
