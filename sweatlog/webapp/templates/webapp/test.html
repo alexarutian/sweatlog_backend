@@ -1,0 +1,10 @@
+<body>
+  <p>TEST PAGE HERE</p>
+</body>
+<script type="module">
+  fetch("http://127.0.0.1:8000/webapp/users/4/workouts").then((response) => {
+    let text = response.text().then((resp) => {
+      console.log((resp.match(/exercise_id/g) || []).length);
+    });
+  });
+</script>
