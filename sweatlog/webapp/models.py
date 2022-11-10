@@ -306,6 +306,7 @@ class Workout(models.Model, NameableMixin):
                 else:
                     bd["block_id"] = wb.block.id
                     bd["block_quantity"] = wb.block_quantity
+                    bd["block_order"] = wb.block_order
                 blocks.append(bd)
         return d
 
