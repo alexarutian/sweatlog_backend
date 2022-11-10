@@ -23,10 +23,10 @@ urlpatterns = [
     path("users/logout/", views.logout_user),
     path("users/get_user_email/", views.get_user_email),
     # new url pattern following REST
-    path("users/<int:user_id>/exercises", views.exercises_new),
-    path("users/<int:user_id>/blocks", views.blocks_new),
-    path("users/<int:user_id>/workouts", views.workouts_new),
-    path("users/<int:user_id>/sessions", views.sessions_new),
+    path("users/<int:user_id>/exercises/", views.exercises_new),
+    path("users/<int:user_id>/blocks/", views.blocks_new),
+    path("users/<int:user_id>/workouts/", views.workouts_new),
+    path("users/<int:user_id>/sessions/", views.sessions_new),
     # test url
     path("test_url/", views.render_template),
 ]
