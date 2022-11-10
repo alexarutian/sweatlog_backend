@@ -123,7 +123,9 @@ def login_user_2(request):
     user = authenticate(username=email, password=password)
     if user is not None:
         # request.session["user_token"] = str(user.token)
-        return JsonResponse({"email": email, "token": user.token}, status=200)
+        return JsonResponse(
+            {"email": email, "token": user.token, "id": user.id}, status=200
+        )
     else:
         try:
             user = User.objects.get(email=email)
@@ -269,11 +271,14 @@ def equipment_types_with_id(request, equipment_type_id):
 
 def exercises_new(request, user_id):
     data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
 
-    # user_token = data.get("user_token", False)
     user = get_object_or_404(User, id=user_id)
 
-    if request.method == "GET":
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    if request.method == "GET" and requestor_has_permission:
         reset_queries()
 
         all_exercises = Exercise.objects.filter(user=user).select_related(
@@ -436,8 +441,6 @@ def blocks_new(request, user_id):
             if block_detail not in detail:
                 detail.append(block_detail)
 
-        for q in connection.queries:
-            print(q)
         return JsonResponse(
             {"all_blocks": detail, "queries": list(connection.queries)}, status=200
         )
@@ -445,7 +448,6 @@ def blocks_new(request, user_id):
 
 def blocks(request):
     data = _find_data(request)
-    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
@@ -522,8 +524,6 @@ def workouts_new(request, user_id):
             workout_detail = workout.serialize(detail_level=Detail.MID)
             detail.append(workout_detail)
 
-        for q in connection.queries:
-            print(q)
         return JsonResponse(
             {"all_workouts": detail, "queries": list(connection.queries)}, status=200
         )
@@ -535,7 +535,6 @@ def render_template(request):
 
 def workouts(request):
     data = _find_data(request)
-    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
@@ -607,7 +606,6 @@ def workouts(request):
 
 def workouts_with_id(request, workout_id):
     data = _find_data(request)
-    print(data)
 
     user_token = data.get("user_token", False)
     user = get_object_or_404(User, token=user_token)
@@ -699,9 +697,14 @@ def workouts_with_id(request, workout_id):
 
 def sessions_new(request, user_id):
     data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+
     user = get_object_or_404(User, id=user_id)
 
-    if request.method == "GET":
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    if request.method == "GET" and requestor_has_permission:
         reset_queries()
         all_sessions_info = Session.objects.filter(workout__user=user).prefetch_related(
             "workout__workoutblocks__block",
@@ -714,8 +717,6 @@ def sessions_new(request, user_id):
             if session_detail not in detail:
                 detail.append(session_detail)
 
-        for q in connection.queries:
-            print(q)
         return JsonResponse(
             {"all_sessions": detail, "queries": list(connection.queries)}, status=200
         )
