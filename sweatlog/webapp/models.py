@@ -166,11 +166,11 @@ class Exercise(models.Model, NameableMixin):
         d["id"] = self.id
         if self.description:
             d["description"] = self.description
-        elif detail_level == Detail.MID:
+        if detail_level == Detail.MID:
             if self.exercise_type:
-                d["exercise_type_id"] = self.exercise_type.id
+                d["exercise_type_id"] = self.exercise_type_id
             if self.equipment_type:
-                d["equipment_type_id"] = self.equipment_type.id
+                d["equipment_type_id"] = self.equipment_type_id
         elif detail_level == Detail.DETAIL:
             if self.exercise_type:
                 d["exercise_type"] = self.exercise_type.serialize()
