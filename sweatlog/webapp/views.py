@@ -51,6 +51,7 @@ def _find_data(request):
 #########################################################################################################
 
 
+@csrf_exempt
 def users(request):
     data = _find_data(request)
     if request.method == "POST":
@@ -69,6 +70,7 @@ def users(request):
                 {
                     "email": user.email,
                     "token": user.token,
+                    "id": user.id,
                     "message": "user successfully created!",
                 }
             )
@@ -269,6 +271,7 @@ def equipment_types_with_id(request, equipment_type_id):
             return JsonResponse({"message": "cannot delete this equipment"}, status=403)
 
 
+@csrf_exempt
 def exercises_new(request, user_id):
     data = _find_data(request)
     requestor_token = data.get("user_token", False)
@@ -281,9 +284,7 @@ def exercises_new(request, user_id):
     if request.method == "GET" and requestor_has_permission:
         reset_queries()
 
-        all_exercises = Exercise.objects.filter(user=user).select_related(
-            "equipment_type", "exercise_type"
-        )
+        all_exercises = Exercise.objects.filter(user=user)
 
         detail = []
         for exercise in all_exercises:
@@ -292,6 +293,41 @@ def exercises_new(request, user_id):
         return JsonResponse(
             {"all_exercises": detail, "queries": list(connection.queries)}, status=200
         )
+
+        # create a new exercise, only if valid user!
+    if request.method == "POST" and requestor_has_permission:
+        print(data)
+
+        name = data.get("name", "").lower()
+        if not name:
+            return HttpResponseBadRequest("name is required")
+        equipment_type_id = data.get("equipment_type_id", None)
+        exercise_type_id = data.get("exercise_type_id", None)
+        description = data.get("description", None)
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        elif equipment_type_id is None:
+            equipment_type = None
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        elif exercise_type_id is None:
+            exercise_type = None
+
+        try:
+            exercise = Exercise.objects.create(
+                user=user,
+                name=name,
+                equipment_type=equipment_type,
+                exercise_type=exercise_type,
+                description=description,
+            )
+            return JsonResponse({"exercise_id": exercise.id}, status=201)
+        except IntegrityError:
+            return JsonResponse({}, status=409)
 
 
 def exercises(request):
@@ -307,8 +343,8 @@ def exercises(request):
         all_exercises = Exercise.objects.filter(user=user).order_by("name")
         # all_exercises = Exercise.objects.order_by("name")
 
-        equipment_type_id = data.get("equipment_type_id", None)
-        exercise_type_id = data.get("exercise_type_id", None)
+        equipment_type_id = data.get("equipment_type_id", False)
+        exercise_type_id = data.get("exercise_type_id", False)
 
         # process equipment type
         if equipment_type_id is not None:
@@ -333,9 +369,9 @@ def exercises(request):
         name = data.get("name", "").lower()
         if not name:
             return HttpResponseBadRequest("name is required")
-        equipment_type_id = data.get("equipment_type_id", False)
-        exercise_type_id = data.get("exercise_type_id", False)
-        description = data.get("description", False)
+        equipment_type_id = data.get("equipment_type_id", None)
+        exercise_type_id = data.get("exercise_type_id", None)
+        description = data.get("description", None)
 
         # process equipment type
         if equipment_type_id is not None:
