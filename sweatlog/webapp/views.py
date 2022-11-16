@@ -158,6 +158,54 @@ def get_user_email(request):
         return JsonResponse({"message": "user token not available"})
 
 
+@csrf_exempt
+def exercise_types_new(request, user_id):
+    data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+    user = get_object_or_404(User, id=user_id)
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    if request.method == "POST" and requestor_has_permission:
+
+        name = data.get("name", "").lower()
+        if not name:
+            return HttpResponseBadRequest("name is required")
+
+        try:
+            exercise_type = ExerciseType.objects.create(
+                user=user,
+                name=name,
+            )
+            return JsonResponse({"exercise_type_id": exercise_type.id}, status=201)
+        except IntegrityError:
+            return JsonResponse({}, status=409)
+
+
+@csrf_exempt
+def exercise_types_new_with_id(request, user_id, exercise_type_id):
+    data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+    user = get_object_or_404(User, id=user_id)
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    exercise_type = get_object_or_404(ExerciseType, id=exercise_type_id)
+
+    if request.method == "PUT" and requestor_has_permission:
+        exercise_type.name = data.get("name", "").lower()
+        exercise_type.save()
+        return JsonResponse({"exercise_type_id": exercise_type.id}, status=200)
+
+    if request.method == "DELETE" and requestor_has_permission:
+        exercise_type.delete()
+        return JsonResponse(
+            {"message": f"exercise {exercise_type_id} has been deleted"}, status=202
+        )
+    else:
+        return JsonResponse({"message": "cannot modify this exercise type"}, status=403)
+
+
 def exercise_types(request):
     data = _find_data(request)
 
@@ -213,6 +261,56 @@ def exercise_types_with_id(request, exercise_type_id):
             )
         else:
             return JsonResponse({"message": "cannot delete this exercise"}, status=403)
+
+
+@csrf_exempt
+def equipment_types_new(request, user_id):
+    data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+    user = get_object_or_404(User, id=user_id)
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    if request.method == "POST" and requestor_has_permission:
+
+        name = data.get("name", "").lower()
+        if not name:
+            return HttpResponseBadRequest("name is required")
+
+        try:
+            equipment_type = EquipmentType.objects.create(
+                user=user,
+                name=name,
+            )
+            return JsonResponse({"equipment_type_id": equipment_type.id}, status=201)
+        except IntegrityError:
+            return JsonResponse({}, status=409)
+
+
+@csrf_exempt
+def equipment_types_new_with_id(request, user_id, equipment_type_id):
+    data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+    user = get_object_or_404(User, id=user_id)
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    equipment_type = get_object_or_404(EquipmentType, id=equipment_type_id)
+
+    if request.method == "PUT" and requestor_has_permission:
+        equipment_type.name = data.get("name", "").lower()
+        equipment_type.save()
+        return JsonResponse({"equipment_type_id": equipment_type.id}, status=200)
+
+    if request.method == "DELETE" and requestor_has_permission:
+        equipment_type.delete()
+        return JsonResponse(
+            {"message": f"exercise {equipment_type_id} has been deleted"}, status=202
+        )
+    else:
+        return JsonResponse(
+            {"message": "cannot modify this equipment type"}, status=403
+        )
 
 
 def equipment_types(request):
@@ -296,7 +394,6 @@ def exercises_new(request, user_id):
 
         # create a new exercise, only if valid user!
     if request.method == "POST" and requestor_has_permission:
-        print(data)
 
         name = data.get("name", "").lower()
         if not name:
@@ -328,6 +425,25 @@ def exercises_new(request, user_id):
             return JsonResponse({"exercise_id": exercise.id}, status=201)
         except IntegrityError:
             return JsonResponse({}, status=409)
+
+
+@csrf_exempt
+def exercises_new_with_id(request, user_id, exercise_id):
+    data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+    user = get_object_or_404(User, id=user_id)
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+
+    if request.method == "DELETE" and requestor_has_permission:
+        exercise.delete()
+        return JsonResponse(
+            {"message": f"exercise {exercise_id} has been deleted"}, status=202
+        )
+    else:
+        return JsonResponse({"message": "cannot modify this exercise"}, status=403)
 
 
 def exercises(request):
