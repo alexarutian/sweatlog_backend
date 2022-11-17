@@ -382,7 +382,7 @@ def exercises_new(request, user_id):
     if request.method == "GET" and requestor_has_permission:
         reset_queries()
 
-        all_exercises = Exercise.objects.filter(user=user)
+        all_exercises = Exercise.objects.filter(user=user).order_by("name")
 
         detail = []
         for exercise in all_exercises:
