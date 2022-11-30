@@ -847,6 +847,7 @@ def workouts_with_id(request, workout_id):
             return JsonResponse({"message": "cannot modify this workout"}, status=403)
 
 
+@csrf_exempt
 def sessions_new(request, user_id):
     data = _find_data(request)
     requestor_token = data.get("user_token", False)
@@ -872,6 +873,34 @@ def sessions_new(request, user_id):
         return JsonResponse(
             {"all_sessions": detail, "queries": list(connection.queries)}, status=200
         )
+
+    if request.method == "POST" and requestor_has_permission:
+        date = data.get("date", False)
+        workout_id = data.get("workout_id", False)
+
+        workout = get_object_or_404(Workout, id=workout_id)
+        session = Session.objects.create(workout=workout, date=date)
+
+        return JsonResponse({"session_id": session.id}, status=201)
+
+
+@csrf_exempt
+def sessions_new_with_id(request, user_id, session_id):
+    data = _find_data(request)
+    requestor_token = data.get("user_token", False)
+    requestor = get_object_or_404(User, token=requestor_token)
+    user = get_object_or_404(User, id=user_id)
+    requestor_has_permission = requestor.is_superuser or requestor == user
+
+    session = get_object_or_404(Session, id=session_id)
+
+    if request.method == "DELETE" and requestor_has_permission:
+        session.delete()
+        return JsonResponse(
+            {"message": f"session {session_id} has been deleted"}, status=202
+        )
+    else:
+        return JsonResponse({"message": "cannot modify this session"}, status=403)
 
 
 def sessions(request):

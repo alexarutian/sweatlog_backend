@@ -40,6 +40,10 @@ urlpatterns = [
         "users/<int:user_id>/equipmenttypes/<int:equipment_type_id>/",
         views.equipment_types_new_with_id,
     ),
+    path(
+        "users/<int:user_id>/sessions/<int:session_id>/",
+        views.sessions_new_with_id,
+    ),
     # test
     # url
     path("test_url/", views.render_template),
