@@ -437,6 +437,39 @@ def exercises_new_with_id(request, user_id, exercise_id):
 
     exercise = get_object_or_404(Exercise, id=exercise_id)
 
+    # modify a preexisting exercise
+    if request.method == "PUT" and requestor_has_permission:
+
+        equipment_type_id = data.get("equipment_type_id", None)
+        exercise_type_id = data.get("exercise_type_id", None)
+        exercise_name = data.get("name", None)
+
+        exercise_description = data.get("description", None)
+
+        if exercise_name is not None:
+            exercise.name = exercise_name.lower()
+        if exercise_description is not None:
+            exercise.description = exercise_description
+
+        # process equipment type
+        if equipment_type_id is not None:
+            equipment_type = EquipmentType.objects.get(id=equipment_type_id)
+        elif equipment_type_id is None:
+            equipment_type = None
+
+        # process exercise type
+        if exercise_type_id is not None:
+            exercise_type = ExerciseType.objects.get(id=exercise_type_id)
+        elif exercise_type_id is None:
+            exercise_type = None
+
+        exercise.equipment_type = equipment_type
+        exercise.exercise_type = exercise_type
+
+        exercise.save()
+
+        return JsonResponse({"exercise_id": exercise.id}, status=200)
+
     if request.method == "DELETE" and requestor_has_permission:
         exercise.delete()
         return JsonResponse(
