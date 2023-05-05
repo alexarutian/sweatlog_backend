@@ -130,18 +130,18 @@ class ExerciseManager(models.Manager):
 
 class Exercise(models.Model, NameableMixin):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200, blank=True)
+    description = models.CharField(max_length=200, blank=True, null=True)
     exercise_type = models.ForeignKey(
         ExerciseType,
         on_delete=models.SET_NULL,
         related_name="exercises",
-        null=True,
+        null=True, blank=True
     )
     equipment_type = models.ForeignKey(
         EquipmentType,
         on_delete=models.SET_NULL,
         related_name="exercises",
-        null=True,
+        null=True, blank=True
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
